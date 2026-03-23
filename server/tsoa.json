@@ -1,0 +1,32 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "silently-remove-extras",
+  "controllerPathGlobs": ["src/controllers/*.ts"],
+  "spec": {
+    "outputDirectory": "src/swagger",
+    "specVersion": 3,
+    "info": {
+      "title": "CoOwn API",
+      "description": "API for CoOwn property co-ownership platform",
+      "version": "1.0.0",
+      "contact": {
+        "name": "CoOwn Team",
+        "email": "support@coown.com"
+      }
+    },
+    "securityDefinitions": {
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from /auth/login"
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "src/swagger/routes",
+    "middleware": "express",
+    "authenticationModule": "./src/middlewares/authentication",
+    "esModuleInterop": true
+  }
+}
