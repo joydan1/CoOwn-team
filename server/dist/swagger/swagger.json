@@ -1,0 +1,751 @@
+{
+    "openapi": "3.0.0",
+    "components": {
+        "examples": {},
+        "headers": {},
+        "parameters": {},
+        "requestBodies": {},
+        "responses": {},
+        "schemas": {
+            "Partial_User-or-null_": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "bvn_hash": {
+                        "type": "string"
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "Partial_User_": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "bvn_hash": {
+                        "type": "string"
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "UpdateUserDto": {
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "RegisterUserDto": {
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "tokenDto": {
+                "properties": {
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "LoginUserResponseDto": {
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "$ref": "#/components/schemas/tokenDto"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/Partial_User_"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "LoginUserDto": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "refreshTokenDto": {
+                "properties": {
+                    "refreshToken": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "refreshToken"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "VerifyBvnDto": {
+                "properties": {
+                    "bvn": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "dateOfBirth": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "bvn",
+                    "firstName",
+                    "lastName",
+                    "dateOfBirth"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            }
+        },
+        "securitySchemes": {
+            "jwt": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT token obtained from /auth/login"
+            }
+        }
+    },
+    "info": {
+        "title": "coown-api",
+        "version": "1.0.0",
+        "license": {
+            "name": "ISC"
+        },
+        "contact": {
+            "name": "Salawu Olanrewaju Joseph"
+        }
+    },
+    "paths": {
+        "/users/{id}": {
+            "get": {
+                "operationId": "GetUserById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User-or-null_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "email": "john.doe@example.com",
+                                            "phone": "+2348012345678",
+                                            "verified": true,
+                                            "role": "user",
+                                            "isActive": true,
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "summary": "Get user by ID",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateUser",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "firstName": "Jane",
+                                            "lastName": "Doe",
+                                            "phone": "+2348012345678"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "description": "UPDATE USER",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserDto"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeleteUser",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ],
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": "550e8400-e29b-41d4-a716-446655440000"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "description": "DELETE USER",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/users": {
+            "get": {
+                "operationId": "ListAll",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Partial_User_"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "firstName": "John",
+                                                "lastName": "Doe",
+                                                "email": "john.doe@example.com",
+                                                "role": "user",
+                                                "verified": true,
+                                                "isActive": true,
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "LIST ALL USERS",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "role",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "isActive",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ]
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "operationId": "Register",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "email": "john.doe@example.com",
+                                            "password": "SecurePass123!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "email": "john.doe@example.com",
+                                            "verified": false,
+                                            "role": "user",
+                                            "isActive": true,
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Register a new user",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "operationId": "Login",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginUserResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "email": "john.doe@example.com",
+                                            "password": "SecurePass123!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "User login",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginUserDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "operationId": "Refresh",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/tokenDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Refresh access token",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/refreshTokenDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "delete": {
+                "operationId": "Logout",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ],
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": "550e8400-e29b-41d4-a716-446655440000"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "User logout",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/auth/verify-bvn": {
+            "post": {
+                "operationId": "VerifyBvn",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "phone": {
+                                                    "type": "string"
+                                                },
+                                                "lastName": {
+                                                    "type": "string"
+                                                },
+                                                "firstName": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "lastName",
+                                                "firstName"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "message"
+                                    ],
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "bvn": "12345678901",
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "dateOfBirth": "1990-01-01"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Verify BVN",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyBvnDto"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ]
+}
