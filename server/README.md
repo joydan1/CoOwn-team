@@ -1,3 +1,6 @@
+
+API documentation at https://coown-team.onrender.com/swagger/api/
+
 # CoOwn API (Server)
 
 This is the CoOwn property co-ownership backend service.
