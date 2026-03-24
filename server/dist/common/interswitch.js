@@ -3,88 +3,75 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.matchBvnFullData = matchBvnFullData;
 exports.getInterswitchToken = getInterswitchToken;
-exports.verifyBvnFull = verifyBvnFull;
+exports.verifyBvn = verifyBvn;
 const axios_1 = __importDefault(require("axios"));
 const env_1 = require("../config/env");
-/**
- * ===============================
- * HELPERS
- * ===============================
- */
-/** Normalize string values for comparison */
-function normalize(value) {
-    return value?.trim().toLowerCase() || "";
-}
-/** Normalize date to YYYY-MM-DD */
-function normalizeDate(date) {
-    return new Date(date).toISOString().split("T")[0];
-}
-/** Match BVN data with user input */
-function matchBvnFullData(bvnData, input) {
-    return (normalize(bvnData.firstName) === normalize(input.firstName) &&
-        normalize(bvnData.lastName) === normalize(input.lastName) &&
-        normalizeDate(bvnData.dateOfBirth) === normalizeDate(input.dateOfBirth));
-}
-/**
- * ===============================
- * TOKEN CACHING
- * ===============================
- */
 let cachedToken = null;
 let tokenExpiry = 0;
-/** Get Interswitch OAuth Token (with caching) */
+let tokenPromise = null;
 async function getInterswitchToken() {
     const now = Date.now();
     if (cachedToken && now < tokenExpiry) {
         return cachedToken;
     }
-    const { clientId, clientSecret, authUrl } = env_1.variables.interswitch;
-    try {
-        const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-        const response = await axios_1.default.post(authUrl, new URLSearchParams({
-            grant_type: "client_credentials",
-            scope: "profile"
-        }), {
-            headers: {
-                Authorization: `Basic ${credentials}`,
-                "Content-Type": "application/x-www-form-urlencoded"
+    if (tokenPromise) {
+        return tokenPromise;
+    }
+    tokenPromise = (async () => {
+        try {
+            const { authUrl, clientId, clientSecret } = env_1.variables.interswitch;
+            if (!clientId || !clientSecret) {
+                throw new Error("Missing Interswitch credentials");
             }
-        });
-        cachedToken = response.data.access_token;
-        tokenExpiry = Date.now() + (response.data.expires_in - 60) * 1000;
-        return cachedToken;
-    }
-    catch (error) {
-        console.error("Interswitch token error:", error.response?.data || error.message);
-        throw new Error("Failed to generate Interswitch token");
-    }
+            const credentials = Buffer.from(`${clientId.trim()}:${clientSecret.trim()}`).toString("base64");
+            const response = await axios_1.default.post(`${authUrl}?grant_type=client_credentials`, null, {
+                headers: {
+                    Authorization: `Basic ${credentials}`,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    Accept: "application/json",
+                },
+            });
+            const { access_token, expires_in } = response.data;
+            cachedToken = access_token;
+            tokenExpiry = Date.now() + (expires_in - 60) * 1000;
+            return cachedToken;
+        }
+        finally {
+            tokenPromise = null;
+        }
+    })();
+    return tokenPromise;
 }
-/**
- * ===============================
- * BVN FULL VERIFICATION
- * ===============================
- */
-async function verifyBvnFull(bvn) {
+async function verifyBvn(bvn) {
+    if (!/^\d{11}$/.test(bvn)) {
+        throw new Error("BVN must be 11 digits");
+    }
     try {
         const token = await getInterswitchToken();
-        const url = `${env_1.variables.interswitch.baseUrl}/marketplace-routing/api/v1/verify/identity/bvn/verify`;
-        const { data } = await axios_1.default.post(url, { id: bvn }, // IMPORTANT: field is "id"
-        {
+        // const url = `${variables.interswitch.baseUrl}/marketplace-routing/api/v1/verify/identity/bvn/verify`;
+        const url = "https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/verify/identity/bvn/verify";
+        const response = await axios_1.default.post(url, { id: bvn }, {
             headers: {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
+            timeout: 10000,
         });
-        if (data.responseCode !== "00") {
-            throw new Error(data.responseDescription || "BVN verification failed");
+        const result = response.data;
+        if (result.responseCode !== "00") {
+            throw new Error(result.responseDescription || "BVN verification failed");
         }
-        return data;
+        return result.data;
     }
     catch (error) {
-        console.error("BVN full verification error:", error.response?.data || error.message);
-        throw new Error("Failed to verify BVN");
+        console.error("BVN verification error:", {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data,
+        });
+        throw new Error(error.response?.data?.responseDescription ||
+            "Failed to verify BVN");
     }
 }
 //# sourceMappingURL=interswitch.js.map

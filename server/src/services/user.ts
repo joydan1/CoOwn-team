@@ -6,7 +6,6 @@ import { hashString, cleanedUser, compareHash, generateAccessToken, generateRefr
 import { isUUID } from "class-validator";
 import { AppError } from "../common/errors/AppError";
 import { Profile } from "passport-google-oauth20";
-import { verifyBvnFull, matchBvnFullData } from "../common/interswitch";
 import logger from "../config/logger";
 
 @Service()
@@ -53,7 +52,7 @@ export default class UserService {
         const refreshToken = await generateRefreshToken(email, user.id);
 
         await this.userRepository.updateByEmail(email, { token: refreshToken });
-
+        
         return {
             message: "Login Successful", user: cleanedUser(user), token: {
                 accessToken, refreshToken
@@ -156,80 +155,5 @@ export default class UserService {
                 refreshToken
             }
         }
-    }
-
-
-    public async verifyBvn(
-        userId: string,
-        body: VerifyBvnDto
-    ): Promise<{
-        message: string;
-        data: {
-            firstName: string;
-            lastName: string;
-            phone?: string;
-        };
-    }> {
-        const { bvn, firstName, lastName, dateOfBirth } = body;
-
-        if (!isUUID(userId)) {
-            throw new AppError("Invalid user ID format");
-        }
-
- 
-        if (!/^\d{11}$/.test(bvn)) {
-            throw new AppError("Invalid BVN format");
-        }
-
-        const user = await this.userRepository.findById(userId);
-        if (!user) throw new AppError("User not found");
-
- 
-        if (user.bvn_hash) {
-            throw new AppError("BVN already verified");
-        }
-
-        let response;
-
-
-        try {
-            response = await verifyBvnFull(bvn);
-        } catch (error: any) {
-            throw new AppError(
-                error.message || "BVN verification service unavailable"
-            );
-        }
-
-
-        const isMatch = matchBvnFullData(response.data, {
-            firstName,
-            lastName,
-            dateOfBirth
-        });
-
-        if (!isMatch) {
-            throw new AppError("BVN details do not match");
-        }
-
-
-        const bvnHash = await hashString(bvn);
-
-
-        await this.userRepository.updateByid(userId, {
-            bvn_hash: bvnHash,
-            verified: true,
-            phone: response.data.phoneNumber || user.phone,
-            firstName: response.data.firstName || user.firstName,
-            lastName: response.data.lastName || user.lastName
-        });
-
-        return {
-            message: "BVN verified successfully",
-            data: {
-                firstName: response.data.firstName,
-                lastName: response.data.lastName,
-                phone: response.data.phoneNumber
-            }
-        };
     }
 }

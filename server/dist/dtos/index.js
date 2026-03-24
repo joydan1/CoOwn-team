@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorResponseDto = exports.PaymentDto = exports.UserDto = exports.AgreementDto = exports.CreateDocumentDto = exports.DocumentDto = exports.VoteMilestoneDto = exports.CreateMilestoneDto = exports.MilestoneDto = exports.ContributionDto = exports.PoolMemberDto = exports.PoolDashboardDto = exports.JoinPoolDto = exports.CreatePoolDto = exports.PoolDto = exports.CreatePropertyDto = exports.PropertyDto = void 0;
 const tsoa_1 = require("tsoa");
+const class_validator_1 = require("class-validator");
 // Property DTOs
 class PropertyDto {
 }
@@ -57,7 +58,7 @@ __decorate([
 ], PropertyDto.prototype, "created_at", void 0);
 __decorate([
     (0, tsoa_1.Example)(new Date("2024-01-15T10:30:00Z")),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], PropertyDto.prototype, "updatedAt", void 0);
 class CreatePropertyDto {
 }
@@ -153,17 +154,20 @@ class JoinPoolDto {
 }
 exports.JoinPoolDto = JoinPoolDto;
 __decorate([
-    (0, tsoa_1.Example)("550e8400-e29b-41d4-a716-446655440001"),
-    __metadata("design:type", String)
-], JoinPoolDto.prototype, "pool_id", void 0);
+    (0, tsoa_1.Example)(250000),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(1, { message: "Investment amount must be at least 1" }),
+    __metadata("design:type", Number)
+], JoinPoolDto.prototype, "investment_amount", void 0);
 __decorate([
-    (0, tsoa_1.Example)("550e8400-e29b-41d4-a716-446655440002"),
+    (0, tsoa_1.Example)("550e8400-e29b-41d4-a716-446655440000"),
     __metadata("design:type", String)
 ], JoinPoolDto.prototype, "user_id", void 0);
 __decorate([
-    (0, tsoa_1.Example)(100000),
-    __metadata("design:type", Number)
-], JoinPoolDto.prototype, "declared_amount", void 0);
+    (0, tsoa_1.Example)("NGN"),
+    (0, class_validator_1.IsIn)(["NGN", "USD", "GBP", "EUR"], { message: "Currency must be one of: NGN, USD, GBP, EUR" }),
+    __metadata("design:type", String)
+], JoinPoolDto.prototype, "currency", void 0);
 class PoolDashboardDto {
 }
 exports.PoolDashboardDto = PoolDashboardDto;

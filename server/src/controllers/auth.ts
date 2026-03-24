@@ -95,33 +95,31 @@ export class UserController extends Controller{
         return this.userService.logout(id);
     }
 
- /** @summary Verify BVN @description Verify user's BVN and update profile */
-@Post("/verify-bvn")
-@Example<VerifyBvnDto>({
-    bvn: "12345678901",
-    firstName: "John",
-    lastName: "Doe",
-    dateOfBirth: "1990-01-01"
-})
-@Response(200, "BVN verified successfully", {
-    message: "BVN verified successfully",
-    data: {
-        firstName: "John",
-        lastName: "Doe",
-        phone: "08012345678"
-    }
-})
-public async verifyBvn(
-    @Query() userId: string,
-    @Body() body: VerifyBvnDto
-): Promise<{
-    message: string;
-    data: {
-        firstName: string;
-        lastName: string;
-        phone?: string;
-    };
-}> {
-    return this.userService.verifyBvn(userId, body);
-}
+//   /** @summary Verify BVN @description Verify user's BVN and update profile */
+//   @Post("/verify-bvn")
+//   @Example<VerifyBvnDto>({
+//     bvn: "12345678901",
+//     firstName: "John",
+//     lastName: "Doe",
+//     dateOfBirth: "1990-01-01",
+//   })
+//   @Response(200, "BVN verified successfully", {
+//     message: "BVN verified successfully (dummy)",
+//     data: {
+//       firstName: "John",
+//       lastName: "Doe",
+//       phone: "08012345678",
+//     },
+//   })
+//   public async verifyBvn(
+//     @Body() body: VerifyBvnDto
+//   ): Promise<{
+//     message: string;
+//     data: { firstName: string; lastName: string; phone?: string };
+//   }> {
+//     // In a real app, userId would come from JWT/session. For now, we pass a dummy userId
+//     const userId = "65c49bdc-7a4a-41d2-8239-03c95c1efce1";
+//     const result = await this.userService.verifyBvn(userId, body);
+//     return result;
+//   }
 }

@@ -45,5 +45,7 @@ export class PoolRepository {
     async findPublic(): Promise<Pool[]>{
         return this.repo.find({ where: { is_public: true }, relations: ['property', 'creator'] });
     }
-
+    async findByPropertyId(propertyId: string): Promise<Pool[]> {
+        return this.repo.find({ where: { property_id: propertyId, status: 'active' }, relations: ['property', 'creator'] });
+    }
 }

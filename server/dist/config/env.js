@@ -74,6 +74,11 @@ exports.variables = {
         clientSecret: process.env.IT_SECRET_KEY,
         authUrl: process.env.IT_AUTH_URL,
         baseUrl: process.env.IT_BASE_URL
+    },
+    ai: {
+        gemini: {
+            apiKey: process.env.GEMINI_API_KEY
+        }
     }
 };
 //# sourceMappingURL=env.js.map

@@ -50,6 +50,9 @@ let PoolRepository = class PoolRepository {
     async findPublic() {
         return this.repo.find({ where: { is_public: true }, relations: ['property', 'creator'] });
     }
+    async findByPropertyId(propertyId) {
+        return this.repo.find({ where: { property_id: propertyId, status: 'active' }, relations: ['property', 'creator'] });
+    }
 };
 exports.PoolRepository = PoolRepository;
 exports.PoolRepository = PoolRepository = __decorate([

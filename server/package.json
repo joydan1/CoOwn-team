@@ -43,6 +43,7 @@
     "typescript-eslint": "^8.56.1"
   },
   "dependencies": {
+    "@google/genai": "^1.46.0",
     "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
     "class-validator": "^0.15.1",

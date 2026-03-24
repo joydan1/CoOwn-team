@@ -95,7 +95,5 @@ export class AuthController extends Controller{
         return this.userService.deleteUser(id);
     }
 
-
-
     
 }

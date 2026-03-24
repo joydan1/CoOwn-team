@@ -1,172 +1,193 @@
-// import { Service } from "typedi";
-// import Pool from "../models/pool";
-// import PoolMember from "../models/poolMember";
-// import Contribution from "../models/contribution";
-// import { PoolRepository } from "../repositories/pool";
-// import { PoolMemberRepository } from "../repositories/poolMember";
-// import { ContributionRepository } from "../repositories/contribution";
-// import { UserRepository } from "../repositories/user";
-// import { PropertyRepository } from "../repositories/property";
-// import { AppError } from "../common/errors/AppError";
-// import { randomUUID } from 'crypto';
-// import {
-//     CreatePoolDto,
-//     JoinPoolDto,
-//     ContributionDto,
-//     PoolDashboardDto,
-//     PoolDto,
-//     PoolMemberDto,
-//     ContributionDto as ContributionDtoType
-// } from "../dtos";
+import { Service } from "typedi";
+import Pool from "../models/pool";
+import PoolMember from "../models/poolMember";
+import Contribution from "../models/contribution";
+import User from "../models/user";
+import { PoolRepository } from "../repositories/pool";
+import { PoolMemberRepository } from "../repositories/poolMember";
+import { ContributionRepository } from "../repositories/contribution";
+import { UserRepository } from "../repositories/user";
+import { PropertyRepository } from "../repositories/property";
+import { AppError } from "../common/errors/AppError";
+import { randomUUID } from 'crypto';
+import {
+    CreatePoolDto,
+    JoinPoolDto,
+    ContributionDto,
+    PoolDashboardDto,
+    PoolDto,
+    PoolMemberDto
+} from "../dtos";
 
-// export { CreatePoolDto, JoinPoolDto, ContributionDto, PoolDashboardDto, PoolDto, PoolMemberDto };
+export { CreatePoolDto, JoinPoolDto, ContributionDto, PoolDashboardDto, PoolDto, PoolMemberDto };
 
-// @Service()
-// export default class PoolService {
+@Service()
+export default class PoolService {
+    constructor(
+        private poolRepository: PoolRepository,
+        private poolMemberRepository: PoolMemberRepository,
+        private contributionRepository: ContributionRepository,
+        private userRepository: UserRepository,
+        private propertyRepository: PropertyRepository
+    ) {}
 
-//     constructor(
-//         private poolRepository: PoolRepository,
-//         private poolMemberRepository: PoolMemberRepository,
-//         private contributionRepository: ContributionRepository,
-//         private userRepository: UserRepository,
-//         private propertyRepository: PropertyRepository
-//     ) {}
+    public async getPoolMembers(poolId: string): Promise<PoolMember[]> {
+        const pool = await this.poolRepository.findById(poolId);
+        if (!pool) throw new AppError("Pool not found");
 
-//     public async createPool(creatorId: string, data: CreatePoolDto): Promise<Pool> {
-//         // Validate property exists
-//         const property = await this.propertyRepository.findById(data.property_id);
-//         if (!property) throw new AppError("Property not found");
+        return this.poolMemberRepository.findByPool(poolId);
+    }
 
-//         // Validate creator exists
-//         const creator = await this.userRepository.findById(creatorId);
-//         if (!creator) throw new AppError("Creator not found");
+    public async getPoolUsers(poolId: string): Promise<User[]> {
+        const members = await this.getPoolMembers(poolId);
+        return members.map((member) => member.user);
+    }
 
-//         // Generate unique shareable link (for future use in email/SMS invites)
-//         const shareableLink = `https://coown.app/pool/${randomUUID()}`;
-//         void shareableLink; // Mark as intentionally unused for now
-//         const poolData = {
-//             ...data,
-//             creator_id: creatorId,
-//             raised_amount: 0,
-//             status: 'active',
-//             is_public: data.is_public || false
-//         };
+    public async createPool(creatorId: string, data: CreatePoolDto): Promise<Pool> {
+        const property = await this.propertyRepository.findById(data.property_id);
+        if (!property) throw new AppError("Property not found");
 
-//         const pool = await this.poolRepository.create(poolData);
+        const creator = await this.userRepository.findById(creatorId);
+        if (!creator) throw new AppError("Creator not found");
 
-//         // Add creator as first member
-//         await this.poolMemberRepository.create({
-//             pool_id: pool.id,
-//             user_id: creatorId,
-//             declared_amount: 0, // Creator can contribute later
-//             paid_amount: 0,
-//             ownership_pct: 0
-//         });
+        const shareableLink = `https://coown.app/pool/${randomUUID()}`;
+        void shareableLink;
 
-//         return pool;
-//     }
+        const poolData = {
+            ...data,
+            creator_id: creatorId,
+            raised_amount: 0,
+            status: 'active',
+            is_public: data.is_public || false
+        };
 
-//     public async joinPool(data: JoinPoolDto): Promise<PoolMember> {
-//         const pool = await this.poolRepository.findById(data.pool_id);
-//         if (!pool) throw new AppError("Pool not found");
+        const pool = await this.poolRepository.create(poolData);
 
-//         const user = await this.userRepository.findById(data.user_id);
-//         if (!user) throw new AppError("User not found");
+        await this.poolMemberRepository.create({
+            pool_id: pool.id,
+            user_id: creatorId,
+            declared_amount: 0,
+            paid_amount: 0,
+            ownership_pct: 0
+        });
 
-//         // Check if already a member
-//         const existingMember = await this.poolMemberRepository.findByPool(data.pool_id);
-//         const isMember = existingMember.some(m => m.user_id === data.user_id);
-//         if (isMember) throw new AppError("User is already a member of this pool");
+        return pool;
+    }
 
-//         const member = await this.poolMemberRepository.create({
-//             pool_id: data.pool_id,
-//             user_id: data.user_id,
-//             declared_amount: data.declared_amount,
-//             paid_amount: 0,
-//             ownership_pct: 0
-//         });
+    public async joinPool(poolId: string, userId: string, joinData: JoinPoolDto): Promise<PoolMember> {
+        const pool = await this.poolRepository.findById(poolId);
+        if (!pool) throw new AppError("Pool not found");
 
-//         // Recalc percentages
-//         await this.recalculateOwnershipPercentages(data.pool_id);
+        const user = await this.userRepository.findById(userId);
+        if (!user) throw new AppError("User not found");
 
-//         return member;
-//     }
+        const existingMember = await this.poolMemberRepository.findByPool(poolId);
+        const isMember = existingMember.some(m => m.user_id === userId);
+        if (isMember) throw new AppError("User is already a member of this pool");
 
-//     public async addContribution(data: ContributionDto): Promise<Contribution> {
-//         const pool = await this.poolRepository.findById(data.pool_id);
-//         if (!pool) throw new AppError("Pool not found");
+        const member = await this.poolMemberRepository.create({
+            pool_id: poolId,
+            user_id: userId,
+            declared_amount: joinData.investment_amount,
+            paid_amount: 0,
+            ownership_pct: 0
+        });
 
-//         const user = await this.userRepository.findById(data.user_id);
-//         if (!user) throw new AppError("User not found");
+        await this.recalculateOwnershipPercentages(poolId);
 
-//         // Check if user is member
-//         const members = await this.poolMemberRepository.findByPool(data.pool_id);
-//         const member = members.find(m => m.user_id === data.user_id);
-//         if (!member) throw new AppError("User is not a member of this pool");
+        return member;
+    }
 
-//         const contribution = await this.contributionRepository.create({
-//             pool_id: data.pool_id,
-//             user_id: data.user_id,
-//             amount: data.amount,
-//             currency: data.currency || 'NGN',
-//             fx_rate: data.fx_rate,
-//             payment_ref: data.payment_ref
-//         });
+    public async addContribution(data: ContributionDto): Promise<Contribution> {
+        const pool = await this.poolRepository.findById(data.pool_id);
+        if (!pool) throw new AppError("Pool not found");
 
-//         // Update member's paid_amount
-//         member.paid_amount += data.amount;
-//         await this.poolMemberRepository.updateById(member.id, { paid_amount: member.paid_amount });
+        const user = await this.userRepository.findById(data.user_id);
+        if (!user) throw new AppError("User not found");
 
-//         // Update pool raised_amount
-//         pool.raised_amount += data.amount;
-//         await this.poolRepository.updateById(pool.id, { raised_amount: pool.raised_amount });
+        const members = await this.poolMemberRepository.findByPool(data.pool_id);
+        const member = members.find(m => m.user_id === data.user_id);
+        if (!member) throw new AppError("User is not a member of this pool");
 
-//         // Recalc percentages
-//         await this.recalculateOwnershipPercentages(data.pool_id);
+        const contribution = await this.contributionRepository.create({
+            pool_id: data.pool_id,
+            user_id: data.user_id,
+            amount: data.amount,
+            currency: data.currency || 'NGN',
+            fx_rate: data.fx_rate,
+            payment_ref: data.payment_ref
+        });
 
-//         return contribution;
-//     }
+        member.paid_amount += data.amount;
+        await this.poolMemberRepository.updateById(member.id, { paid_amount: member.paid_amount });
 
-//     private async recalculateOwnershipPercentages(poolId: string): Promise<void> {
-//         const members = await this.poolMemberRepository.findByPool(poolId);
-//         const totalRaised = members.reduce((sum, m) => sum + m.paid_amount, 0);
+        pool.raised_amount += data.amount;
+        await this.poolRepository.updateById(pool.id, { raised_amount: pool.raised_amount });
 
-//         if (totalRaised === 0) return;
+        await this.recalculateOwnershipPercentages(data.pool_id);
 
-//         for (const member of members) {
-//             const ownershipPct = (member.paid_amount / totalRaised) * 100;
-//             await this.poolMemberRepository.updateById(member.id, { ownership_pct: ownershipPct });
-//         }
-//     }
+        return contribution;
+    }
 
-//     public async getPoolDashboard(poolId: string): Promise<Record<string, unknown>> {
-//         const pool = await this.poolRepository.findById(poolId);
-//         if (!pool) throw new AppError("Pool not found");
+    private async recalculateOwnershipPercentages(poolId: string): Promise<void> {
+        const members = await this.poolMemberRepository.findByPool(poolId);
+        const totalRaised = members.reduce((sum, m) => sum + m.paid_amount, 0);
 
-//         const members = await this.poolMemberRepository.findByPool(poolId);
-//         const contributions = await this.contributionRepository.findByPool(poolId);
+        if (totalRaised === 0) return;
 
-//         const progress = pool.target_amount > 0 ? (pool.raised_amount / pool.target_amount) * 100 : 0;
+        for (const member of members) {
+            const ownershipPct = (member.paid_amount / totalRaised) * 100;
+            await this.poolMemberRepository.updateById(member.id, { ownership_pct: ownershipPct });
+        }
+    }
 
-//         return {
-//             pool,
-//             members,
-//             contributions,
-//             progress,
-//             totalRaised: pool.raised_amount,
-//             targetAmount: pool.target_amount,
-//             daysRemaining: pool.deadline ? Math.ceil((pool.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null
-//         };
-//     }
+    public async getPoolDashboard(poolId: string): Promise<PoolDashboardDto> {
+        const pool = await this.poolRepository.findById(poolId);
+        if (!pool) throw new AppError("Pool not found");
 
-//     public async togglePublic(poolId: string, creatorId: string, isPublic: boolean): Promise<Pool> {
-//         const pool = await this.poolRepository.findById(poolId);
-//         if (!pool) throw new AppError("Pool not found");
-//         if (pool.creator_id !== creatorId) throw new AppError("Only pool creator can toggle public status");
+        const members = await this.poolMemberRepository.findByPool(poolId);
+        const contributions = await this.contributionRepository.findByPool(poolId);
 
-//         const updated = await this.poolRepository.updateById(poolId, { is_public: isPublic });
-//         if (!updated) throw new AppError("Failed to update pool");
-//         return updated;
-//     }
+        const progress = pool.target_amount > 0 ? (pool.raised_amount / pool.target_amount) * 100 : 0;
 
-// }
+        return {
+            pool,
+            members,
+            contributions,
+            progress,
+            totalRaised: pool.raised_amount,
+            targetAmount: pool.target_amount,
+            daysRemaining: pool.deadline ? Math.ceil((pool.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null
+        } as PoolDashboardDto;
+    }
+
+    public async togglePublic(poolId: string, creatorId: string, isPublic: boolean): Promise<Pool> {
+        const pool = await this.poolRepository.findById(poolId);
+        if (!pool) throw new AppError("Pool not found");
+        if (pool.creator_id !== creatorId) throw new AppError("Only pool creator can toggle public status");
+
+        const updated = await this.poolRepository.updateById(poolId, { is_public: isPublic });
+        if (!updated) throw new AppError("Failed to update pool");
+        return updated;
+    }
+
+    public async getPools(filter: Record<string, unknown> = {}): Promise<Pool[]> {
+        return this.poolRepository.listAll(filter);
+    }
+
+    public async getPoolById(id: string): Promise<Pool | null> {
+        return this.poolRepository.findById(id);
+    }
+
+    public async getPublicPools(): Promise<Pool[]> {
+        return this.poolRepository.findPublic();
+    }
+
+    public async updatePool(id: string, updates: Partial<Pool>): Promise<Pool | null> {
+        return this.poolRepository.updateById(id, updates);
+    }
+
+    public async deletePool(id: string): Promise<boolean> {
+        return this.poolRepository.deleteById(id);
+    }
+}

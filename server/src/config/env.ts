@@ -32,10 +32,15 @@ export const variables = {
         callbackURL: process.env.callbackURL
     },
     interswitch: {
-        clientId: process.env.IT_CLIENT_ID, 
-        clientSecret: process.env.IT_SECRET_KEY,
-        authUrl: process.env.IT_AUTH_URL,
-        baseUrl: process.env.IT_BASE_URL
+        clientId: process.env.IT_CLIENT_ID as string, 
+        clientSecret: process.env.IT_SECRET_KEY as string,
+        authUrl: process.env.IT_AUTH_URL as string,
+        baseUrl: process.env.IT_BASE_URL as string
+    },
+    ai:{
+        gemini: {
+            apiKey: process.env.GEMINI_API_KEY as string
+        }
     }
 }
 

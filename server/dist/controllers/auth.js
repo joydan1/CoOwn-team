@@ -77,10 +77,6 @@ let UserController = class UserController extends tsoa_1.Controller {
     async logout(id) {
         return this.userService.logout(id);
     }
-    /** @summary Verify BVN @description Verify user's BVN and update profile */
-    async verifyBvn(userId, body) {
-        return this.userService.verifyBvn(userId, body);
-    }
 };
 exports.UserController = UserController;
 __decorate([
@@ -157,28 +153,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "logout", null);
-__decorate([
-    (0, tsoa_1.Post)("/verify-bvn"),
-    (0, tsoa_1.Example)({
-        bvn: "12345678901",
-        firstName: "John",
-        lastName: "Doe",
-        dateOfBirth: "1990-01-01"
-    }),
-    (0, tsoa_1.Response)(200, "BVN verified successfully", {
-        message: "BVN verified successfully",
-        data: {
-            firstName: "John",
-            lastName: "Doe",
-            phone: "08012345678"
-        }
-    }),
-    __param(0, (0, tsoa_1.Query)()),
-    __param(1, (0, tsoa_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], UserController.prototype, "verifyBvn", null);
 exports.UserController = UserController = __decorate([
     (0, typedi_1.Service)(),
     (0, tsoa_1.Route)("auth"),

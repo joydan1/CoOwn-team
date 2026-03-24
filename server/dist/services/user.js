@@ -17,7 +17,6 @@ const user_1 = require("../repositories/user");
 const util_1 = require("../common/util");
 const class_validator_1 = require("class-validator");
 const AppError_1 = require("../common/errors/AppError");
-const interswitch_1 = require("../common/interswitch");
 const logger_1 = __importDefault(require("../config/logger"));
 let UserService = class UserService {
     constructor(userRepository) {
@@ -130,52 +129,6 @@ let UserService = class UserService {
             token: {
                 accessToken,
                 refreshToken
-            }
-        };
-    }
-    async verifyBvn(userId, body) {
-        const { bvn, firstName, lastName, dateOfBirth } = body;
-        if (!(0, class_validator_1.isUUID)(userId)) {
-            throw new AppError_1.AppError("Invalid user ID format");
-        }
-        if (!/^\d{11}$/.test(bvn)) {
-            throw new AppError_1.AppError("Invalid BVN format");
-        }
-        const user = await this.userRepository.findById(userId);
-        if (!user)
-            throw new AppError_1.AppError("User not found");
-        if (user.bvn_hash) {
-            throw new AppError_1.AppError("BVN already verified");
-        }
-        let response;
-        try {
-            response = await (0, interswitch_1.verifyBvnFull)(bvn);
-        }
-        catch (error) {
-            throw new AppError_1.AppError(error.message || "BVN verification service unavailable");
-        }
-        const isMatch = (0, interswitch_1.matchBvnFullData)(response.data, {
-            firstName,
-            lastName,
-            dateOfBirth
-        });
-        if (!isMatch) {
-            throw new AppError_1.AppError("BVN details do not match");
-        }
-        const bvnHash = await (0, util_1.hashString)(bvn);
-        await this.userRepository.updateByid(userId, {
-            bvn_hash: bvnHash,
-            verified: true,
-            phone: response.data.phoneNumber || user.phone,
-            firstName: response.data.firstName || user.firstName,
-            lastName: response.data.lastName || user.lastName
-        });
-        return {
-            message: "BVN verified successfully",
-            data: {
-                firstName: response.data.firstName,
-                lastName: response.data.lastName,
-                phone: response.data.phoneNumber
             }
         };
     }

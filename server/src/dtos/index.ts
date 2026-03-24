@@ -1,4 +1,5 @@
 import { Example } from "tsoa";
+import { IsNumber, Min, IsIn } from "class-validator";
 
 // Property DTOs
 export class PropertyDto {
@@ -44,7 +45,7 @@ export class PropertyDto {
 
     /** Property last update timestamp */
     @Example(new Date("2024-01-15T10:30:00Z"))
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 export class CreatePropertyDto {
@@ -141,17 +142,19 @@ export class CreatePoolDto {
 }
 
 export class JoinPoolDto {
-    /** Pool ID */
-    @Example("550e8400-e29b-41d4-a716-446655440001")
-    pool_id!: string;
+    /** The amount the user wants to invest/contribute to the pool */
+    @Example(250000)
+    @IsNumber()
+    @Min(1, { message: "Investment amount must be at least 1" })
+    investment_amount!: number;
 
-    /** User ID */
-    @Example("550e8400-e29b-41d4-a716-446655440002")
+    @Example("550e8400-e29b-41d4-a716-446655440000")
     user_id!: string;
 
-    /** Amount the user wants to contribute */
-    @Example(100000)
-    declared_amount!: number;
+    /** The currency for the investment */
+    @Example("NGN")
+    @IsIn(["NGN", "USD", "GBP", "EUR"], { message: "Currency must be one of: NGN, USD, GBP, EUR" })
+    currency!: "NGN" | "USD" | "GBP" | "EUR";
 }
 
 export class PoolDashboardDto {
@@ -410,7 +413,7 @@ export class UserDto {
 
     /** User role */
     @Example("user")
-    role!: "user" | "admin";
+    role!: string;
 
     /** Email verification status */
     @Example(true)

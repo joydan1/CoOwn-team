@@ -24,7 +24,7 @@ export default class Property extends BaseEntity {
     @Column('simple-array', { nullable: true })
     documents?: string[];
 
-    @Column('decimal', { precision: 10, scale: 2, nullable: true })
+    @Column('bigint', { nullable: true })
     ai_valuation?: number;
 
     @Column({ default: 'available' })
