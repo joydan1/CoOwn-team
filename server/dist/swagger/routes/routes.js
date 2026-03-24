@@ -9,6 +9,10 @@ const property_1 = require("./../../controllers/property");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const pool_1 = require("./../../controllers/pool");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+const milestone_1 = require("./../../controllers/milestone");
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+const contribution_1 = require("./../../controllers/contribution");
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const auth_1 = require("./../../controllers/auth");
 const authentication_1 = require("./../../middlewares/authentication");
 const expressAuthenticationRecasted = authentication_1.expressAuthentication;
@@ -243,6 +247,65 @@ const models = {
     "Partial_Pool_": {
         "dataType": "refAlias",
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "id": { "dataType": "string" }, "property": { "ref": "Property" }, "property_id": { "dataType": "string" }, "creator": { "ref": "User" }, "creator_id": { "dataType": "string" }, "name": { "dataType": "string" }, "target_amount": { "dataType": "double" }, "raised_amount": { "dataType": "double" }, "deadline": { "dataType": "datetime" }, "status": { "dataType": "string" }, "is_public": { "dataType": "boolean" }, "created_at": { "dataType": "datetime" }, "updatedAt": { "dataType": "datetime" } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MilestoneDto": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "string", "required": true },
+            "pool_id": { "dataType": "string", "required": true },
+            "title": { "dataType": "string", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "target_date": { "dataType": "datetime", "required": true },
+            "status": { "dataType": "string", "required": true },
+            "required_approvals": { "dataType": "double", "required": true },
+            "current_approvals": { "dataType": "double", "required": true },
+            "created_at": { "dataType": "datetime" },
+            "updatedAt": { "dataType": "datetime" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateMilestoneDto": {
+        "dataType": "refObject",
+        "properties": {
+            "pool_id": { "dataType": "string", "required": true },
+            "title": { "dataType": "string", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "target_date": { "dataType": "datetime", "required": true },
+            "required_approvals": { "dataType": "double", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "VoteMilestoneDto": {
+        "dataType": "refObject",
+        "properties": {
+            "approve": { "dataType": "boolean", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_MilestoneDto_": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "id": { "dataType": "string" }, "pool_id": { "dataType": "string" }, "title": { "dataType": "string" }, "description": { "dataType": "string" }, "target_date": { "dataType": "datetime" }, "status": { "dataType": "string" }, "required_approvals": { "dataType": "double" }, "current_approvals": { "dataType": "double" }, "created_at": { "dataType": "datetime" }, "updatedAt": { "dataType": "datetime" } }, "validators": {} },
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaymentDto": {
+        "dataType": "refObject",
+        "properties": {
+            "pool_id": { "dataType": "string", "required": true },
+            "user_id": { "dataType": "string", "required": true },
+            "amount": { "dataType": "double", "required": true },
+            "currency": { "dataType": "union", "subSchemas": [{ "dataType": "enum", "enums": ["NGN"] }, { "dataType": "enum", "enums": ["USD"] }, { "dataType": "enum", "enums": ["GBP"] }, { "dataType": "enum", "enums": ["EUR"] }] },
+            "paymentMethod": { "dataType": "union", "subSchemas": [{ "dataType": "enum", "enums": ["card"] }, { "dataType": "enum", "enums": ["bank_transfer"] }, { "dataType": "enum", "enums": ["cross_border"] }] },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_ContributionDto_": {
+        "dataType": "refAlias",
+        "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "id": { "dataType": "string" }, "pool_id": { "dataType": "string" }, "user_id": { "dataType": "string" }, "amount": { "dataType": "double" }, "currency": { "dataType": "string" }, "fx_rate": { "dataType": "double" }, "payment_ref": { "dataType": "string" }, "created_at": { "dataType": "datetime" }, "updatedAt": { "dataType": "datetime" } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RegisterUserDto": {
@@ -826,6 +889,265 @@ function RegisterRoutes(app) {
             const controller = new pool_1.PoolController();
             await templateService.apiHandler({
                 methodName: 'deletePool',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsMilestoneController_getMilestones = {
+        poolId: { "in": "query", "name": "poolId", "dataType": "string" },
+    };
+    app.get('/milestones', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.getMilestones)), async function MilestoneController_getMilestones(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsMilestoneController_getMilestones, request, response });
+            const controller = new milestone_1.MilestoneController();
+            await templateService.apiHandler({
+                methodName: 'getMilestones',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsMilestoneController_getMilestoneById = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+    };
+    app.get('/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.getMilestoneById)), async function MilestoneController_getMilestoneById(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsMilestoneController_getMilestoneById, request, response });
+            const controller = new milestone_1.MilestoneController();
+            await templateService.apiHandler({
+                methodName: 'getMilestoneById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsMilestoneController_createMilestone = {
+        milestone: { "in": "body", "name": "milestone", "required": true, "ref": "CreateMilestoneDto" },
+    };
+    app.post('/milestones', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.createMilestone)), async function MilestoneController_createMilestone(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsMilestoneController_createMilestone, request, response });
+            const controller = new milestone_1.MilestoneController();
+            await templateService.apiHandler({
+                methodName: 'createMilestone',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsMilestoneController_voteOnMilestone = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+        vote: { "in": "body", "name": "vote", "required": true, "ref": "VoteMilestoneDto" },
+        req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
+    };
+    app.post('/milestones/:id/vote', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.voteOnMilestone)), async function MilestoneController_voteOnMilestone(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsMilestoneController_voteOnMilestone, request, response });
+            const controller = new milestone_1.MilestoneController();
+            await templateService.apiHandler({
+                methodName: 'voteOnMilestone',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsMilestoneController_updateMilestone = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+        updates: { "in": "body", "name": "updates", "required": true, "ref": "Partial_MilestoneDto_" },
+    };
+    app.put('/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.updateMilestone)), async function MilestoneController_updateMilestone(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsMilestoneController_updateMilestone, request, response });
+            const controller = new milestone_1.MilestoneController();
+            await templateService.apiHandler({
+                methodName: 'updateMilestone',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsMilestoneController_deleteMilestone = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+    };
+    app.delete('/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.deleteMilestone)), async function MilestoneController_deleteMilestone(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsMilestoneController_deleteMilestone, request, response });
+            const controller = new milestone_1.MilestoneController();
+            await templateService.apiHandler({
+                methodName: 'deleteMilestone',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsContributionController_getContributions = {
+        poolId: { "in": "query", "name": "poolId", "dataType": "string" },
+        userId: { "in": "query", "name": "userId", "dataType": "string" },
+    };
+    app.get('/contributions', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.getContributions)), async function ContributionController_getContributions(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsContributionController_getContributions, request, response });
+            const controller = new contribution_1.ContributionController();
+            await templateService.apiHandler({
+                methodName: 'getContributions',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsContributionController_getContributionById = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+    };
+    app.get('/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.getContributionById)), async function ContributionController_getContributionById(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsContributionController_getContributionById, request, response });
+            const controller = new contribution_1.ContributionController();
+            await templateService.apiHandler({
+                methodName: 'getContributionById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsContributionController_processPayment = {
+        payment: { "in": "body", "name": "payment", "required": true, "ref": "PaymentDto" },
+        req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
+    };
+    app.post('/contributions/pay', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.processPayment)), async function ContributionController_processPayment(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsContributionController_processPayment, request, response });
+            const controller = new contribution_1.ContributionController();
+            await templateService.apiHandler({
+                methodName: 'processPayment',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsContributionController_updateContribution = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+        updates: { "in": "body", "name": "updates", "required": true, "ref": "Partial_ContributionDto_" },
+    };
+    app.put('/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.updateContribution)), async function ContributionController_updateContribution(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsContributionController_updateContribution, request, response });
+            const controller = new contribution_1.ContributionController();
+            await templateService.apiHandler({
+                methodName: 'updateContribution',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsContributionController_deleteContribution = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+    };
+    app.delete('/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.deleteContribution)), async function ContributionController_deleteContribution(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsContributionController_deleteContribution, request, response });
+            const controller = new contribution_1.ContributionController();
+            await templateService.apiHandler({
+                methodName: 'deleteContribution',
                 controller,
                 response,
                 next,

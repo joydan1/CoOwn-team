@@ -13,13 +13,22 @@ import { randomUUID } from 'crypto';
 import {
     CreatePoolDto,
     JoinPoolDto,
-    ContributionDto,
     PoolDashboardDto,
     PoolDto,
     PoolMemberDto
 } from "../dtos";
 import { variables } from "../config/env";
-export { CreatePoolDto, JoinPoolDto, ContributionDto, PoolDashboardDto, PoolDto, PoolMemberDto };
+
+type AddContributionDto = Omit<Partial<import("../dtos").ContributionDto>, 'id' | 'created_at' | 'updatedAt'> & {
+    pool_id: string;
+    user_id: string;
+    amount: number;
+    currency?: string;
+    fx_rate?: number;
+    payment_ref?: string;
+};
+
+export { CreatePoolDto, JoinPoolDto, PoolDashboardDto, PoolDto, PoolMemberDto };
 
 @Service()
 export default class PoolService {
@@ -120,7 +129,7 @@ export default class PoolService {
         return member;
     }
 
-    public async addContribution(data: ContributionDto): Promise<Contribution> {
+    public async addContribution(data: AddContributionDto): Promise<Contribution> {
         const pool = await this.poolRepository.findById(data.pool_id);
         if (!pool) throw new AppError("Pool not found");
 
@@ -172,6 +181,12 @@ export default class PoolService {
 
         const progress = pool.target_amount > 0 ? (pool.raised_amount / pool.target_amount) * 100 : 0;
 
+        // Ensure deadline is a Date object before calling getTime()
+        const deadlineDate = pool.deadline ? new Date(pool.deadline) : null;
+        const daysRemaining = deadlineDate && deadlineDate instanceof Date && !isNaN(deadlineDate.getTime())
+            ? Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+            : null;
+
         return {
             pool,
             members,
@@ -179,7 +194,7 @@ export default class PoolService {
             progress,
             totalRaised: pool.raised_amount,
             targetAmount: pool.target_amount,
-            daysRemaining: pool.deadline ? Math.ceil((pool.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null
+            daysRemaining
         } as PoolDashboardDto;
     }
 

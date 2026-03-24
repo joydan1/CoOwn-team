@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PoolMemberDto = exports.PoolDto = exports.PoolDashboardDto = exports.ContributionDto = exports.JoinPoolDto = exports.CreatePoolDto = void 0;
+exports.PoolMemberDto = exports.PoolDto = exports.PoolDashboardDto = exports.JoinPoolDto = exports.CreatePoolDto = void 0;
 const typedi_1 = require("typedi");
 const pool_1 = require("../repositories/pool");
 const poolMember_1 = require("../repositories/poolMember");
@@ -20,7 +20,6 @@ const AppError_1 = require("../common/errors/AppError");
 const dtos_1 = require("../dtos");
 Object.defineProperty(exports, "CreatePoolDto", { enumerable: true, get: function () { return dtos_1.CreatePoolDto; } });
 Object.defineProperty(exports, "JoinPoolDto", { enumerable: true, get: function () { return dtos_1.JoinPoolDto; } });
-Object.defineProperty(exports, "ContributionDto", { enumerable: true, get: function () { return dtos_1.ContributionDto; } });
 Object.defineProperty(exports, "PoolDashboardDto", { enumerable: true, get: function () { return dtos_1.PoolDashboardDto; } });
 Object.defineProperty(exports, "PoolDto", { enumerable: true, get: function () { return dtos_1.PoolDto; } });
 Object.defineProperty(exports, "PoolMemberDto", { enumerable: true, get: function () { return dtos_1.PoolMemberDto; } });
@@ -150,6 +149,11 @@ let PoolService = class PoolService {
         const members = await this.poolMemberRepository.findByPool(poolId);
         const contributions = await this.contributionRepository.findByPool(poolId);
         const progress = pool.target_amount > 0 ? (pool.raised_amount / pool.target_amount) * 100 : 0;
+        // Ensure deadline is a Date object before calling getTime()
+        const deadlineDate = pool.deadline ? new Date(pool.deadline) : null;
+        const daysRemaining = deadlineDate && deadlineDate instanceof Date && !isNaN(deadlineDate.getTime())
+            ? Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+            : null;
         return {
             pool,
             members,
@@ -157,7 +161,7 @@ let PoolService = class PoolService {
             progress,
             totalRaised: pool.raised_amount,
             targetAmount: pool.target_amount,
-            daysRemaining: pool.deadline ? Math.ceil((pool.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null
+            daysRemaining
         };
     }
     async togglePublic(poolId, creatorId, isPublic) {

@@ -60,6 +60,9 @@ let PropertyController = class PropertyController extends tsoa_1.Controller {
         this.propertyService = typedi_1.default.get(property_1.default);
         this.propertyRepository = typedi_1.default.get(property_2.PropertyRepository);
     }
+    /**
+         * Retrieve a list of properties, with optional filtering by location, type, and status.
+         */
     async getProperties(location, type, status) {
         const filter = {};
         if (location)
@@ -73,9 +76,15 @@ let PropertyController = class PropertyController extends tsoa_1.Controller {
             query.where = filter;
         return this.propertyRepository.listAll(query);
     }
+    /**
+         * Get the list of property listings that are currently active for investment search.
+         */
     async getPropertyListings() {
         return this.propertyService.getPropertyListings();
     }
+    /**
+     * Get details for a specific property by ID.
+     */
     async getPropertyById(id) {
         return this.propertyRepository.findById(id);
     }

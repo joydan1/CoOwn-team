@@ -222,3 +222,19 @@
 {"level":"info","message":"GET /pools/ceb905d8-2620-4a9a-854b-08cbaceb1402/dashboard ::1"}
 {"level":"error","message":"pool.deadline.getTime is not a function","method":"GET","path":"/pools/ceb905d8-2620-4a9a-854b-08cbaceb1402/dashboard","stack":"TypeError: pool.deadline.getTime is not a function\n    at PoolService.getPoolDashboard (C:\\projectFiles\\coOwn\\CoOwn-team\\server\\dist\\services\\pool.js:166:69)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async ExpressTemplateService.apiHandler (C:\\projectFiles\\coOwn\\CoOwn-team\\server\\node_modules\\@tsoa\\runtime\\dist\\routeGeneration\\templates\\express\\expressTemplateService.js:10:26)\n    at async PoolController_getPoolDashboard (C:\\projectFiles\\coOwn\\CoOwn-team\\server\\dist\\swagger\\routes\\routes.js:757:13)"}
 {"level":"info","message":"GET /pools/ceb905d8-2620-4a9a-854b-08cbaceb1402/users ::1"}
+{"level":"info","message":"POST /auth/login ::1"}
+{"level":"info","message":"GET /pools ::1"}
+{"level":"info","message":"POST /contributions/pay ::1"}
+{"level":"info","message":"GET /contributions ::1"}
+{"level":"info","message":"GET /contributions/65c49bdc-7a4a-41d2-8239-03c95c1efce1 ::1"}
+{"level":"info","message":"POST /milestones ::1"}
+{"level":"info","message":"GET /milestones ::1"}
+{"level":"info","message":"GET /milestones?poolId=91f0fc01-a808-4de1-8e47-e3ab9fe4d8e6 ::1"}
+{"level":"info","message":"GET /milestones/4b28477d-f62f-45b0-b446-09340b1a1923 ::1"}
+{"level":"info","message":"GET /milestones/4b28477d-f62f-45b0-b446-09340b1a1923 ::1"}
+{"level":"info","message":"GET /milestones ::1"}
+{"level":"info","message":"GET /milestones/91f0fc01-a808-4de1-8e47-e3ab9fe4d8e6 ::1"}
+{"level":"info","message":"POST /milestones/91f0fc01-a808-4de1-8e47-e3ab9fe4d8e6/vote ::1"}
+{"level":"info","message":"GET /pools/4b28477d-f62f-45b0-b446-09340b1a1923/dashboard ::1"}
+{"level":"error","message":"pool.deadline.getTime is not a function","method":"GET","path":"/pools/4b28477d-f62f-45b0-b446-09340b1a1923/dashboard","stack":"TypeError: pool.deadline.getTime is not a function\n    at PoolService.getPoolDashboard (C:\\projectFiles\\coOwn\\CoOwn-team\\server\\dist\\services\\pool.js:159:69)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async ExpressTemplateService.apiHandler (C:\\projectFiles\\coOwn\\CoOwn-team\\server\\node_modules\\@tsoa\\runtime\\dist\\routeGeneration\\templates\\express\\expressTemplateService.js:10:26)\n    at async PoolController_getPoolDashboard (C:\\projectFiles\\coOwn\\CoOwn-team\\server\\dist\\swagger\\routes\\routes.js:795:13)"}
+{"level":"info","message":"GET /pools/4b28477d-f62f-45b0-b446-09340b1a1923/dashboard ::1"}

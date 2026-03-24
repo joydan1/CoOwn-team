@@ -35,6 +35,14 @@ __decorate([
     __metadata("design:type", String)
 ], Milestone.prototype, "title", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Milestone.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date', nullable: true }),
+    __metadata("design:type", Date)
+], Milestone.prototype, "target_date", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: 'pending' }),
     __metadata("design:type", String)
 ], Milestone.prototype, "status", void 0);

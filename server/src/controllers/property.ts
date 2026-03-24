@@ -32,6 +32,9 @@ export class PropertyController extends Controller {
         this.propertyRepository = Container.get(PropertyRepository);
     }
 
+/**
+     * Retrieve a list of properties, with optional filtering by location, type, and status.
+     */
     @Get("/")
     @Example<PropertyDto[]>([
         {
@@ -69,11 +72,17 @@ export class PropertyController extends Controller {
         return this.propertyRepository.listAll(query) as unknown as PropertyDto[];
     }
 
+/**
+     * Get the list of property listings that are currently active for investment search.
+     */
     @Get("/listings")
     public async getPropertyListings(): Promise<PropertyDto[]> {
         return this.propertyService.getPropertyListings() as unknown as PropertyDto[];
     }
 
+    /**
+     * Get details for a specific property by ID.
+     */
     @Security("jwt")
     @Get("/{id}")
     @Example<PropertyDto>({

@@ -957,6 +957,295 @@
                 "type": "object",
                 "description": "Make all properties in T optional"
             },
+            "MilestoneDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the milestone",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Milestone title",
+                        "example": "Property Purchase Agreement"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Milestone description",
+                        "example": "Complete the property purchase agreement with the seller"
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target completion date",
+                        "example": "2024-02-15T00:00:00.000Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Milestone status",
+                        "example": "pending"
+                    },
+                    "required_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Required approvals",
+                        "example": 3
+                    },
+                    "current_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Current approvals",
+                        "example": 2
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Milestone creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "pool_id",
+                    "title",
+                    "description",
+                    "target_date",
+                    "status",
+                    "required_approvals",
+                    "current_approvals"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "CreateMilestoneDto": {
+                "properties": {
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Milestone title",
+                        "example": "Property Purchase Agreement"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Milestone description",
+                        "example": "Complete the property purchase agreement with the seller"
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target completion date",
+                        "example": "2024-02-15"
+                    },
+                    "required_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Required approvals",
+                        "example": 3
+                    }
+                },
+                "required": [
+                    "pool_id",
+                    "title",
+                    "description",
+                    "target_date",
+                    "required_approvals"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "VoteMilestoneDto": {
+                "properties": {
+                    "approve": {
+                        "type": "boolean",
+                        "description": "Vote decision",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "approve"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Partial_MilestoneDto_": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the milestone",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Milestone title",
+                        "example": "Property Purchase Agreement"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Milestone description",
+                        "example": "Complete the property purchase agreement with the seller"
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target completion date",
+                        "example": "2024-02-15T00:00:00.000Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Milestone status",
+                        "example": "pending"
+                    },
+                    "required_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Required approvals",
+                        "example": 3
+                    },
+                    "current_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Current approvals",
+                        "example": 2
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Milestone creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "PaymentDto": {
+                "properties": {
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID to contribute to",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User ID making the contribution",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Payment amount",
+                        "example": 50000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "NGN",
+                            "USD",
+                            "GBP",
+                            "EUR"
+                        ],
+                        "description": "Payment currency",
+                        "example": "USD"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "enum": [
+                            "card",
+                            "bank_transfer",
+                            "cross_border"
+                        ],
+                        "description": "Payment method",
+                        "example": "card"
+                    }
+                },
+                "required": [
+                    "pool_id",
+                    "user_id",
+                    "amount"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Partial_ContributionDto_": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the contribution",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Contribution amount",
+                        "example": 50000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "Currency",
+                        "example": "NGN"
+                    },
+                    "fx_rate": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Foreign exchange rate",
+                        "example": 1
+                    },
+                    "payment_ref": {
+                        "type": "string",
+                        "description": "Payment reference",
+                        "example": "PAY_123456789"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Contribution timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
             "RegisterUserDto": {
                 "properties": {
                     "firstName": {
@@ -1340,6 +1629,7 @@
                         }
                     }
                 },
+                "description": "Retrieve a list of properties, with optional filtering by location, type, and status.",
                 "tags": [
                     "Properties"
                 ],
@@ -1480,6 +1770,7 @@
                         }
                     }
                 },
+                "description": "Get the list of property listings that are currently active for investment search.",
                 "tags": [
                     "Properties"
                 ],
@@ -1547,6 +1838,7 @@
                         }
                     }
                 },
+                "description": "Get details for a specific property by ID.",
                 "tags": [
                     "Properties"
                 ],
@@ -2578,6 +2870,811 @@
                                     "is_public"
                                 ],
                                 "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/milestones": {
+            "get": {
+                "operationId": "GetMilestones",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/MilestoneDto"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                                "title": "Collect 50% of target funds",
+                                                "description": "Complete the first funding milestone",
+                                                "target_date": "2024-02-15T00:00:00.000Z",
+                                                "status": "pending",
+                                                "required_approvals": 3,
+                                                "current_approvals": 2,
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve milestones, optionally filtered by pool ID.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "optional pool ID to filter milestones by pool",
+                        "in": "query",
+                        "name": "poolId",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "operationId": "CreateMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MilestoneDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "title": "Collect 50% of target funds",
+                                            "description": "First major funding milestone",
+                                            "target_date": "2024-02-15T00:00:00.000Z",
+                                            "required_approvals": 3
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Milestone created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MilestoneDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid milestone data or pool not found",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Create a new milestone for a pool.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "description": "milestone details including pool_id, title and required approvals",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateMilestoneDto",
+                                "description": "milestone details including pool_id, title and required approvals"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/milestones/{id}": {
+            "get": {
+                "operationId": "GetMilestoneById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/MilestoneDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                            "title": "Collect 50% of target funds",
+                                            "description": "Complete the first funding milestone",
+                                            "target_date": "2024-02-15T00:00:00.000Z",
+                                            "status": "pending",
+                                            "required_approvals": 3,
+                                            "current_approvals": 2,
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Get a specific milestone by ID.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID to lookup",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/MilestoneDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Update a milestone's details. Only status and metadata are updated.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "fields to update (status, description, required_approvals, etc.)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Partial_MilestoneDto_",
+                                "description": "fields to update (status, description, required_approvals, etc.)"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeleteMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Delete a milestone by ID.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID to delete",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/milestones/{id}/vote": {
+            "post": {
+                "operationId": "VoteOnMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MilestoneDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "approve": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid vote or milestone already completed",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Only pool members can vote on milestones",
+                                            "statusCode": 403,
+                                            "name": "ForbiddenError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Record an approval or rejection vote for a milestone by a pool member.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "vote payload with approve true/false",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VoteMilestoneDto",
+                                "description": "vote payload with approve true/false"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contributions": {
+            "get": {
+                "operationId": "GetContributions",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/ContributionDto"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                                "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                                "amount": 50000,
+                                                "currency": "USD",
+                                                "fx_rate": 1500,
+                                                "payment_ref": "PAY_123456789",
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Get contributions with optional filters for pool or user.",
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "optional pool ID filter",
+                        "in": "query",
+                        "name": "poolId",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "optional user ID filter",
+                        "in": "query",
+                        "name": "userId",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/contributions/{id}": {
+            "get": {
+                "operationId": "GetContributionById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ContributionDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                            "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                            "amount": 50000,
+                                            "currency": "USD",
+                                            "fx_rate": 1500,
+                                            "payment_ref": "PAY_123456789",
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contribution Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Contribution not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Create a contribution for a pool member. Recursively recalculates pool ownership percentages.",
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateContribution",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ContributionDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contribution Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Contribution not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Partial_ContributionDto_"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeleteContribution",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contribution Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Contribution not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/contributions/pay": {
+            "post": {
+                "operationId": "ProcessPayment",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContributionDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                            "amount": 50000,
+                                            "currency": "USD",
+                                            "paymentMethod": "cross_border"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Payment processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContributionDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid payment data or insufficient funds",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentDto"
                             }
                         }
                     }

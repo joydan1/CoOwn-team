@@ -17,6 +17,12 @@ export default class Milestone extends BaseEntity {
     @Column()
     title!: string;
 
+    @Column({ nullable: true })
+    description?: string;
+
+    @Column({ type: 'date', nullable: true })
+    target_date?: Date;
+
     @Column({ default: 'pending' })
     status!: string;
 
