@@ -73,6 +73,18 @@ If swagger UI is integrated in the server, view at `/swagger` (or `/docs`) depen
 
 - additional endpoints depend on codebase (list, update, delete) in `UserService` / `user` controller.
 
+### `/pools` (PoolController)
+
+- `GET /pools/` - list pools (optional creatorId/isPublic filters)
+- `GET /pools/public` - list public pools
+- `GET /pools/{id}` - get pool by id (secured)
+- `POST /pools/` - create pool (secured)
+- `POST /pools/{id}/join` - join pool as logged-in user (secured)
+- `GET /pools/{id}/dashboard` - get pool dashboard (secured)
+- `GET /pools/{id}/members` - get pool members (secured)
+- `GET /pools/{id}/users` - get users joined pool (secured; newly added)
+- `PUT /pools/{id}/toggle-public` - toggle public status (creator only)
+
 ## 6. Important files
 
 - `src/controllers/auth.ts`
