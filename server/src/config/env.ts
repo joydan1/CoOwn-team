@@ -41,6 +41,7 @@ export const variables = {
         gemini: {
             apiKey: process.env.GEMINI_API_KEY as string
         }
-    }
+    },
+    pool: process.env.POOL_INVITE_BASE_URL
 }
 

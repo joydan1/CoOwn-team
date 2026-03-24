@@ -79,6 +79,7 @@ exports.variables = {
         gemini: {
             apiKey: process.env.GEMINI_API_KEY
         }
-    }
+    },
+    pool: process.env.POOL_INVITE_BASE_URL
 };
 //# sourceMappingURL=env.js.map

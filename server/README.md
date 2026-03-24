@@ -6,6 +6,13 @@ API documentation at https://coown-team.onrender.com/swagger/api/
 This is the CoOwn property co-ownership backend service.
 It uses Node.js, TypeScript, Express + TSOA (Swagger API generation), TypeORM + PostgreSQL, and class-validator.
 
+## Recent Updates (March 2026)
+
+- Pool joining simplified: `GET /pools/{id}/join` for instant join, `PUT /pools/{id}/join` to update details
+- Invite links: Generate via `GET /pools/{id}/invite`, but join directly via pool ID
+- Removed redundant endpoints: `/pools/invite/{code}/join` and `/pools/{id}/members`
+- Added comprehensive Swagger descriptions for all endpoints
+
 ## 1. Prerequisites
 
 - Node.js 18+ (or LTS)
@@ -40,6 +47,7 @@ npm run start
 ## 4. API docs
 
 Swagger OpenAPI JSON is generated to `src/swagger/swagger.json` via tsoa.
+All endpoints now include detailed descriptions for frontend integration.
 If swagger UI is integrated in the server, view at `/swagger` (or `/docs`) depending on routing.
 
 ## 5. Controllers and endpoints
@@ -78,26 +86,30 @@ If swagger UI is integrated in the server, view at `/swagger` (or `/docs`) depen
 - `GET /pools/` - list pools (optional creatorId/isPublic filters)
 - `GET /pools/public` - list public pools
 - `GET /pools/{id}` - get pool by id (secured)
-- `POST /pools/` - create pool (secured)
-- `POST /pools/{id}/join` - join pool as logged-in user (secured)
+- `POST /pools/` - create pool (secured) - returns pool with invite_link
+- `GET /pools/{id}/invite` - get invite link for pool (secured)
+- `GET /pools/{id}/join` - join pool instantly with default values (secured)
+- `PUT /pools/{id}/join` - update join details (investment amount/currency) (secured)
 - `GET /pools/{id}/dashboard` - get pool dashboard (secured)
-- `GET /pools/{id}/members` - get pool members (secured)
-- `GET /pools/{id}/users` - get users joined pool (secured; newly added)
+- `GET /pools/{id}/users` - get users joined pool (secured)
 - `PUT /pools/{id}/toggle-public` - toggle public status (creator only)
+- `PUT /pools/{id}` - update pool details (secured)
+- `DELETE /pools/{id}` - delete pool (secured)
 
 ## 6. Important files
 
-- `src/controllers/auth.ts`
-- `src/controllers/user.ts`
-- `src/services/user.ts`
-- `src/repositories/user.ts`
-- `src/models/user.ts`
-- `src/dtos/user.ts`
+- `src/controllers/auth.ts`, `src/controllers/user.ts`, `src/controllers/pool.ts`
+- `src/services/user.ts`, `src/services/pool.ts`
+- `src/repositories/user.ts`, `src/repositories/pool.ts`, `src/repositories/poolMember.ts`
+- `src/models/user.ts`, `src/models/pool.ts`, `src/models/poolMember.ts`
+- `src/dtos/user.ts`, `src/dtos/index.ts` (includes pool DTOs)
 - `tsoa.json`
 - `src/swagger/swagger.json`
 
 ## 7. Notes
 
-- `tsoa` decorators used: `@Route`, `@Tags`, `@Example`, `@Response`, and `@Security` for JWT-protected routes.
+- `tsoa` decorators used: `@Route`, `@Tags`, `@Example`, `@Response`, `@Description`, and `@Security` for JWT-protected routes.
 - Update DB config in `src/config/postgres.ts` or wherever database connection is set.
 - Ensure token secret and InterSwitch BVN provider credentials are in environment settings.
+- Pool invite links use base URL from `POOL_INVITE_BASE_URL` env var (default: https://coown.app/pools)
+- All pool endpoints now have detailed JSDoc descriptions for clear API documentation.

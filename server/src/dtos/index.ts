@@ -117,6 +117,10 @@ export class PoolDto {
     /** Pool last update timestamp */
     @Example(new Date("2024-01-15T10:30:00Z"))
     updatedAt?: Date;
+
+    /** Invite link for pool membership */
+    @Example("https://coown.app/pools/550e8400-e29b-41d4-a716-446655440000/join")
+    invite_link?: string;
 }
 
 export class CreatePoolDto {

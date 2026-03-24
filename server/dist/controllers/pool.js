@@ -55,6 +55,9 @@ let PoolController = class PoolController extends tsoa_1.Controller {
         super();
         this.poolService = typedi_1.default.get(pool_1.default);
     }
+    /**
+     * Retrieve a list of pools. Optionally filter by creator ID or public status.
+     */
     async getPools(creatorId, isPublic) {
         const filter = {};
         if (creatorId)
@@ -66,42 +69,89 @@ let PoolController = class PoolController extends tsoa_1.Controller {
             query.where = filter;
         return this.poolService.getPools(query);
     }
+    /**
+     * Retrieve a list of all public pools available for joining.
+     */
     async getPublicPools() {
         return this.poolService.getPublicPools();
     }
+    /**
+     * Retrieve detailed information about a specific pool by its ID.
+     */
     async getPoolById(id) {
         return this.poolService.getPoolById(id);
     }
+    /**
+     * Create a new co-ownership pool for a property. Returns the created pool with an invite link.
+     */
     async createPool(pool, req) {
         const userId = req.user?.id;
         if (!userId)
             throw new AppError_1.AppError("Unauthorized");
-        return this.poolService.createPool(userId, pool);
+        const createdPool = await this.poolService.createPool(userId, pool);
+        const inviteLink = this.poolService.getPoolInviteLink(createdPool.id);
+        return {
+            ...createdPool,
+            invite_link: inviteLink
+        };
     }
-    async joinPool(id, joinData, req) {
+    /**
+     * Generate and retrieve the invite link for a pool to share with potential members.
+     */
+    async getInviteLink(id) {
+        const pool = await this.poolService.getPoolById(id);
+        if (!pool)
+            throw new AppError_1.AppError("Pool not found");
+        return { invite_link: this.poolService.getPoolInviteLink(id) };
+    }
+    /**
+     * Join a pool instantly with default investment amount (0). Update details later via PUT endpoint.
+     */
+    async joinPool(id, req) {
         const userId = req.user?.id;
         if (!userId)
             throw new AppError_1.AppError("Unauthorized");
-        return this.poolService.joinPool(id, userId, joinData);
+        return this.poolService.joinPool(id, userId);
     }
+    /**
+     * Update the investment amount and currency for an existing pool membership.
+     */
+    async updateJoinDetails(id, joinData, req) {
+        const userId = req.user?.id;
+        if (!userId)
+            throw new AppError_1.AppError("Unauthorized");
+        return this.poolService.updateJoinDetails(id, userId, joinData);
+    }
+    /**
+     * Retrieve comprehensive dashboard data for a pool, including members, contributions, and progress.
+     */
     async getPoolDashboard(id) {
         return this.poolService.getPoolDashboard(id);
     }
-    async getPoolMembers(id) {
-        return this.poolService.getPoolMembers(id);
-    }
+    /**
+     * Retrieve the list of user objects for all members of a specific pool.
+     */
     async getPoolUsers(id) {
         return this.poolService.getPoolUsers(id);
     }
+    /**
+     * Toggle the public visibility of a pool. Only the pool creator can perform this action.
+     */
     async togglePublic(id, data, req) {
         const userId = req.user?.id;
         if (!userId)
             throw new AppError_1.AppError("Unauthorized");
         return this.poolService.togglePublic(id, userId, data.is_public);
     }
+    /**
+     * Update pool details such as name, target amount, or deadline.
+     */
     async updatePool(id, updates) {
         return this.poolService.updatePool(id, updates);
     }
+    /**
+     * Delete a pool. This action cannot be undone.
+     */
     async deletePool(id) {
         return this.poolService.deletePool(id);
     }
@@ -192,19 +242,52 @@ __decorate([
 ], PoolController.prototype, "createPool", null);
 __decorate([
     (0, tsoa_1.Security)("jwt"),
-    (0, tsoa_1.Post)("/{id}/join"),
+    (0, tsoa_1.Get)("/{id}/invite"),
+    __param(0, (0, tsoa_1.Path)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PoolController.prototype, "getInviteLink", null);
+__decorate([
+    (0, tsoa_1.Security)("jwt"),
+    (0, tsoa_1.Get)("/{id}/join"),
     (0, tsoa_1.Example)({
         id: "550e8400-e29b-41d4-a716-446655440003",
         pool_id: "550e8400-e29b-41d4-a716-446655440000",
         user_id: "550e8400-e29b-41d4-a716-446655440002",
-        declared_amount: 250000,
+        declared_amount: 0,
         paid_amount: 0,
-        ownership_pct: 25.0,
+        ownership_pct: 0.0,
         joined_at: new Date("2024-01-15T10:30:00Z")
     }),
-    (0, tsoa_1.Response)(201, "Successfully joined pool"),
+    (0, tsoa_1.Response)(200, "Successfully joined pool"),
     (0, tsoa_1.Response)(400, "Bad Request", {
         message: "Invalid amount or already a member",
+        statusCode: 400,
+        name: "ValidationError"
+    }),
+    (0, tsoa_1.Response)(401, "Unauthorized", {
+        message: "Authentication required",
+        statusCode: 401,
+        name: "UnauthorizedError"
+    }),
+    (0, tsoa_1.Response)(404, "Pool Not Found", {
+        message: "Pool not found",
+        statusCode: 404,
+        name: "NotFoundError"
+    }),
+    __param(0, (0, tsoa_1.Path)()),
+    __param(1, (0, tsoa_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PoolController.prototype, "joinPool", null);
+__decorate([
+    (0, tsoa_1.Security)("jwt"),
+    (0, tsoa_1.Put)("/{id}/join"),
+    (0, tsoa_1.Response)(200, "Join details updated"),
+    (0, tsoa_1.Response)(400, "Bad Request", {
+        message: "Invalid data or not a member",
         statusCode: 400,
         name: "ValidationError"
     }),
@@ -224,7 +307,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, pool_1.JoinPoolDto, Object]),
     __metadata("design:returntype", Promise)
-], PoolController.prototype, "joinPool", null);
+], PoolController.prototype, "updateJoinDetails", null);
 __decorate([
     (0, tsoa_1.Security)("jwt"),
     (0, tsoa_1.Get)("/{id}/dashboard"),
@@ -239,31 +322,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PoolController.prototype, "getPoolDashboard", null);
-__decorate([
-    (0, tsoa_1.Security)("jwt"),
-    (0, tsoa_1.Get)("/{id}/members"),
-    (0, tsoa_1.Example)([
-        {
-            id: "550e8400-e29b-41d4-a716-446655440003",
-            pool_id: "550e8400-e29b-41d4-a716-446655440000",
-            user_id: "550e8400-e29b-41d4-a716-446655440002",
-            declared_amount: 250000,
-            paid_amount: 0,
-            ownership_pct: 25.0,
-            joined_at: new Date("2024-01-15T10:30:00Z")
-        }
-    ]),
-    (0, tsoa_1.Response)(200, "Pool members"),
-    (0, tsoa_1.Response)(404, "Pool Not Found", {
-        message: "Pool not found",
-        statusCode: 404,
-        name: "NotFoundError"
-    }),
-    __param(0, (0, tsoa_1.Path)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], PoolController.prototype, "getPoolMembers", null);
 __decorate([
     (0, tsoa_1.Security)("jwt"),
     (0, tsoa_1.Get)("/{id}/users"),

@@ -18,7 +18,7 @@ import {
     PoolDto,
     PoolMemberDto
 } from "../dtos";
-
+import { variables } from "../config/env";
 export { CreatePoolDto, JoinPoolDto, ContributionDto, PoolDashboardDto, PoolDto, PoolMemberDto };
 
 @Service()
@@ -43,15 +43,18 @@ export default class PoolService {
         return members.map((member) => member.user);
     }
 
+    private readonly baseInviteUrl = variables.pool as string;
+
+    public getPoolInviteLink(poolId: string): string {
+        return `${this.baseInviteUrl}/${poolId}/join`;
+    }
+ 
     public async createPool(creatorId: string, data: CreatePoolDto): Promise<Pool> {
         const property = await this.propertyRepository.findById(data.property_id);
         if (!property) throw new AppError("Property not found");
 
         const creator = await this.userRepository.findById(creatorId);
         if (!creator) throw new AppError("Creator not found");
-
-        const shareableLink = `https://coown.app/pool/${randomUUID()}`;
-        void shareableLink;
 
         const poolData = {
             ...data,
@@ -74,7 +77,7 @@ export default class PoolService {
         return pool;
     }
 
-    public async joinPool(poolId: string, userId: string, joinData: JoinPoolDto): Promise<PoolMember> {
+    public async joinPool(poolId: string, userId: string, joinData?: JoinPoolDto): Promise<PoolMember> {
         const pool = await this.poolRepository.findById(poolId);
         if (!pool) throw new AppError("Pool not found");
 
@@ -85,13 +88,32 @@ export default class PoolService {
         const isMember = existingMember.some(m => m.user_id === userId);
         if (isMember) throw new AppError("User is already a member of this pool");
 
+        const declaredAmount = joinData?.investment_amount ?? 0;
+        const currency = joinData?.currency ?? 'NGN';
+
         const member = await this.poolMemberRepository.create({
             pool_id: poolId,
             user_id: userId,
-            declared_amount: joinData.investment_amount,
+            declared_amount: declaredAmount,
             paid_amount: 0,
             ownership_pct: 0
         });
+
+        await this.recalculateOwnershipPercentages(poolId);
+
+        return member;
+    }
+
+    public async updateJoinDetails(poolId: string, userId: string, joinData: JoinPoolDto): Promise<PoolMember> {
+        const pool = await this.poolRepository.findById(poolId);
+        if (!pool) throw new AppError("Pool not found");
+
+        const members = await this.poolMemberRepository.findByPool(poolId);
+        const member = members.find(m => m.user_id === userId);
+        if (!member) throw new AppError("User is not a member of this pool");
+
+        member.declared_amount = joinData.investment_amount;
+        await this.poolMemberRepository.updateById(member.id, { declared_amount: joinData.investment_amount });
 
         await this.recalculateOwnershipPercentages(poolId);
 

@@ -17,7 +17,6 @@ const contribution_1 = require("../repositories/contribution");
 const user_1 = require("../repositories/user");
 const property_1 = require("../repositories/property");
 const AppError_1 = require("../common/errors/AppError");
-const crypto_1 = require("crypto");
 const dtos_1 = require("../dtos");
 Object.defineProperty(exports, "CreatePoolDto", { enumerable: true, get: function () { return dtos_1.CreatePoolDto; } });
 Object.defineProperty(exports, "JoinPoolDto", { enumerable: true, get: function () { return dtos_1.JoinPoolDto; } });
@@ -25,6 +24,7 @@ Object.defineProperty(exports, "ContributionDto", { enumerable: true, get: funct
 Object.defineProperty(exports, "PoolDashboardDto", { enumerable: true, get: function () { return dtos_1.PoolDashboardDto; } });
 Object.defineProperty(exports, "PoolDto", { enumerable: true, get: function () { return dtos_1.PoolDto; } });
 Object.defineProperty(exports, "PoolMemberDto", { enumerable: true, get: function () { return dtos_1.PoolMemberDto; } });
+const env_1 = require("../config/env");
 let PoolService = class PoolService {
     constructor(poolRepository, poolMemberRepository, contributionRepository, userRepository, propertyRepository) {
         this.poolRepository = poolRepository;
@@ -32,6 +32,7 @@ let PoolService = class PoolService {
         this.contributionRepository = contributionRepository;
         this.userRepository = userRepository;
         this.propertyRepository = propertyRepository;
+        this.baseInviteUrl = env_1.variables.pool;
     }
     async getPoolMembers(poolId) {
         const pool = await this.poolRepository.findById(poolId);
@@ -43,6 +44,9 @@ let PoolService = class PoolService {
         const members = await this.getPoolMembers(poolId);
         return members.map((member) => member.user);
     }
+    getPoolInviteLink(poolId) {
+        return `${this.baseInviteUrl}/${poolId}/join`;
+    }
     async createPool(creatorId, data) {
         const property = await this.propertyRepository.findById(data.property_id);
         if (!property)
@@ -50,8 +54,6 @@ let PoolService = class PoolService {
         const creator = await this.userRepository.findById(creatorId);
         if (!creator)
             throw new AppError_1.AppError("Creator not found");
-        const shareableLink = `https://coown.app/pool/${(0, crypto_1.randomUUID)()}`;
-        void shareableLink;
         const poolData = {
             ...data,
             creator_id: creatorId,
@@ -80,13 +82,28 @@ let PoolService = class PoolService {
         const isMember = existingMember.some(m => m.user_id === userId);
         if (isMember)
             throw new AppError_1.AppError("User is already a member of this pool");
+        const declaredAmount = joinData?.investment_amount ?? 0;
+        const currency = joinData?.currency ?? 'NGN';
         const member = await this.poolMemberRepository.create({
             pool_id: poolId,
             user_id: userId,
-            declared_amount: joinData.investment_amount,
+            declared_amount: declaredAmount,
             paid_amount: 0,
             ownership_pct: 0
         });
+        await this.recalculateOwnershipPercentages(poolId);
+        return member;
+    }
+    async updateJoinDetails(poolId, userId, joinData) {
+        const pool = await this.poolRepository.findById(poolId);
+        if (!pool)
+            throw new AppError_1.AppError("Pool not found");
+        const members = await this.poolMemberRepository.findByPool(poolId);
+        const member = members.find(m => m.user_id === userId);
+        if (!member)
+            throw new AppError_1.AppError("User is not a member of this pool");
+        member.declared_amount = joinData.investment_amount;
+        await this.poolMemberRepository.updateById(member.id, { declared_amount: joinData.investment_amount });
         await this.recalculateOwnershipPercentages(poolId);
         return member;
     }

@@ -490,6 +490,11 @@
 						"format": "date-time",
 						"description": "Pool last update timestamp",
 						"example": "2024-01-15T10:30:00.000Z"
+					},
+					"invite_link": {
+						"type": "string",
+						"description": "Invite link for pool membership",
+						"example": "https://coown.app/pools/550e8400-e29b-41d4-a716-446655440000/join"
 					}
 				},
 				"required": [
@@ -1846,6 +1851,7 @@
 						}
 					}
 				},
+				"description": "Retrieve a list of pools. Optionally filter by creator ID or public status.",
 				"tags": [
 					"Pools"
 				],
@@ -1931,6 +1937,7 @@
 						}
 					}
 				},
+				"description": "Create a new co-ownership pool for a property. Returns the created pool with an invite link.",
 				"tags": [
 					"Pools"
 				],
@@ -1970,6 +1977,7 @@
 						}
 					}
 				},
+				"description": "Retrieve a list of all public pools available for joining.",
 				"tags": [
 					"Pools"
 				],
@@ -2016,6 +2024,7 @@
 						}
 					}
 				},
+				"description": "Retrieve detailed information about a specific pool by its ID.",
 				"tags": [
 					"Pools"
 				],
@@ -2054,6 +2063,7 @@
 						}
 					}
 				},
+				"description": "Update pool details such as name, target amount, or deadline.",
 				"tags": [
 					"Pools"
 				],
@@ -2097,6 +2107,51 @@
 						}
 					}
 				},
+				"description": "Delete a pool. This action cannot be undone.",
+				"tags": [
+					"Pools"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/pools/{id}/invite": {
+			"get": {
+				"operationId": "GetInviteLink",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"invite_link": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"invite_link"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Generate and retrieve the invite link for a pool to share with potential members.",
 				"tags": [
 					"Pools"
 				],
@@ -2118,7 +2173,7 @@
 			}
 		},
 		"/pools/{id}/join": {
-			"post": {
+			"get": {
 				"operationId": "JoinPool",
 				"responses": {
 					"200": {
@@ -2134,22 +2189,12 @@
 											"id": "550e8400-e29b-41d4-a716-446655440003",
 											"pool_id": "550e8400-e29b-41d4-a716-446655440000",
 											"user_id": "550e8400-e29b-41d4-a716-446655440002",
-											"declared_amount": 250000,
+											"declared_amount": 0,
 											"paid_amount": 0,
-											"ownership_pct": 25,
+											"ownership_pct": 0,
 											"joined_at": "2024-01-15T10:30:00.000Z"
 										}
 									}
-								}
-							}
-						}
-					},
-					"201": {
-						"description": "Successfully joined pool",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PoolMemberDto"
 								}
 							}
 						}
@@ -2212,6 +2257,98 @@
 						}
 					}
 				},
+				"description": "Join a pool instantly with default investment amount (0). Update details later via PUT endpoint.",
+				"tags": [
+					"Pools"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateJoinDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PoolMemberDto"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseDto"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "Invalid data or not a member",
+											"statusCode": 400,
+											"name": "ValidationError"
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseDto"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "Authentication required",
+											"statusCode": 401,
+											"name": "UnauthorizedError"
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Pool Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseDto"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "Pool not found",
+											"statusCode": 404,
+											"name": "NotFoundError"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Update the investment amount and currency for an existing pool membership.",
 				"tags": [
 					"Pools"
 				],
@@ -2276,78 +2413,7 @@
 						}
 					}
 				},
-				"tags": [
-					"Pools"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/pools/{id}/members": {
-			"get": {
-				"operationId": "GetPoolMembers",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/PoolMemberDto"
-									},
-									"type": "array"
-								},
-								"examples": {
-									"Example 1": {
-										"value": [
-											{
-												"id": "550e8400-e29b-41d4-a716-446655440003",
-												"pool_id": "550e8400-e29b-41d4-a716-446655440000",
-												"user_id": "550e8400-e29b-41d4-a716-446655440002",
-												"declared_amount": 250000,
-												"paid_amount": 0,
-												"ownership_pct": 25,
-												"joined_at": "2024-01-15T10:30:00.000Z"
-											}
-										]
-									}
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Pool Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseDto"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"message": "Pool not found",
-											"statusCode": 404,
-											"name": "NotFoundError"
-										}
-									}
-								}
-							}
-						}
-					}
-				},
+				"description": "Retrieve comprehensive dashboard data for a pool, including members, contributions, and progress.",
 				"tags": [
 					"Pools"
 				],
@@ -2405,6 +2471,7 @@
 						}
 					}
 				},
+				"description": "Retrieve the list of user objects for all members of a specific pool.",
 				"tags": [
 					"Pools"
 				],
@@ -2478,6 +2545,7 @@
 						}
 					}
 				},
+				"description": "Toggle the public visibility of a pool. Only the pool creator can perform this action.",
 				"tags": [
 					"Pools"
 				],

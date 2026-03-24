@@ -127,6 +127,10 @@ __decorate([
     (0, tsoa_1.Example)(new Date("2024-01-15T10:30:00Z")),
     __metadata("design:type", Date)
 ], PoolDto.prototype, "updatedAt", void 0);
+__decorate([
+    (0, tsoa_1.Example)("https://coown.app/pools/550e8400-e29b-41d4-a716-446655440000/join"),
+    __metadata("design:type", String)
+], PoolDto.prototype, "invite_link", void 0);
 class CreatePoolDto {
 }
 exports.CreatePoolDto = CreatePoolDto;

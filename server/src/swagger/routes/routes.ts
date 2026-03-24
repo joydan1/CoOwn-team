@@ -120,6 +120,7 @@ const models: TsoaRoute.Models = {
             "is_public": {"dataType":"boolean","required":true},
             "created_at": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
+            "invite_link": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -781,12 +782,42 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsPoolController_getInviteLink: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/pools/:id/invite',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(PoolController)),
+            ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getInviteLink)),
+
+            async function PoolController_getInviteLink(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsPoolController_getInviteLink, request, response });
+
+                const controller = new PoolController();
+
+              await templateService.apiHandler({
+                methodName: 'getInviteLink',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPoolController_joinPool: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                joinData: {"in":"body","name":"joinData","required":true,"ref":"JoinPoolDto"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/pools/:id/join',
+        app.get('/pools/:id/join',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.joinPool)),
@@ -803,6 +834,39 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'joinPool',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsPoolController_updateJoinDetails: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                joinData: {"in":"body","name":"joinData","required":true,"ref":"JoinPoolDto"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.put('/pools/:id/join',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(PoolController)),
+            ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.updateJoinDetails)),
+
+            async function PoolController_updateJoinDetails(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsPoolController_updateJoinDetails, request, response });
+
+                const controller = new PoolController();
+
+              await templateService.apiHandler({
+                methodName: 'updateJoinDetails',
                 controller,
                 response,
                 next,
@@ -834,37 +898,6 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getPoolDashboard',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsPoolController_getPoolMembers: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-        };
-        app.get('/pools/:id/members',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(PoolController)),
-            ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPoolMembers)),
-
-            async function PoolController_getPoolMembers(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsPoolController_getPoolMembers, request, response });
-
-                const controller = new PoolController();
-
-              await templateService.apiHandler({
-                methodName: 'getPoolMembers',
                 controller,
                 response,
                 next,
