@@ -52,6 +52,7 @@ exports.AuthController = void 0;
 const typedi_1 = __importStar(require("typedi"));
 const user_1 = __importDefault(require("../services/user"));
 const tsoa_1 = require("tsoa");
+const dtos_1 = require("../dtos");
 let AuthController = class AuthController extends tsoa_1.Controller {
     constructor() {
         super();
@@ -78,6 +79,10 @@ let AuthController = class AuthController extends tsoa_1.Controller {
     /** DELETE USER */
     async deleteUser(id) {
         return this.userService.deleteUser(id);
+    }
+    /** VERIFY BVN */
+    async verifyBvn(id, body) {
+        return this.userService.verifyBvn(id, body.bvn);
     }
 };
 exports.AuthController = AuthController;
@@ -153,6 +158,38 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "deleteUser", null);
+__decorate([
+    (0, tsoa_1.Security)("jwt"),
+    (0, tsoa_1.Post)("/:id/verify-bvn"),
+    (0, tsoa_1.Example)({
+        userId: "550e8400-e29b-41d4-a716-446655440000",
+        firstName: "John",
+        lastName: "Doe",
+        middleName: "Michael",
+        dateOfBirth: "1990-01-15",
+        phoneNumber: "+2348012345678",
+        nin: "12345678901",
+        verified: true,
+        verifiedAt: new Date("2026-03-25T22:36:21.732Z"),
+        message: "BVN verified successfully"
+    }),
+    (0, tsoa_1.Response)(200, "BVN verified successfully"),
+    (0, tsoa_1.Response)(400, "Invalid BVN or verification failed", {
+        message: "BVN verification failed",
+        statusCode: 400,
+        name: "VerificationError"
+    }),
+    (0, tsoa_1.Response)(404, "User not found", {
+        message: "User not found",
+        statusCode: 404,
+        name: "NotFoundError"
+    }),
+    __param(0, (0, tsoa_1.Path)()),
+    __param(1, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, dtos_1.VerifyBvnDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyBvn", null);
 exports.AuthController = AuthController = __decorate([
     (0, typedi_1.Service)(),
     (0, tsoa_1.Route)("users"),

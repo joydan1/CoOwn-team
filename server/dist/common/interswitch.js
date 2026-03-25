@@ -66,13 +66,30 @@ async function verifyBvn(bvn) {
         return result.data;
     }
     catch (error) {
-        console.error("BVN verification error:", {
+        const errorDetails = {
             message: error.message,
             status: error.response?.status,
             data: error.response?.data,
-        });
-        throw new Error(error.response?.data?.responseDescription ||
-            "Failed to verify BVN");
+        };
+        console.error("BVN verification error:", errorDetails);
+        // Provide detailed error message
+        let errorMessage = "Failed to verify BVN";
+        if (error.response?.data?.responseDescription) {
+            errorMessage = error.response.data.responseDescription;
+        }
+        else if (error.response?.status === 401 || error.response?.status === 403) {
+            errorMessage = "Authentication failed with Interswitch - check credentials";
+        }
+        else if (error.response?.status === 400) {
+            errorMessage = "Invalid BVN or API request format";
+        }
+        else if (error.code === "ECONNREFUSED") {
+            errorMessage = "Cannot connect to Interswitch API";
+        }
+        else if (error.message) {
+            errorMessage = error.message;
+        }
+        throw new Error(errorMessage);
     }
 }
 async function verifyInterswitchTransaction(merchantCode, transactionReference, amount) {

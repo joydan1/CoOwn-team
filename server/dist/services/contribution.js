@@ -15,15 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typedi_1 = require("typedi");
 const contribution_1 = require("../repositories/contribution");
 const pool_1 = require("../repositories/pool");
+const poolMember_1 = require("../repositories/poolMember");
 const user_1 = require("../repositories/user");
 const AppError_1 = require("../common/errors/AppError");
 const pool_2 = __importDefault(require("./pool"));
 const env_1 = require("../config/env");
 const interswitch_1 = require("../common/interswitch");
+const websocket_1 = require("../config/websocket");
 let ContributionService = class ContributionService {
-    constructor(contributionRepository, poolRepository, userRepository, poolService) {
+    constructor(contributionRepository, poolRepository, poolMemberRepository, userRepository, poolService) {
         this.contributionRepository = contributionRepository;
         this.poolRepository = poolRepository;
+        this.poolMemberRepository = poolMemberRepository;
         this.userRepository = userRepository;
         this.poolService = poolService;
     }
@@ -67,13 +70,28 @@ let ContributionService = class ContributionService {
         if (data.currency && verified.CurrencyCode && data.currency.toUpperCase() !== verified.CurrencyCode.toString().toUpperCase()) {
             throw new AppError_1.AppError("Payment currency does not match Interswitch verification", 400);
         }
-        return this.poolService.addContribution({
+        const contribution = await this.poolService.addContribution({
             pool_id: data.pool_id,
             user_id: data.user_id,
             amount: contributionAmount,
             currency: data.currency || "NGN",
             payment_ref: verified.PaymentReference || data.payment_ref
         });
+        // Emit real-time update
+        try {
+            const io = (0, websocket_1.getIO)();
+            io.to(data.pool_id).emit("contributionAdded", {
+                pool_id: data.pool_id,
+                user_id: data.user_id,
+                amount: contributionAmount,
+                currency: data.currency || "NGN",
+                timestamp: new Date()
+            });
+        }
+        catch (error) {
+            console.error("Failed to emit contribution event:", error);
+        }
+        return contribution;
     }
     async getLiveFxRate(fromCurrency) {
         const mockRates = {
@@ -84,16 +102,49 @@ let ContributionService = class ContributionService {
         return mockRates[fromCurrency] || 1500;
     }
     async getContributionsByPool(poolId) {
-        return this.contributionRepository.findByPool(poolId);
+        const contributions = await this.contributionRepository.findByPool(poolId);
+        // Get pool members to map ownership percentages
+        const members = await this.poolService.getPoolMembers(poolId);
+        const membershipMap = new Map(members.map(m => [m.user_id, m]));
+        // Map contributions to include ownership_pct (ensure no NaN values)
+        return contributions.map(contrib => ({
+            id: contrib.id,
+            pool_id: contrib.pool_id,
+            user_id: contrib.user_id,
+            amount: contrib.amount,
+            currency: contrib.currency,
+            ownership_pct: Number(membershipMap.get(contrib.user_id)?.ownership_pct) || 0,
+            fx_rate: contrib.fx_rate,
+            payment_ref: contrib.payment_ref,
+            created_at: contrib.created_at,
+            updatedAt: contrib.updatedAt
+        }));
     }
     async getContributionsByUser(userId) {
-        return this.contributionRepository.findByUser(userId);
+        const contributions = await this.contributionRepository.findByUser(userId);
+        // Fetch all memberships for this user
+        const memberships = await this.poolMemberRepository.findByUser(userId);
+        const membershipMap = new Map(memberships.map(m => [m.pool_id, m]));
+        // Map contributions to include ownership_pct (ensure no NaN values)
+        return contributions.map(contrib => ({
+            id: contrib.id,
+            pool_id: contrib.pool_id,
+            user_id: contrib.user_id,
+            amount: contrib.amount,
+            currency: contrib.currency,
+            ownership_pct: Number(membershipMap.get(contrib.pool_id)?.ownership_pct) || 0,
+            fx_rate: contrib.fx_rate,
+            payment_ref: contrib.payment_ref,
+            created_at: contrib.created_at,
+            updatedAt: contrib.updatedAt
+        }));
     }
 };
 ContributionService = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [contribution_1.ContributionRepository,
         pool_1.PoolRepository,
+        poolMember_1.PoolMemberRepository,
         user_1.UserRepository,
         pool_2.default])
 ], ContributionService);

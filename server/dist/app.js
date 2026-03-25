@@ -15,7 +15,7 @@ const passport_1 = __importDefault(require("passport"));
 const googleAuth_1 = __importDefault(require("./routes/googleAuth"));
 const requestLogger_1 = require("./middlewares/requestLogger");
 require("./config/google");
-//import { initWebSocket } from "./config/websocket";
+const websocket_1 = require("./config/websocket");
 const http_1 = __importDefault(require("http"));
 const cors_1 = __importDefault(require("cors"));
 const port = env_1.variables.port || 4000;
@@ -49,7 +49,7 @@ app.use(requestLogger_1.requestLogger);
 (0, routes_1.RegisterRoutes)(app);
 app.use(errorHandler_1.errorHandler);
 const server = http_1.default.createServer(app);
-//initWebSocket(server);
+(0, websocket_1.initWebSocket)(server);
 server.listen(port, async () => {
     console.log(`${env_1.variables.app.appName} running on port ${port}`);
     await (0, postgres_1.postgresLoader)();

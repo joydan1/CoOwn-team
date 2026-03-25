@@ -21,7 +21,7 @@ import {
 import Pool from "../models/pool";
 import { Request as ExpressRequest } from 'express';
 import { AppError } from "../common/errors/AppError";
-import { PoolDto, PoolMemberDto, ErrorResponseDto } from "../dtos";
+import { PoolDto, PoolMemberDto, ErrorResponseDto, OwnershipCertificateDto } from "../dtos";
 
 interface AuthenticatedRequest extends ExpressRequest {
     user?: { id: string };
@@ -109,8 +109,12 @@ export class PoolController extends Controller {
         statusCode: 404,
         name: "NotFoundError"
     })
-    public async getPoolById(@Path() id: string): Promise<PoolDto | null> {
-        return this.poolService.getPoolById(id) as unknown as PoolDto | null;
+    public async getPoolById(
+        @Path() id: string,
+        @Request() req: AuthenticatedRequest
+    ): Promise<PoolDto | null> {
+        const userId = req.user?.id;
+        return this.poolService.getPoolById(id, userId) as unknown as PoolDto | null;
     }
 
     /**
@@ -240,6 +244,27 @@ export class PoolController extends Controller {
     })
     public async getPoolDashboard(@Path() id: string): Promise<PoolDashboardDto> {
         return this.poolService.getPoolDashboard(id);
+    }
+
+    /**
+     * Generate an ownership certificate for the requesting pool member.
+     */
+    @Security("jwt")
+    @Get("/{id}/certificate")
+    @Response<OwnershipCertificateDto>(200, "Ownership certificate")
+    @Response<ErrorResponseDto>(404, "Pool or member not found", {
+        message: "Pool or user not found",
+        statusCode: 404,
+        name: "NotFoundError"
+    })
+    public async getPoolCertificate(
+        @Path() id: string,
+        @Request() req: AuthenticatedRequest
+    ): Promise<OwnershipCertificateDto> {
+        const userId = req.user?.id;
+        if (!userId) throw new AppError("Unauthorized");
+
+        return this.poolService.getOwnershipCertificate(id, userId);
     }
 
     /**

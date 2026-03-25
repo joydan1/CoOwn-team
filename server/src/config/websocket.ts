@@ -1,82 +1,70 @@
-// import { Server } from "socket.io";
-// import http from "http";
-// import Container from "typedi";
-// import { UserRepository } from "../repositories/user";
+import { Server } from "socket.io";
+import http from "http";
+import Container from "typedi";
+import { UserRepository } from "../repositories/user";
 
-// let io: Server | undefined;
-// let userRepository = Container.get(UserRepository);
-
-
-// export function initWebSocket(server: http.Server){
-//     io = new Server(server, {
-//         cors: {
-//             origin: "*",
-//             methods: [ "GET", "POST"],
-//         },
-//     });
-
-//     console.log("Socket initialized!");
-
-//     io.on("connection", (socket) => {
-//         const onlineUsers = new Map<string, string>();
+let io: Server | undefined;
+let userRepository = Container.get(UserRepository);
 
 
-//          socket.on("loginUser", async (userId: string) => {
-          
-          
-//             try{
+export function initWebSocket(server: http.Server){
+    io = new Server(server, {
+        cors: {
+            origin: "*",
+            methods: [ "GET", "POST"],
+        },
+    });
 
-//             const user = await userRepository.findById(userId);
+    console.log("Socket initialized!");
 
-//             if(!user) {
-//                 console.log(`User not found: ${userId}`);
-//                 return;
-//             }
+    io.on("connection", (socket) => {
+        const onlineUsers = new Map<string, string>();
 
-//             socket.join(userId);
-            
-//             onlineUsers.set(userId, socket.id);
 
-//             console.log(`User ${userId} is online`);
+         socket.on("loginUser", async (userId: string) => {
 
-            
-            
-            
-//             io?.emit("userOnline", userId);
-            
-//             io?.to(userId).emit("notification", {
-//             type: "login",
-//             message: `Hi ${user?.firstName} you are logged in successfully 🎉`,
-//             timestamp: new Date()
-//         });
 
-//             } catch(error){
-//                 console.error("Socket Login error", error);
-//             }
-//         });
+            try{
 
-        
+            const user = await userRepository.findById(userId);
 
-//         socket.on("disconnect", () => {
-//             for(const [userId, socketId] of onlineUsers.entries()){
-//                 if(socketId === socket.id){
-//                     onlineUsers.delete(userId);
+            if(!user) {
+                console.log(`User not found: ${userId}`);
+                return;
+            }
 
-//                     console.log(`User ${userId} is offline`);
+            socket.join(userId);
 
-//                     io?.emit("userOffline", userId);
-//                     break;
-//                 }
-//             }
-//         });
-//     });
+            onlineUsers.set(userId, socket.id);
 
-// }
+            console.log(`User ${userId} is online`);
 
-// export function getIO(): Server {
 
-//     if (!io) throw new Error("Socket.IO not initialized");
+
+            io?.emit("userOnline", userId);
+
+            io?.to(userId).emit("notification", {
+            type: "login",
+            message: `Hi ${user?.firstName} you are logged in successfully 🎉`,
+            timestamp: new Date()
+        });
+
+            } catch(error){
+                console.error("Socket Login error", error);
+            }
+        });
+
+        socket.on("joinPool", (poolId: string) => {
+            socket.join(poolId);
+            console.log(`Socket joined pool: ${poolId}`);
+        });
+    });
+}
+
+export function getIO(): Server {
+
+    if (!io) throw new Error("Socket.IO not initialized");
     
-//     return io;
+    return io;
     
-// }
+}

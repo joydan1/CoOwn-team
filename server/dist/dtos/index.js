@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ErrorResponseDto = exports.InterswitchPaymentDto = exports.PaymentDto = exports.UserDto = exports.AgreementDto = exports.CreateDocumentDto = exports.DocumentDto = exports.VoteMilestoneDto = exports.CreateMilestoneDto = exports.MilestoneDto = exports.ContributionDto = exports.PoolMemberDto = exports.PoolDashboardDto = exports.JoinPoolDto = exports.CreatePoolDto = exports.PoolDto = exports.CreatePropertyDto = exports.PropertyDto = void 0;
+exports.BvnVerificationResponseDto = exports.VerifyBvnDto = exports.ErrorResponseDto = exports.InterswitchPaymentDto = exports.PaymentDto = exports.UserDto = exports.AgreementDto = exports.CreateDocumentDto = exports.DocumentDto = exports.VoteMilestoneDto = exports.CreateMilestoneDto = exports.MilestoneDto = exports.ContributionDto = exports.OwnershipCertificateDto = exports.CertificateMemberSummaryDto = exports.CertificateMemberDto = exports.CertificatePoolDto = exports.PoolMemberDto = exports.PoolDashboardDto = exports.JoinPoolDto = exports.CreatePoolDto = exports.PoolDto = exports.CreatePropertyDto = exports.PropertyDto = void 0;
 const tsoa_1 = require("tsoa");
 const class_validator_1 = require("class-validator");
 // Property DTOs
@@ -120,6 +120,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], PoolDto.prototype, "is_public", void 0);
 __decorate([
+    (0, tsoa_1.Example)(15.5),
+    __metadata("design:type", Number)
+], PoolDto.prototype, "my_ownership_pct", void 0);
+__decorate([
     (0, tsoa_1.Example)(new Date("2024-01-15T10:30:00Z")),
     __metadata("design:type", Date)
 ], PoolDto.prototype, "created_at", void 0);
@@ -215,6 +219,79 @@ __decorate([
     (0, tsoa_1.Example)(new Date("2024-01-15T10:30:00Z")),
     __metadata("design:type", Date)
 ], PoolMemberDto.prototype, "updatedAt", void 0);
+// Lean DTOs for Ownership Certificate Response
+class CertificatePoolDto {
+}
+exports.CertificatePoolDto = CertificatePoolDto;
+__decorate([
+    (0, tsoa_1.Example)("550e8400-e29b-41d4-a716-446655440000"),
+    __metadata("design:type", String)
+], CertificatePoolDto.prototype, "id", void 0);
+__decorate([
+    (0, tsoa_1.Example)("Lagos Luxury Apartment Co-Own"),
+    __metadata("design:type", String)
+], CertificatePoolDto.prototype, "name", void 0);
+__decorate([
+    (0, tsoa_1.Example)(5000000),
+    __metadata("design:type", Number)
+], CertificatePoolDto.prototype, "target_amount", void 0);
+__decorate([
+    (0, tsoa_1.Example)(3250000),
+    __metadata("design:type", Number)
+], CertificatePoolDto.prototype, "raised_amount", void 0);
+__decorate([
+    (0, tsoa_1.Example)(new Date("2024-12-31")),
+    __metadata("design:type", Date)
+], CertificatePoolDto.prototype, "deadline", void 0);
+class CertificateMemberDto {
+}
+exports.CertificateMemberDto = CertificateMemberDto;
+__decorate([
+    (0, tsoa_1.Example)("John Doe"),
+    __metadata("design:type", String)
+], CertificateMemberDto.prototype, "name", void 0);
+__decorate([
+    (0, tsoa_1.Example)("john.doe@example.com"),
+    __metadata("design:type", String)
+], CertificateMemberDto.prototype, "email", void 0);
+__decorate([
+    (0, tsoa_1.Example)(100000),
+    __metadata("design:type", Number)
+], CertificateMemberDto.prototype, "declared_amount", void 0);
+__decorate([
+    (0, tsoa_1.Example)(50000),
+    __metadata("design:type", Number)
+], CertificateMemberDto.prototype, "paid_amount", void 0);
+__decorate([
+    (0, tsoa_1.Example)(10.0),
+    __metadata("design:type", Number)
+], CertificateMemberDto.prototype, "ownership_pct", void 0);
+class CertificateMemberSummaryDto {
+}
+exports.CertificateMemberSummaryDto = CertificateMemberSummaryDto;
+__decorate([
+    (0, tsoa_1.Example)("John Doe"),
+    __metadata("design:type", String)
+], CertificateMemberSummaryDto.prototype, "name", void 0);
+__decorate([
+    (0, tsoa_1.Example)("john.doe@example.com"),
+    __metadata("design:type", String)
+], CertificateMemberSummaryDto.prototype, "email", void 0);
+__decorate([
+    (0, tsoa_1.Example)(10.0),
+    __metadata("design:type", Number)
+], CertificateMemberSummaryDto.prototype, "ownership_pct", void 0);
+class OwnershipCertificateDto {
+}
+exports.OwnershipCertificateDto = OwnershipCertificateDto;
+__decorate([
+    (0, tsoa_1.Example)(120),
+    __metadata("design:type", Number)
+], OwnershipCertificateDto.prototype, "daysRemaining", void 0);
+__decorate([
+    (0, tsoa_1.Example)(new Date("2024-01-15T12:00:00Z")),
+    __metadata("design:type", Date)
+], OwnershipCertificateDto.prototype, "generatedAt", void 0);
 // Contribution DTOs
 class ContributionDto {
 }
@@ -239,6 +316,10 @@ __decorate([
     (0, tsoa_1.Example)("NGN"),
     __metadata("design:type", String)
 ], ContributionDto.prototype, "currency", void 0);
+__decorate([
+    (0, tsoa_1.Example)(8.5),
+    __metadata("design:type", Number)
+], ContributionDto.prototype, "ownership_pct", void 0);
 __decorate([
     (0, tsoa_1.Example)(1.0),
     __metadata("design:type", Number)
@@ -515,4 +596,55 @@ __decorate([
     (0, tsoa_1.Example)("ValidationError"),
     __metadata("design:type", String)
 ], ErrorResponseDto.prototype, "name", void 0);
+// BVN Verification DTOs
+class VerifyBvnDto {
+}
+exports.VerifyBvnDto = VerifyBvnDto;
+__decorate([
+    (0, tsoa_1.Example)("12345678901"),
+    __metadata("design:type", String)
+], VerifyBvnDto.prototype, "bvn", void 0);
+class BvnVerificationResponseDto {
+}
+exports.BvnVerificationResponseDto = BvnVerificationResponseDto;
+__decorate([
+    (0, tsoa_1.Example)("550e8400-e29b-41d4-a716-446655440000"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "userId", void 0);
+__decorate([
+    (0, tsoa_1.Example)("John"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "firstName", void 0);
+__decorate([
+    (0, tsoa_1.Example)("Doe"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "lastName", void 0);
+__decorate([
+    (0, tsoa_1.Example)("Michael"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "middleName", void 0);
+__decorate([
+    (0, tsoa_1.Example)("1990-01-15"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "dateOfBirth", void 0);
+__decorate([
+    (0, tsoa_1.Example)("+2348012345678"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "phoneNumber", void 0);
+__decorate([
+    (0, tsoa_1.Example)("12345678901"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "nin", void 0);
+__decorate([
+    (0, tsoa_1.Example)(true),
+    __metadata("design:type", Boolean)
+], BvnVerificationResponseDto.prototype, "verified", void 0);
+__decorate([
+    (0, tsoa_1.Example)(new Date("2026-03-25T22:36:21.732Z")),
+    __metadata("design:type", Date)
+], BvnVerificationResponseDto.prototype, "verifiedAt", void 0);
+__decorate([
+    (0, tsoa_1.Example)("BVN verified successfully"),
+    __metadata("design:type", String)
+], BvnVerificationResponseDto.prototype, "message", void 0);
 //# sourceMappingURL=index.js.map

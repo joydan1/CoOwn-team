@@ -7,6 +7,8 @@ import { isUUID } from "class-validator";
 import { AppError } from "../common/errors/AppError";
 import { Profile } from "passport-google-oauth20";
 import logger from "../config/logger";
+import { verifyBvn as verifyBvnInterswitch } from "../common/interswitch";
+import { BvnVerificationResponseDto } from "../dtos";
 
 @Service()
 export default class UserService {
@@ -155,5 +157,49 @@ export default class UserService {
                 refreshToken
             }
         }
+    }
+
+    public async verifyBvn(userId: string, bvn: string): Promise<BvnVerificationResponseDto> {
+        // Validate user exists
+        if (!isUUID(userId)) throw new AppError("Invalid User ID format");
+        const user = await this.userRepository.findById(userId);
+        if (!user) throw new AppError("User not found");
+
+        // Verify BVN with Interswitch
+        let bvnData;
+        try {
+            bvnData = await verifyBvnInterswitch(bvn);
+        } catch (error: any) {
+            const errorMsg = error.message || "BVN verification failed";
+            logger.error(`BVN verification failed for user ${userId}: ${errorMsg}`);
+            throw new AppError(errorMsg, 400);
+        }
+
+        // Hash the BVN for secure storage
+        const bvnHash = await hashString(bvn);
+
+        // Update user with BVN hash and verified status
+        await this.userRepository.updateByid(userId, {
+            bvn_hash: bvnHash,
+            verified: true,
+            firstName: bvnData.firstName,
+            lastName: bvnData.lastName,
+            phone: bvnData.phoneNumber
+        });
+
+        logger.info(`BVN verified for user ${userId}`);
+
+        return {
+            userId,
+            firstName: bvnData.firstName,
+            lastName: bvnData.lastName,
+            middleName: bvnData.middleName,
+            dateOfBirth: bvnData.dateOfBirth,
+            phoneNumber: bvnData.phoneNumber,
+            nin: bvnData.nin,
+            verified: true,
+            verifiedAt: new Date(),
+            message: "BVN verified successfully"
+        };
     }
 }

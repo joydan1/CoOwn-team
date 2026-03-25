@@ -78,8 +78,9 @@ let PoolController = class PoolController extends tsoa_1.Controller {
     /**
      * Retrieve detailed information about a specific pool by its ID.
      */
-    async getPoolById(id) {
-        return this.poolService.getPoolById(id);
+    async getPoolById(id, req) {
+        const userId = req.user?.id;
+        return this.poolService.getPoolById(id, userId);
     }
     /**
      * Create a new co-ownership pool for a property. Returns the created pool with an invite link.
@@ -127,6 +128,15 @@ let PoolController = class PoolController extends tsoa_1.Controller {
      */
     async getPoolDashboard(id) {
         return this.poolService.getPoolDashboard(id);
+    }
+    /**
+     * Generate an ownership certificate for the requesting pool member.
+     */
+    async getPoolCertificate(id, req) {
+        const userId = req.user?.id;
+        if (!userId)
+            throw new AppError_1.AppError("Unauthorized");
+        return this.poolService.getOwnershipCertificate(id, userId);
     }
     /**
      * Retrieve the list of user objects for all members of a specific pool.
@@ -216,8 +226,9 @@ __decorate([
         name: "NotFoundError"
     }),
     __param(0, (0, tsoa_1.Path)()),
+    __param(1, (0, tsoa_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PoolController.prototype, "getPoolById", null);
 __decorate([
@@ -322,6 +333,21 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PoolController.prototype, "getPoolDashboard", null);
+__decorate([
+    (0, tsoa_1.Security)("jwt"),
+    (0, tsoa_1.Get)("/{id}/certificate"),
+    (0, tsoa_1.Response)(200, "Ownership certificate"),
+    (0, tsoa_1.Response)(404, "Pool or member not found", {
+        message: "Pool or user not found",
+        statusCode: 404,
+        name: "NotFoundError"
+    }),
+    __param(0, (0, tsoa_1.Path)()),
+    __param(1, (0, tsoa_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PoolController.prototype, "getPoolCertificate", null);
 __decorate([
     (0, tsoa_1.Security)("jwt"),
     (0, tsoa_1.Get)("/{id}/users"),

@@ -10,7 +10,7 @@ import passport from "passport";
 import googleAuthRoutes from "./routes/googleAuth";
 import {requestLogger} from "./middlewares/requestLogger";
 import "./config/google";
-//import { initWebSocket } from "./config/websocket";
+import { initWebSocket } from "./config/websocket";
 import http from "http";
 import cors from "cors";
 
@@ -56,7 +56,7 @@ RegisterRoutes(app);
 app.use(errorHandler)
 
 const server = http.createServer(app);
-//initWebSocket(server);
+initWebSocket(server);
 
 server.listen(port, async () => {
     console.log(`${variables.app.appName} running on port ${port}`);

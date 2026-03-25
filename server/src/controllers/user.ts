@@ -1,8 +1,14 @@
 import Container, { Service } from "typedi";
 import UserService from "../services/user";
-import { Controller, Route, Get, Path, Security, Tags, Example, Response, Delete, Body, Put, Query } from "tsoa";
+import { Controller, Route, Get, Path, Security, Tags, Example, Response, Delete, Body, Put, Query, Post, Request } from "tsoa";
 import User from "../models/user";
 import { UpdateUserDto } from "../dtos/user";
+import { VerifyBvnDto, BvnVerificationResponseDto, ErrorResponseDto } from "../dtos";
+import { Request as ExpressRequest } from "express";
+
+interface AuthenticatedRequest extends ExpressRequest {
+    user?: { id: string };
+}
 
 
 
@@ -93,6 +99,39 @@ export class AuthController extends Controller{
     @Response(404, "User not found")
     public async deleteUser(@Path() id: string): Promise<{ message: string }> {
         return this.userService.deleteUser(id);
+    }
+
+    /** VERIFY BVN */
+    @Security("jwt")
+    @Post("/:id/verify-bvn")
+    @Example<BvnVerificationResponseDto>({
+        userId: "550e8400-e29b-41d4-a716-446655440000",
+        firstName: "John",
+        lastName: "Doe",
+        middleName: "Michael",
+        dateOfBirth: "1990-01-15",
+        phoneNumber: "+2348012345678",
+        nin: "12345678901",
+        verified: true,
+        verifiedAt: new Date("2026-03-25T22:36:21.732Z"),
+        message: "BVN verified successfully"
+    })
+    @Response<BvnVerificationResponseDto>(200, "BVN verified successfully")
+    @Response<ErrorResponseDto>(400, "Invalid BVN or verification failed", {
+        message: "BVN verification failed",
+        statusCode: 400,
+        name: "VerificationError"
+    })
+    @Response<ErrorResponseDto>(404, "User not found", {
+        message: "User not found",
+        statusCode: 404,
+        name: "NotFoundError"
+    })
+    public async verifyBvn(
+        @Path() id: string,
+        @Body() body: VerifyBvnDto
+    ): Promise<BvnVerificationResponseDto> {
+        return this.userService.verifyBvn(id, body.bvn);
     }
 
     

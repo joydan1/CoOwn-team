@@ -135,10 +135,9 @@ let PoolService = class PoolService {
     async recalculateOwnershipPercentages(poolId) {
         const members = await this.poolMemberRepository.findByPool(poolId);
         const totalRaised = members.reduce((sum, m) => sum + m.paid_amount, 0);
-        if (totalRaised === 0)
-            return;
+        // Calculate ownership percentages for all members
         for (const member of members) {
-            const ownershipPct = (member.paid_amount / totalRaised) * 100;
+            const ownershipPct = totalRaised > 0 ? (member.paid_amount / totalRaised) * 100 : 0;
             await this.poolMemberRepository.updateById(member.id, { ownership_pct: ownershipPct });
         }
     }
@@ -164,6 +163,58 @@ let PoolService = class PoolService {
             daysRemaining
         };
     }
+    async getOwnershipCertificate(poolId, userId) {
+        const pool = await this.poolRepository.findById(poolId);
+        if (!pool)
+            throw new AppError_1.AppError("Pool not found");
+        const members = await this.poolMemberRepository.findByPool(poolId);
+        if (!members || members.length === 0)
+            throw new AppError_1.AppError("No members found for pool");
+        const member = members.find(m => m.user_id === userId);
+        if (!member)
+            throw new AppError_1.AppError("User is not a member of this pool");
+        // Get user details for the requesting member
+        const memberUser = await this.userRepository.findById(member.user_id);
+        if (!memberUser)
+            throw new AppError_1.AppError("Member user not found");
+        // Get user details for all members
+        const memberUsers = await Promise.all(members.map(m => this.userRepository.findById(m.user_id)));
+        const deadlineDate = pool.deadline ? new Date(pool.deadline) : null;
+        const daysRemaining = deadlineDate && deadlineDate instanceof Date && !isNaN(deadlineDate.getTime())
+            ? Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+            : null;
+        // Map pool to lean DTO
+        const certificatePool = {
+            id: pool.id,
+            name: pool.name,
+            target_amount: pool.target_amount,
+            raised_amount: pool.raised_amount,
+            deadline: pool.deadline
+        };
+        // Map requesting member to lean DTO
+        const certificateMember = {
+            name: `${memberUser.firstName || ''} ${memberUser.lastName || ''}`.trim() || memberUser.email,
+            email: memberUser.email,
+            declared_amount: member.declared_amount,
+            paid_amount: member.paid_amount,
+            ownership_pct: Number(member.ownership_pct) || 0
+        };
+        // Map all members to summary DTO
+        const certificateMembers = members
+            .map((m, index) => ({
+            name: memberUsers[index] ? `${memberUsers[index].firstName || ''} ${memberUsers[index].lastName || ''}`.trim() || memberUsers[index].email : 'Unknown',
+            email: memberUsers[index]?.email || 'unknown@example.com',
+            ownership_pct: Number(m.ownership_pct) || 0
+        }))
+            .sort((a, b) => b.ownership_pct - a.ownership_pct); // Sort by ownership percentage descending
+        return {
+            pool: certificatePool,
+            member: certificateMember,
+            members: certificateMembers,
+            daysRemaining,
+            generatedAt: new Date()
+        };
+    }
     async togglePublic(poolId, creatorId, isPublic) {
         const pool = await this.poolRepository.findById(poolId);
         if (!pool)
@@ -175,14 +226,45 @@ let PoolService = class PoolService {
             throw new AppError_1.AppError("Failed to update pool");
         return updated;
     }
-    async getPools(filter = {}) {
-        return this.poolRepository.listAll(filter);
+    async getPools(filter = {}, userId) {
+        const pools = await this.poolRepository.listAll(filter);
+        // If no user context, return pools as-is
+        if (!userId)
+            return pools;
+        // Fetch membership info for user if provided
+        const memberships = await this.poolMemberRepository.findByUser(userId);
+        const membershipMap = new Map(memberships.map(m => [m.pool_id, m]));
+        // Attach ownership_pct to each pool if user is a member
+        return pools.map(pool => ({
+            ...pool,
+            my_ownership_pct: membershipMap.get(pool.id) ? Number(membershipMap.get(pool.id).ownership_pct) || 0 : undefined
+        }));
     }
-    async getPoolById(id) {
-        return this.poolRepository.findById(id);
+    async getPoolById(id, userId) {
+        const pool = await this.poolRepository.findById(id);
+        if (!pool || !userId)
+            return pool;
+        // Fetch membership info if user provided
+        const membership = await this.poolMemberRepository.findByPool(id);
+        const userMembership = membership?.find(m => m.user_id === userId);
+        return {
+            ...pool,
+            my_ownership_pct: userMembership ? Number(userMembership.ownership_pct) || 0 : undefined
+        };
     }
-    async getPublicPools() {
-        return this.poolRepository.findPublic();
+    async getPublicPools(userId) {
+        const pools = await this.poolRepository.findPublic();
+        // If no user context, return pools as-is
+        if (!userId)
+            return pools;
+        // Fetch membership info for user if provided
+        const memberships = await this.poolMemberRepository.findByUser(userId);
+        const membershipMap = new Map(memberships.map(m => [m.pool_id, m]));
+        // Attach ownership_pct to each pool if user is a member
+        return pools.map(pool => ({
+            ...pool,
+            my_ownership_pct: membershipMap.get(pool.id) ? Number(membershipMap.get(pool.id).ownership_pct) || 0 : undefined
+        }));
     }
     async updatePool(id, updates) {
         return this.poolRepository.updateById(id, updates);

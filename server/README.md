@@ -91,6 +91,7 @@ If swagger UI is integrated in the server, view at `/swagger` (or `/docs`) depen
 - `GET /pools/{id}/join` - join pool instantly with default values (secured)
 - `PUT /pools/{id}/join` - update join details (investment amount/currency) (secured)
 - `GET /pools/{id}/dashboard` - get pool dashboard (secured)
+- `GET /pools/{id}/certificate` - generate ownership certificate for requesting member (secured)
 - `GET /pools/{id}/users` - get users joined pool (secured)
 - `PUT /pools/{id}/toggle-public` - toggle public status (creator only)
 - `PUT /pools/{id}` - update pool details (secured)
@@ -106,7 +107,49 @@ If swagger UI is integrated in the server, view at `/swagger` (or `/docs`) depen
 - `tsoa.json`
 - `src/swagger/swagger.json`
 
-## 7. Notes
+## 7. WebSocket implementation
+
+This project includes Socket.IO-based WebSocket support in `src/config/websocket.ts`. It is initialized by `src/app.ts` with the HTTP server.
+
+- `initWebSocket(server)` starts Socket.IO with CORS allowed from all origins and methods GET/POST.
+- `io.on('connection', socket => { ... })` handles client socket lifecycles.
+
+Socket event contract (client ↔ server):
+
+Client emits:
+
+- `loginUser` (payload: `string` userId)
+  - server validates user, calls `socket.join(userId)`, stores mapping, broadcasts `userOnline`, and sends a room-specific `notification`.
+
+- `joinPool` (payload: `string` poolId)
+  - server calls `socket.join(poolId)` and logs the join.
+
+Server emits (to clients):
+
+- `userOnline` (broadcast) when any user logs in through websocket.
+  - payload: `string` userId.
+
+- `notification` (to user room) on login success.
+  - payload shape: `{ type: 'login', message: string, timestamp: Date }`.
+
+- `contributionAdded` (to pool room) when a pool contribution is recorded.
+  - payload shape: `{ pool_id: string, user_id: string, amount: number, currency: string, timestamp: Date }`.
+
+- `contributionUpdated` (to pool room) when an existing contribution is updated.
+  - payload shape: `ContributionDto` for the updated contribution.
+
+- `contributionRemoved` (to pool room) when a contribution is deleted.
+  - payload shape: `{ id: string, pool_id: string, user_id: string, amount: number, currency: string, timestamp: Date }`.
+
+Listening for these on client (recommended):
+
+- `socket.on('userOnline', userId => { ... })`
+- `socket.on('notification', data => { ... })`
+- `socket.on('contributionAdded', contribution => { ... })`
+- `socket.on('contributionUpdated', updatedContribution => { ... })`
+- `socket.on('contributionRemoved', removedInfo => { ... })`
+
+## 8. Notes
 
 - `tsoa` decorators used: `@Route`, `@Tags`, `@Example`, `@Response`, `@Description`, and `@Security` for JWT-protected routes.
 - Update DB config in `src/config/postgres.ts` or wherever database connection is set.

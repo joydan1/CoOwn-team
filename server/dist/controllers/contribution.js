@@ -52,6 +52,7 @@ exports.ContributionController = void 0;
 const typedi_1 = __importStar(require("typedi"));
 const contribution_1 = __importDefault(require("../services/contribution"));
 const contribution_2 = require("../repositories/contribution");
+const websocket_1 = require("../config/websocket");
 const tsoa_1 = require("tsoa");
 const AppError_1 = require("../common/errors/AppError");
 const dtos_1 = require("../dtos");
@@ -88,7 +89,6 @@ let ContributionController = class ContributionController extends tsoa_1.Control
             user_id: userId
         });
     }
-    // @Security("jwt") // Temporarily disabled for testing
     async verifyContribution(payment, req) {
         // Temporarily disabled auth checks for testing
         // const userId = req.user?.id;
@@ -99,10 +99,41 @@ let ContributionController = class ContributionController extends tsoa_1.Control
         return this.contributionService.verifyAndRecordContribution(payment);
     }
     async updateContribution(id, updates) {
-        return this.contributionRepository.updateById(id, updates);
+        const contribution = await this.contributionRepository.findById(id);
+        if (!contribution) {
+            throw new AppError_1.AppError("Contribution not found", 404);
+        }
+        const updatedContribution = await this.contributionRepository.updateById(id, updates);
+        try {
+            (0, websocket_1.getIO)().to(contribution.pool_id).emit("contributionUpdated", updatedContribution);
+        }
+        catch (error) {
+            console.error("Failed to emit contributionUpdated event:", error);
+        }
+        return updatedContribution;
     }
     async deleteContribution(id) {
-        return this.contributionRepository.deleteById(id);
+        const contribution = await this.contributionRepository.findById(id);
+        if (!contribution) {
+            throw new AppError_1.AppError("Contribution not found", 404);
+        }
+        const deleted = await this.contributionRepository.deleteById(id);
+        if (deleted) {
+            try {
+                (0, websocket_1.getIO)().to(contribution.pool_id).emit("contributionRemoved", {
+                    id: contribution.id,
+                    pool_id: contribution.pool_id,
+                    user_id: contribution.user_id,
+                    amount: contribution.amount,
+                    currency: contribution.currency,
+                    timestamp: new Date()
+                });
+            }
+            catch (error) {
+                console.error("Failed to emit contributionRemoved event:", error);
+            }
+        }
+        return deleted;
     }
 };
 exports.ContributionController = ContributionController;

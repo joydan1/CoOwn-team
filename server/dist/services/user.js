@@ -18,6 +18,7 @@ const util_1 = require("../common/util");
 const class_validator_1 = require("class-validator");
 const AppError_1 = require("../common/errors/AppError");
 const logger_1 = __importDefault(require("../config/logger"));
+const interswitch_1 = require("../common/interswitch");
 let UserService = class UserService {
     constructor(userRepository) {
         this.userRepository = userRepository;
@@ -130,6 +131,47 @@ let UserService = class UserService {
                 accessToken,
                 refreshToken
             }
+        };
+    }
+    async verifyBvn(userId, bvn) {
+        // Validate user exists
+        if (!(0, class_validator_1.isUUID)(userId))
+            throw new AppError_1.AppError("Invalid User ID format");
+        const user = await this.userRepository.findById(userId);
+        if (!user)
+            throw new AppError_1.AppError("User not found");
+        // Verify BVN with Interswitch
+        let bvnData;
+        try {
+            bvnData = await (0, interswitch_1.verifyBvn)(bvn);
+        }
+        catch (error) {
+            const errorMsg = error.message || "BVN verification failed";
+            logger_1.default.error(`BVN verification failed for user ${userId}: ${errorMsg}`);
+            throw new AppError_1.AppError(errorMsg, 400);
+        }
+        // Hash the BVN for secure storage
+        const bvnHash = await (0, util_1.hashString)(bvn);
+        // Update user with BVN hash and verified status
+        await this.userRepository.updateByid(userId, {
+            bvn_hash: bvnHash,
+            verified: true,
+            firstName: bvnData.firstName,
+            lastName: bvnData.lastName,
+            phone: bvnData.phoneNumber
+        });
+        logger_1.default.info(`BVN verified for user ${userId}`);
+        return {
+            userId,
+            firstName: bvnData.firstName,
+            lastName: bvnData.lastName,
+            middleName: bvnData.middleName,
+            dateOfBirth: bvnData.dateOfBirth,
+            phoneNumber: bvnData.phoneNumber,
+            nin: bvnData.nin,
+            verified: true,
+            verifiedAt: new Date(),
+            message: "BVN verified successfully"
         };
     }
 };

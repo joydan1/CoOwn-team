@@ -2,12 +2,14 @@ import { Service } from "typedi";
 import Contribution from "../models/contribution";
 import { ContributionRepository } from "../repositories/contribution";
 import { PoolRepository } from "../repositories/pool";
+import { PoolMemberRepository } from "../repositories/poolMember";
 import { UserRepository } from "../repositories/user";
 import { AppError } from "../common/errors/AppError";
 import PoolService from "./pool";
 import { variables } from "../config/env";
-import { PaymentDto, InterswitchPaymentDto } from "../dtos";
+import { PaymentDto, InterswitchPaymentDto, ContributionDto } from "../dtos";
 import { verifyInterswitchTransaction } from "../common/interswitch";
+import { getIO } from "../config/websocket";
 
 @Service()
 export default class ContributionService {
@@ -15,6 +17,7 @@ export default class ContributionService {
     constructor(
         private contributionRepository: ContributionRepository,
         private poolRepository: PoolRepository,
+        private poolMemberRepository: PoolMemberRepository,
         private userRepository: UserRepository,
         private poolService: PoolService
     ) {}
@@ -75,13 +78,30 @@ export default class ContributionService {
             throw new AppError("Payment currency does not match Interswitch verification", 400);
         }
 
-        return this.poolService.addContribution({
+        const contribution = await this.poolService.addContribution({
             pool_id: data.pool_id,
             user_id: data.user_id,
             amount: contributionAmount,
             currency: data.currency || "NGN",
             payment_ref: verified.PaymentReference || data.payment_ref
         });
+
+        // Emit real-time update
+        try {
+            const io = getIO();
+            io.to(data.pool_id).emit("contributionAdded", {
+                pool_id: data.pool_id,
+                user_id: data.user_id,
+                amount: contributionAmount,
+                currency: data.currency || "NGN",
+                timestamp: new Date()
+            });
+
+        } catch (error) {
+            console.error("Failed to emit contribution event:", error);
+        }
+
+        return contribution;
     }
 
     private async getLiveFxRate(fromCurrency: string): Promise<number> {
@@ -93,12 +113,48 @@ export default class ContributionService {
         return mockRates[fromCurrency as keyof typeof mockRates] || 1500;
     }
 
-    public async getContributionsByPool(poolId: string): Promise<Contribution[]> {
-        return this.contributionRepository.findByPool(poolId);
+    public async getContributionsByPool(poolId: string): Promise<ContributionDto[]> {
+        const contributions = await this.contributionRepository.findByPool(poolId);
+        
+        // Get pool members to map ownership percentages
+        const members = await this.poolService.getPoolMembers(poolId);
+        const membershipMap = new Map(members.map(m => [m.user_id, m]));
+        
+        // Map contributions to include ownership_pct (ensure no NaN values)
+        return contributions.map(contrib => ({
+            id: contrib.id,
+            pool_id: contrib.pool_id,
+            user_id: contrib.user_id,
+            amount: contrib.amount,
+            currency: contrib.currency,
+            ownership_pct: Number(membershipMap.get(contrib.user_id)?.ownership_pct) || 0,
+            fx_rate: contrib.fx_rate,
+            payment_ref: contrib.payment_ref,
+            created_at: contrib.created_at,
+            updatedAt: contrib.updatedAt
+        })) as ContributionDto[];
     }
 
-    public async getContributionsByUser(userId: string): Promise<Contribution[]> {
-        return this.contributionRepository.findByUser(userId);
+    public async getContributionsByUser(userId: string): Promise<ContributionDto[]> {
+        const contributions = await this.contributionRepository.findByUser(userId);
+        
+        // Fetch all memberships for this user
+        const memberships = await this.poolMemberRepository.findByUser(userId);
+        const membershipMap = new Map(memberships.map(m => [m.pool_id, m]));
+        
+        // Map contributions to include ownership_pct (ensure no NaN values)
+        return contributions.map(contrib => ({
+            id: contrib.id,
+            pool_id: contrib.pool_id,
+            user_id: contrib.user_id,
+            amount: contrib.amount,
+            currency: contrib.currency,
+            ownership_pct: Number(membershipMap.get(contrib.pool_id)?.ownership_pct) || 0,
+            fx_rate: contrib.fx_rate,
+            payment_ref: contrib.payment_ref,
+            created_at: contrib.created_at,
+            updatedAt: contrib.updatedAt
+        })) as ContributionDto[];
     }
 
 }

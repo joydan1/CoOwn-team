@@ -110,6 +110,10 @@ export class PoolDto {
     @Example(false)
     is_public!: boolean;
 
+    /** Your ownership percentage in this pool (if you are a member) */
+    @Example(15.5)
+    my_ownership_pct?: number;
+
     /** Pool creation timestamp */
     @Example(new Date("2024-01-15T10:30:00Z"))
     created_at?: Date;
@@ -211,6 +215,84 @@ export class PoolMemberDto {
     updatedAt?: Date;
 }
 
+// Lean DTOs for Ownership Certificate Response
+export class CertificatePoolDto {
+    /** Pool ID */
+    @Example("550e8400-e29b-41d4-a716-446655440000")
+    id!: string;
+
+    /** Pool name */
+    @Example("Lagos Luxury Apartment Co-Own")
+    name!: string;
+
+    /** Target amount to raise */
+    @Example(5000000)
+    target_amount!: number;
+
+    /** Amount raised so far */
+    @Example(3250000)
+    raised_amount!: number;
+
+    /** Fundraising deadline */
+    @Example(new Date("2024-12-31"))
+    deadline?: Date;
+}
+
+export class CertificateMemberDto {
+    /** User name */
+    @Example("John Doe")
+    name!: string;
+
+    /** User email */
+    @Example("john.doe@example.com")
+    email!: string;
+
+    /** Amount declared to contribute */
+    @Example(100000)
+    declared_amount!: number;
+
+    /** Amount actually paid */
+    @Example(50000)
+    paid_amount!: number;
+
+    /** Ownership percentage */
+    @Example(10.0)
+    ownership_pct!: number;
+}
+
+export class CertificateMemberSummaryDto {
+    /** User name */
+    @Example("John Doe")
+    name!: string;
+
+    /** User email */
+    @Example("john.doe@example.com")
+    email!: string;
+
+    /** Ownership percentage */
+    @Example(10.0)
+    ownership_pct!: number;
+}
+
+export class OwnershipCertificateDto {
+    /** Pool details (essential fields only) */
+    pool!: CertificatePoolDto;
+
+    /** The requesting member's certificate details */
+    member!: CertificateMemberDto;
+
+    /** All members in pool with ownership percentages (summary only) */
+    members!: CertificateMemberSummaryDto[];
+
+    /** Number of days until pool deadline */
+    @Example(120)
+    daysRemaining!: number | null;
+
+    /** Timestamp of certificate generation */
+    @Example(new Date("2024-01-15T12:00:00Z"))
+    generatedAt!: Date;
+}
+
 // Contribution DTOs
 export class ContributionDto {
     /** Unique identifier for the contribution */
@@ -232,6 +314,10 @@ export class ContributionDto {
     /** Currency */
     @Example("NGN")
     currency!: string;
+
+    /** Member's current ownership percentage in the pool */
+    @Example(8.5)
+    ownership_pct?: number;
 
     /** Foreign exchange rate */
     @Example(1.0)
@@ -500,4 +586,53 @@ export class ErrorResponseDto {
     /** Error name/type */
     @Example("ValidationError")
     name!: string;
+}
+
+// BVN Verification DTOs
+export class VerifyBvnDto {
+    /** 11-digit BVN number */
+    @Example("12345678901")
+    bvn!: string;
+}
+
+export class BvnVerificationResponseDto {
+    /** User ID */
+    @Example("550e8400-e29b-41d4-a716-446655440000")
+    userId!: string;
+
+    /** First name from BVN verification */
+    @Example("John")
+    firstName!: string;
+
+    /** Last name from BVN verification */
+    @Example("Doe")
+    lastName!: string;
+
+    /** Middle name from BVN verification (optional) */
+    @Example("Michael")
+    middleName?: string;
+
+    /** Date of birth from BVN */
+    @Example("1990-01-15")
+    dateOfBirth!: string;
+
+    /** Phone number from BVN (optional) */
+    @Example("+2348012345678")
+    phoneNumber?: string;
+
+    /** NIN from BVN (optional) */
+    @Example("12345678901")
+    nin?: string;
+
+    /** Verification status */
+    @Example(true)
+    verified!: boolean;
+
+    /** Verification timestamp */
+    @Example(new Date("2026-03-25T22:36:21.732Z"))
+    verifiedAt!: Date;
+
+    /** Message */
+    @Example("BVN verified successfully")
+    message!: string;
 }

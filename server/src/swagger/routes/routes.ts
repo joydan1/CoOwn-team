@@ -47,6 +47,41 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BvnVerificationResponseDto": {
+        "dataType": "refObject",
+        "properties": {
+            "userId": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "middleName": {"dataType":"string"},
+            "dateOfBirth": {"dataType":"string","required":true},
+            "phoneNumber": {"dataType":"string"},
+            "nin": {"dataType":"string"},
+            "verified": {"dataType":"boolean","required":true},
+            "verifiedAt": {"dataType":"datetime","required":true},
+            "message": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ErrorResponseDto": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string","required":true},
+            "statusCode": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "VerifyBvnDto": {
+        "dataType": "refObject",
+        "properties": {
+            "bvn": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PropertyDto": {
         "dataType": "refObject",
         "properties": {
@@ -61,16 +96,6 @@ const models: TsoaRoute.Models = {
             "status": {"dataType":"string","required":true},
             "created_at": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ErrorResponseDto": {
-        "dataType": "refObject",
-        "properties": {
-            "message": {"dataType":"string","required":true},
-            "statusCode": {"dataType":"double","required":true},
-            "name": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -122,6 +147,7 @@ const models: TsoaRoute.Models = {
             "deadline": {"dataType":"datetime"},
             "status": {"dataType":"string","required":true},
             "is_public": {"dataType":"boolean","required":true},
+            "my_ownership_pct": {"dataType":"double"},
             "created_at": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
             "invite_link": {"dataType":"string"},
@@ -232,6 +258,7 @@ const models: TsoaRoute.Models = {
             "user_id": {"dataType":"string","required":true},
             "amount": {"dataType":"double","required":true},
             "currency": {"dataType":"string","required":true},
+            "ownership_pct": {"dataType":"double"},
             "fx_rate": {"dataType":"double"},
             "payment_ref": {"dataType":"string"},
             "created_at": {"dataType":"datetime"},
@@ -247,6 +274,52 @@ const models: TsoaRoute.Models = {
             "members": {"dataType":"array","array":{"dataType":"refObject","ref":"PoolMemberDto"},"required":true},
             "contributions": {"dataType":"array","array":{"dataType":"refObject","ref":"ContributionDto"},"required":true},
             "progress": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CertificatePoolDto": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "target_amount": {"dataType":"double","required":true},
+            "raised_amount": {"dataType":"double","required":true},
+            "deadline": {"dataType":"datetime"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CertificateMemberDto": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "declared_amount": {"dataType":"double","required":true},
+            "paid_amount": {"dataType":"double","required":true},
+            "ownership_pct": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CertificateMemberSummaryDto": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "ownership_pct": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OwnershipCertificateDto": {
+        "dataType": "refObject",
+        "properties": {
+            "pool": {"ref":"CertificatePoolDto","required":true},
+            "member": {"ref":"CertificateMemberDto","required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"CertificateMemberSummaryDto"},"required":true},
+            "daysRemaining": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "generatedAt": {"dataType":"datetime","required":true},
         },
         "additionalProperties": false,
     },
@@ -325,7 +398,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_ContributionDto_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"pool_id":{"dataType":"string"},"user_id":{"dataType":"string"},"amount":{"dataType":"double"},"currency":{"dataType":"string"},"fx_rate":{"dataType":"double"},"payment_ref":{"dataType":"string"},"created_at":{"dataType":"datetime"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"pool_id":{"dataType":"string"},"user_id":{"dataType":"string"},"amount":{"dataType":"double"},"currency":{"dataType":"string"},"ownership_pct":{"dataType":"double"},"fx_rate":{"dataType":"double"},"payment_ref":{"dataType":"string"},"created_at":{"dataType":"datetime"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RegisterUserDto": {
@@ -507,6 +580,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'deleteUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_verifyBvn: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"VerifyBvnDto"},
+        };
+        app.post('/users/:id/verify-bvn',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.verifyBvn)),
+
+            async function AuthController_verifyBvn(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_verifyBvn, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'verifyBvn',
                 controller,
                 response,
                 next,
@@ -797,6 +902,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPoolController_getPoolById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/pools/:id',
             authenticateMiddleware([{"jwt":[]}]),
@@ -974,6 +1080,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getPoolDashboard',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsPoolController_getPoolCertificate: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/pools/:id/certificate',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(PoolController)),
+            ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPoolCertificate)),
+
+            async function PoolController_getPoolCertificate(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsPoolController_getPoolCertificate, request, response });
+
+                const controller = new PoolController();
+
+              await templateService.apiHandler({
+                methodName: 'getPoolCertificate',
                 controller,
                 response,
                 next,

@@ -1,6 +1,7 @@
 import Container, { Service } from "typedi";
 import ContributionService from "../services/contribution";
 import { ContributionRepository } from "../repositories/contribution";
+import { getIO } from "../config/websocket";
 import {
     Controller,
     Route,
@@ -124,7 +125,6 @@ export class ContributionController extends Controller {
         });
     }
 
-    // @Security("jwt") // Temporarily disabled for testing
     @Post("/verify")
     @Example<InterswitchPaymentDto>({
         pool_id: "550e8400-e29b-41d4-a716-446655440000",
@@ -167,7 +167,20 @@ export class ContributionController extends Controller {
         @Path() id: string,
         @Body() updates: Partial<ContributionDto>
     ): Promise<ContributionDto | null> {
-        return this.contributionRepository.updateById(id, updates);
+        const contribution = await this.contributionRepository.findById(id);
+        if (!contribution) {
+            throw new AppError("Contribution not found", 404);
+        }
+
+        const updatedContribution = await this.contributionRepository.updateById(id, updates);
+
+        try {
+            getIO().to(contribution.pool_id).emit("contributionUpdated", updatedContribution);
+        } catch (error) {
+            console.error("Failed to emit contributionUpdated event:", error);
+        }
+
+        return updatedContribution;
     }
 
     @Security("jwt")
@@ -179,6 +192,28 @@ export class ContributionController extends Controller {
         name: "NotFoundError"
     })
     public async deleteContribution(@Path() id: string): Promise<boolean> {
-        return this.contributionRepository.deleteById(id);
+        const contribution = await this.contributionRepository.findById(id);
+        if (!contribution) {
+            throw new AppError("Contribution not found", 404);
+        }
+
+        const deleted = await this.contributionRepository.deleteById(id);
+
+        if (deleted) {
+            try {
+                getIO().to(contribution.pool_id).emit("contributionRemoved", {
+                    id: contribution.id,
+                    pool_id: contribution.pool_id,
+                    user_id: contribution.user_id,
+                    amount: contribution.amount,
+                    currency: contribution.currency,
+                    timestamp: new Date()
+                });
+            } catch (error) {
+                console.error("Failed to emit contributionRemoved event:", error);
+            }
+        }
+
+        return deleted;
     }
 }
