@@ -88,6 +88,16 @@ let ContributionController = class ContributionController extends tsoa_1.Control
             user_id: userId
         });
     }
+    // @Security("jwt") // Temporarily disabled for testing
+    async verifyContribution(payment, req) {
+        // Temporarily disabled auth checks for testing
+        // const userId = req.user?.id;
+        // if (!userId) throw new AppError("Unauthorized");
+        // if (payment.user_id !== userId) {
+        //     throw new AppError("Mismatch between authenticated user and payment user_id", 403);
+        // }
+        return this.contributionService.verifyAndRecordContribution(payment);
+    }
     async updateContribution(id, updates) {
         return this.contributionRepository.updateById(id, updates);
     }
@@ -169,6 +179,28 @@ __decorate([
     __metadata("design:paramtypes", [dtos_1.PaymentDto, Object]),
     __metadata("design:returntype", Promise)
 ], ContributionController.prototype, "processPayment", null);
+__decorate([
+    (0, tsoa_1.Post)("/verify"),
+    (0, tsoa_1.Example)({
+        pool_id: "550e8400-e29b-41d4-a716-446655440000",
+        user_id: "550e8400-e29b-41d4-a716-446655440002",
+        merchant_code: "MX275869",
+        amount: 10000,
+        currency: "NGN",
+        payment_ref: "FBN|WEB|MX275869|..."
+    }),
+    (0, tsoa_1.Response)(201, "Payment verified and contribution recorded"),
+    (0, tsoa_1.Response)(400, "Bad Request", {
+        message: "Invalid payment verification data",
+        statusCode: 400,
+        name: "ValidationError"
+    }),
+    __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dtos_1.InterswitchPaymentDto, Object]),
+    __metadata("design:returntype", Promise)
+], ContributionController.prototype, "verifyContribution", null);
 __decorate([
     (0, tsoa_1.Security)("jwt"),
     (0, tsoa_1.Put)("/{id}"),

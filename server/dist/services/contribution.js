@@ -18,6 +18,8 @@ const pool_1 = require("../repositories/pool");
 const user_1 = require("../repositories/user");
 const AppError_1 = require("../common/errors/AppError");
 const pool_2 = __importDefault(require("./pool"));
+const env_1 = require("../config/env");
+const interswitch_1 = require("../common/interswitch");
 let ContributionService = class ContributionService {
     constructor(contributionRepository, poolRepository, userRepository, poolService) {
         this.contributionRepository = contributionRepository;
@@ -48,6 +50,30 @@ let ContributionService = class ContributionService {
             payment_ref: paymentRef
         });
         return contribution;
+    }
+    async verifyAndRecordContribution(data) {
+        const merchantCode = data.merchant_code || env_1.variables.interswitch.merchantCode;
+        const verified = await (0, interswitch_1.verifyInterswitchTransaction)(merchantCode, data.payment_ref, data.amount);
+        if (!verified || verified.ResponseCode !== "00") {
+            throw new AppError_1.AppError("Interswitch payment not successful", 400);
+        }
+        const expectedAmount = Number(data.amount);
+        const verifiedAmount = Number(verified.Amount);
+        if (expectedAmount !== verifiedAmount) {
+            throw new AppError_1.AppError("Payment amount does not match Interswitch verification", 400);
+        }
+        const contributionAmount = Number(data.amount) / 100; // convert kobo to Naira for pool
+        // skip strict currency if unavailable from response
+        if (data.currency && verified.CurrencyCode && data.currency.toUpperCase() !== verified.CurrencyCode.toString().toUpperCase()) {
+            throw new AppError_1.AppError("Payment currency does not match Interswitch verification", 400);
+        }
+        return this.poolService.addContribution({
+            pool_id: data.pool_id,
+            user_id: data.user_id,
+            amount: contributionAmount,
+            currency: data.currency || "NGN",
+            payment_ref: verified.PaymentReference || data.payment_ref
+        });
     }
     async getLiveFxRate(fromCurrency) {
         const mockRates = {

@@ -303,6 +303,19 @@ const models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "InterswitchPaymentDto": {
+        "dataType": "refObject",
+        "properties": {
+            "pool_id": { "dataType": "string", "required": true },
+            "user_id": { "dataType": "string", "required": true },
+            "merchant_code": { "dataType": "string", "required": true },
+            "amount": { "dataType": "double", "required": true },
+            "currency": { "dataType": "union", "subSchemas": [{ "dataType": "enum", "enums": ["NGN"] }, { "dataType": "enum", "enums": ["USD"] }, { "dataType": "enum", "enums": ["GBP"] }, { "dataType": "enum", "enums": ["EUR"] }], "required": true },
+            "payment_ref": { "dataType": "string", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_ContributionDto_": {
         "dataType": "refAlias",
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "id": { "dataType": "string" }, "pool_id": { "dataType": "string" }, "user_id": { "dataType": "string" }, "amount": { "dataType": "double" }, "currency": { "dataType": "string" }, "fx_rate": { "dataType": "double" }, "payment_ref": { "dataType": "string" }, "created_at": { "dataType": "datetime" }, "updatedAt": { "dataType": "datetime" } }, "validators": {} },
@@ -1101,6 +1114,30 @@ function RegisterRoutes(app) {
             const controller = new contribution_1.ContributionController();
             await templateService.apiHandler({
                 methodName: 'processPayment',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsContributionController_verifyContribution = {
+        payment: { "in": "body", "name": "payment", "required": true, "ref": "InterswitchPaymentDto" },
+        req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
+    };
+    app.post('/contributions/verify', ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.verifyContribution)), async function ContributionController_verifyContribution(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsContributionController_verifyContribution, request, response });
+            const controller = new contribution_1.ContributionController();
+            await templateService.apiHandler({
+                methodName: 'verifyContribution',
                 controller,
                 response,
                 next,

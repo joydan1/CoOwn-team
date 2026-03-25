@@ -19,7 +19,7 @@ import {
 } from "tsoa";
 import { Request as ExpressRequest } from 'express';
 import { AppError } from "../common/errors/AppError";
-import { ContributionDto, PaymentDto, ErrorResponseDto } from "../dtos";
+import { ContributionDto, PaymentDto, InterswitchPaymentDto, ErrorResponseDto } from "../dtos";
 
 interface AuthenticatedRequest extends ExpressRequest {
     user?: { id: string };
@@ -122,6 +122,37 @@ export class ContributionController extends Controller {
             ...payment,
             user_id: userId
         });
+    }
+
+    // @Security("jwt") // Temporarily disabled for testing
+    @Post("/verify")
+    @Example<InterswitchPaymentDto>({
+        pool_id: "550e8400-e29b-41d4-a716-446655440000",
+        user_id: "550e8400-e29b-41d4-a716-446655440002",
+        merchant_code: "MX275869",
+        amount: 10000,
+        currency: "NGN",
+        payment_ref: "FBN|WEB|MX275869|..."
+    })
+    @Response<ContributionDto>(201, "Payment verified and contribution recorded")
+    @Response<ErrorResponseDto>(400, "Bad Request", {
+        message: "Invalid payment verification data",
+        statusCode: 400,
+        name: "ValidationError"
+    })
+    public async verifyContribution(
+        @Body() payment: InterswitchPaymentDto,
+        @Request() req: AuthenticatedRequest
+    ): Promise<ContributionDto> {
+        // Temporarily disabled auth checks for testing
+        // const userId = req.user?.id;
+        // if (!userId) throw new AppError("Unauthorized");
+
+        // if (payment.user_id !== userId) {
+        //     throw new AppError("Mismatch between authenticated user and payment user_id", 403);
+        // }
+
+        return this.contributionService.verifyAndRecordContribution(payment);
     }
 
     @Security("jwt")

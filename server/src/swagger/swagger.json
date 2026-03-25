@@ -1191,6 +1191,57 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"InterswitchPaymentDto": {
+				"properties": {
+					"pool_id": {
+						"type": "string",
+						"description": "Pool ID to contribute to",
+						"example": "550e8400-e29b-41d4-a716-446655440000"
+					},
+					"user_id": {
+						"type": "string",
+						"description": "User ID making the contribution",
+						"example": "550e8400-e29b-41d4-a716-446655440002"
+					},
+					"merchant_code": {
+						"type": "string",
+						"description": "Interswitch merchant code",
+						"example": "MX275869"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double",
+						"description": "Payment amount in minor units (kobo)",
+						"example": 10000
+					},
+					"currency": {
+						"type": "string",
+						"enum": [
+							"NGN",
+							"USD",
+							"GBP",
+							"EUR"
+						],
+						"description": "Payment currency",
+						"example": "NGN"
+					},
+					"payment_ref": {
+						"type": "string",
+						"description": "Interswitch payment reference",
+						"example": "FBN|WEB|MX275869|..."
+					}
+				},
+				"required": [
+					"pool_id",
+					"user_id",
+					"merchant_code",
+					"amount",
+					"currency",
+					"payment_ref"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Partial_ContributionDto_": {
 				"properties": {
 					"id": {
@@ -3675,6 +3726,79 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/PaymentDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/contributions/verify": {
+			"post": {
+				"operationId": "VerifyContribution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ContributionDto"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"pool_id": "550e8400-e29b-41d4-a716-446655440000",
+											"user_id": "550e8400-e29b-41d4-a716-446655440002",
+											"merchant_code": "MX275869",
+											"amount": 10000,
+											"currency": "NGN",
+											"payment_ref": "FBN|WEB|MX275869|..."
+										}
+									}
+								}
+							}
+						}
+					},
+					"201": {
+						"description": "Payment verified and contribution recorded",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ContributionDto"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseDto"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "Invalid payment verification data",
+											"statusCode": 400,
+											"name": "ValidationError"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contributions"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/InterswitchPaymentDto"
 							}
 						}
 					}

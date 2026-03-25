@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ErrorResponseDto = exports.PaymentDto = exports.UserDto = exports.AgreementDto = exports.CreateDocumentDto = exports.DocumentDto = exports.VoteMilestoneDto = exports.CreateMilestoneDto = exports.MilestoneDto = exports.ContributionDto = exports.PoolMemberDto = exports.PoolDashboardDto = exports.JoinPoolDto = exports.CreatePoolDto = exports.PoolDto = exports.CreatePropertyDto = exports.PropertyDto = void 0;
+exports.ErrorResponseDto = exports.InterswitchPaymentDto = exports.PaymentDto = exports.UserDto = exports.AgreementDto = exports.CreateDocumentDto = exports.DocumentDto = exports.VoteMilestoneDto = exports.CreateMilestoneDto = exports.MilestoneDto = exports.ContributionDto = exports.PoolMemberDto = exports.PoolDashboardDto = exports.JoinPoolDto = exports.CreatePoolDto = exports.PoolDto = exports.CreatePropertyDto = exports.PropertyDto = void 0;
 const tsoa_1 = require("tsoa");
 const class_validator_1 = require("class-validator");
 // Property DTOs
@@ -472,6 +472,33 @@ __decorate([
     (0, tsoa_1.Example)("card"),
     __metadata("design:type", String)
 ], PaymentDto.prototype, "paymentMethod", void 0);
+class InterswitchPaymentDto {
+}
+exports.InterswitchPaymentDto = InterswitchPaymentDto;
+__decorate([
+    (0, tsoa_1.Example)("550e8400-e29b-41d4-a716-446655440000"),
+    __metadata("design:type", String)
+], InterswitchPaymentDto.prototype, "pool_id", void 0);
+__decorate([
+    (0, tsoa_1.Example)("550e8400-e29b-41d4-a716-446655440002"),
+    __metadata("design:type", String)
+], InterswitchPaymentDto.prototype, "user_id", void 0);
+__decorate([
+    (0, tsoa_1.Example)("MX275869"),
+    __metadata("design:type", String)
+], InterswitchPaymentDto.prototype, "merchant_code", void 0);
+__decorate([
+    (0, tsoa_1.Example)(10000),
+    __metadata("design:type", Number)
+], InterswitchPaymentDto.prototype, "amount", void 0);
+__decorate([
+    (0, tsoa_1.Example)("NGN"),
+    __metadata("design:type", String)
+], InterswitchPaymentDto.prototype, "currency", void 0);
+__decorate([
+    (0, tsoa_1.Example)("FBN|WEB|MX275869|..."),
+    __metadata("design:type", String)
+], InterswitchPaymentDto.prototype, "payment_ref", void 0);
 // Error Response DTO
 class ErrorResponseDto {
 }

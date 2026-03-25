@@ -459,6 +459,34 @@ export class PaymentDto {
     paymentMethod?: "card" | "bank_transfer" | "cross_border";
 }
 
+export class InterswitchPaymentDto {
+    /** Pool ID to contribute to */
+    @Example("550e8400-e29b-41d4-a716-446655440000")
+    pool_id!: string;
+
+    /** User ID making the contribution */
+    @Example("550e8400-e29b-41d4-a716-446655440002")
+    user_id!: string;
+
+    /** Interswitch merchant code */
+    @Example("MX275869")
+    merchant_code!: string;
+
+    /** Payment amount in minor units (kobo) */
+    @Example(10000)
+    amount!: number;
+
+    /** Payment currency */
+    @Example("NGN")
+    currency!: "NGN" | "USD" | "GBP" | "EUR";
+
+    /** Interswitch payment reference */
+    @Example("FBN|WEB|MX275869|...")
+    payment_ref!: string;
+}
+
+
+
 // Error Response DTO
 export class ErrorResponseDto {
     /** Error message */

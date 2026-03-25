@@ -73,7 +73,10 @@ exports.variables = {
         clientId: process.env.IT_CLIENT_ID,
         clientSecret: process.env.IT_SECRET_KEY,
         authUrl: process.env.IT_AUTH_URL,
-        baseUrl: process.env.IT_BASE_URL
+        baseUrl: process.env.IT_BASE_URL,
+        paymentVerifyUrl: process.env.IT_PAYMENT_VERIFY_URL,
+        merchantCode: process.env.IT_MERCHANT_CODE,
+        getTransactionUrl: process.env.IT_GET_TRANSACTION_URL
     },
     ai: {
         gemini: {

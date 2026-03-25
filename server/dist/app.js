@@ -29,6 +29,22 @@ app.use(express_1.default.json());
 app.use(passport_1.default.initialize());
 app.use("/auth", googleAuth_1.default);
 app.use('/swagger/api', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
+app.use(express_1.default.static('public'));
+app.use((req, res, next) => {
+    // Disable CSP for development/testing
+    if (req.path.includes('interswitch-test')) {
+        res.setHeader("Content-Security-Policy", "");
+    }
+    else {
+        res.setHeader("Content-Security-Policy", "default-src 'self' https://newwebpay.qa.interswitchng.com https://www.clarity.ms https://h.online-metrix.net; " +
+            "script-src 'self' 'unsafe-inline' https://newwebpay.qa.interswitchng.com https://www.clarity.ms https://h.online-metrix.net; " +
+            "connect-src 'self' https://newwebpay.qa.interswitchng.com https://www.clarity.ms https://h.online-metrix.net http://localhost:5000; " +
+            "frame-src 'self' https://newwebpay.qa.interswitchng.com; " +
+            "style-src 'self' 'unsafe-inline'; " +
+            "img-src 'self' https://newwebpay.qa.interswitchng.com data:;");
+    }
+    next();
+});
 app.use(requestLogger_1.requestLogger);
 (0, routes_1.RegisterRoutes)(app);
 app.use(errorHandler_1.errorHandler);

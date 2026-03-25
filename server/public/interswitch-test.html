@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="">
+  <title>Interswitch Path A Test</title>
+  <script src="https://newwebpay.qa.interswitchng.com/inline-checkout.js"></script>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 20px;">
+  <h1>Interswitch Path A Test Page</h1>
+  <div>
+    <label>Merchant Code: <input id="merchant_code" value="MX275869" /></label><br/>
+    <label>Pay Item ID: <input id="pay_item_id" value="Default_Payable_MX275869" /></label><br/>
+    <label>Amount (kobo): <input id="amount" value="10000" /></label><br/>
+    <label>Currency numeric: <input id="currency" value="566" /></label><br/>
+    <label>Customer email: <input id="cust_email" value="salawu.oj@gmail.com" /></label><br/>
+    <label>JWT Token (for backend verify call): <input id="jwt" style="width:450px" /></label><br/>
+    <button id="start">Start Path A Payment</button>
+  </div>
+  <pre id="output" style="white-space: pre-wrap; background:#f4f4f4; padding:10px; border:1px solid #ccc; margin-top:20px; height:250px; overflow:auto;"></pre>
+
+  <script>
+    function out(message) {
+      var el = document.getElementById('output');
+      el.textContent += message + '\n';
+    }
+
+    function onPaymentComplete(response, body, jwt) {
+      out('Interswitch callback: ' + JSON.stringify(response));
+
+      if (response.resp !== '00') {
+        out('Payment not successful in client callback, response ' + response.resp);
+        return;
+      }
+
+      out('Calling backend /contributions/verify with payload: ' + JSON.stringify(body));
+
+      fetch('/contributions/verify', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': 'Bearer ' + jwt
+        },
+        body: JSON.stringify(body)
+      })
+      .then(function(r) { return r.json().then(function(json) { return {status: r.status, json: json}; }); })
+      .then(function(result) {
+        out('Backend response status ' + result.status + ': ' + JSON.stringify(result.json));
+      })
+      .catch(function(err) {
+        out('Backend request failed: ' + err);
+      });
+    }
+
+    document.getElementById('start').addEventListener('click', function() {
+      var merchant_code = document.getElementById('merchant_code').value;
+      var pay_item_id = document.getElementById('pay_item_id').value;
+      var amount = Number(document.getElementById('amount').value);
+      var currency = Number(document.getElementById('currency').value);
+      var cust_email = document.getElementById('cust_email').value;
+      var jwt = document.getElementById('jwt').value.trim();
+      var txn_ref = 'test_' + Date.now();
+
+      out('Launching Interswitch checkout...');
+
+      window.webpayCheckout({
+        merchant_code: merchant_code,
+        pay_item_id: pay_item_id,
+        txn_ref: txn_ref,
+        amount: amount,
+        currency: currency,
+        cust_email: cust_email,
+        mode: 'TEST',
+        site_redirect_url: window.location.origin + '/interswitch-test.html',
+        onComplete: function(response) {
+          var transactionRef = response.txnref || response.payRef || txn_ref;
+
+          onPaymentComplete(response, {
+            pool_id: '3085a6ba-6604-4ab2-bda9-a61c304d18a5',
+            user_id: '65c49bdc-7a4a-41d2-8239-03c95c1efce1',
+            merchant_code: merchant_code,
+            amount: amount,
+            currency: 'NGN',
+            payment_ref: transactionRef
+          }, jwt);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

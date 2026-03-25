@@ -139,3 +139,74 @@ export async function verifyBvn(bvn: string): Promise<BvnFullResponse["data"]> {
     );
   }
 }
+
+export interface InterswitchTransactionVerificationResponse {
+  Amount: number;
+  CardNumber: string;
+  MerchantReference: string;
+  PaymentReference: string;
+  RetrievalReferenceNumber: string;
+  SplitAccounts: unknown[];
+  TransactionDate: string;
+  ResponseCode: string;
+  ResponseDescription: string;
+  AccountNumber?: string;
+  TransactionReference?: string;
+  CurrencyCode?: string | number;
+}
+
+export async function verifyInterswitchTransaction(merchantCode: string, transactionReference: string, amount: number): Promise<InterswitchTransactionVerificationResponse> {
+  if (!merchantCode) {
+    throw new Error("Missing Interswitch merchant code");
+  }
+
+  if (!transactionReference) {
+    throw new Error("Missing Interswitch transaction reference");
+  }
+
+  const token = await getInterswitchToken();
+  const verifyUrl =
+    variables.interswitch.getTransactionUrl ||
+    "https://qa.interswitchng.com/collections/api/v1/gettransaction.json";
+
+  const queryString = new URLSearchParams({
+    merchantcode: merchantCode,
+    transactionreference: transactionReference,
+    amount: amount.toString(),
+  }).toString();
+
+  try {
+    const response = await axios.get<InterswitchTransactionVerificationResponse>(
+      `${verifyUrl}?${queryString}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        timeout: 10000,
+      }
+    );
+
+    const result = response.data;
+
+    console.log('Interswitch verification response:', result);
+
+    if (result.ResponseCode !== "00") {
+      throw new Error(result.ResponseDescription || "Interswitch transaction verification failed");
+    }
+
+    return result;
+  } catch (error: any) {
+    console.error("Interswitch transaction verification error:", {
+      message: error?.message,
+      status: error?.response?.status,
+      data: error?.response?.data,
+    });
+
+    throw new Error(
+      error?.response?.data?.ResponseDescription ||
+      "Failed to verify Interswitch transaction"
+    );
+  }
+}
