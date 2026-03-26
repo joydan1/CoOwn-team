@@ -1,0 +1,20 @@
+{
+  "/(app)/dashboard/page": "/dashboard",
+  "/(app)/listings/[id]/page": "/listings/[id]",
+  "/(app)/listings/page": "/listings",
+  "/(app)/payments/callback/page": "/payments/callback",
+  "/(app)/pools/[id]/certificate/page": "/pools/[id]/certificate",
+  "/(app)/pools/[id]/contribute/page": "/pools/[id]/contribute",
+  "/(app)/pools/[id]/page": "/pools/[id]",
+  "/(app)/pools/create/page": "/pools/create",
+  "/(app)/pools/join/[id]/page": "/pools/join/[id]",
+  "/(app)/pools/page": "/pools",
+  "/(auth)/callback/page": "/callback",
+  "/(auth)/login/page": "/login",
+  "/(auth)/register/page": "/register",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/google/route": "/api/auth/google",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/"
+}

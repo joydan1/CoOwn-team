@@ -1,0 +1,3 @@
+{
+  "/(app)/pools/join/[id]/page": "app/(app)/pools/join/[id]/page.js"
+}

@@ -1,0 +1,3 @@
+{
+  "/(app)/pools/[id]/certificate/page": "app/(app)/pools/[id]/certificate/page.js"
+}
