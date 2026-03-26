@@ -1,0 +1,4410 @@
+{
+    "openapi": "3.0.0",
+    "components": {
+        "examples": {},
+        "headers": {},
+        "parameters": {},
+        "requestBodies": {},
+        "responses": {},
+        "schemas": {
+            "Partial_User-or-null_": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "bvn_hash": {
+                        "type": "string"
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "Partial_User_": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "bvn_hash": {
+                        "type": "string"
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "UpdateUserDto": {
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "BvnVerificationResponseDto": {
+                "properties": {
+                    "userId": {
+                        "type": "string",
+                        "description": "User ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "description": "First name from BVN verification",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "description": "Last name from BVN verification",
+                        "example": "Doe"
+                    },
+                    "middleName": {
+                        "type": "string",
+                        "description": "Middle name from BVN verification (optional)",
+                        "example": "Michael"
+                    },
+                    "dateOfBirth": {
+                        "type": "string",
+                        "description": "Date of birth from BVN",
+                        "example": "1990-01-15"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "description": "Phone number from BVN (optional)",
+                        "example": "+2348012345678"
+                    },
+                    "nin": {
+                        "type": "string",
+                        "description": "NIN from BVN (optional)",
+                        "example": "12345678901"
+                    },
+                    "verified": {
+                        "type": "boolean",
+                        "description": "Verification status",
+                        "example": true
+                    },
+                    "verifiedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Verification timestamp",
+                        "example": "2026-03-25T22:36:21.732Z"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "BVN verified successfully"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "firstName",
+                    "lastName",
+                    "dateOfBirth",
+                    "verified",
+                    "verifiedAt",
+                    "message"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "ErrorResponseDto": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Invalid request parameters"
+                    },
+                    "statusCode": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "HTTP status code",
+                        "example": 400
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Error name/type",
+                        "example": "ValidationError"
+                    }
+                },
+                "required": [
+                    "message",
+                    "statusCode",
+                    "name"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "VerifyBvnDto": {
+                "properties": {
+                    "bvn": {
+                        "type": "string",
+                        "description": "11-digit BVN number",
+                        "example": "12345678901"
+                    }
+                },
+                "required": [
+                    "bvn"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "PropertyDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the property",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Property title",
+                        "example": "3 Bedroom Luxury Apartment in Lekki"
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "Property location",
+                        "example": "Lekki Phase 1, Lagos"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Property price in Naira",
+                        "example": 15000000
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Property type",
+                        "example": "apartment"
+                    },
+                    "images": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "Array of property image URLs",
+                        "example": [
+                            "https://example.com/image1.jpg"
+                        ]
+                    },
+                    "documents": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "Array of property document URLs",
+                        "example": [
+                            "https://example.com/title-deed.pdf"
+                        ]
+                    },
+                    "ai_valuation": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "AI-calculated property valuation",
+                        "example": 16500000
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Property status",
+                        "example": "available"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Property creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Property last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "title",
+                    "location",
+                    "price",
+                    "type",
+                    "status"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "CreatePropertyDtoType": {
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Property title",
+                        "example": "3 Bedroom Luxury Apartment in Lekki"
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "Property location",
+                        "example": "Lekki Phase 1, Lagos"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Property price in Naira",
+                        "example": 15000000
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "apartment",
+                            "house",
+                            "land",
+                            "commercial"
+                        ],
+                        "description": "Property type",
+                        "example": "apartment"
+                    },
+                    "images": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "Array of property image URLs",
+                        "example": [
+                            "https://example.com/image1.jpg"
+                        ]
+                    },
+                    "documents": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "Array of property document URLs",
+                        "example": [
+                            "https://example.com/title-deed.pdf"
+                        ]
+                    }
+                },
+                "required": [
+                    "title",
+                    "location",
+                    "price",
+                    "type"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Partial_PropertyDto_": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the property",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Property title",
+                        "example": "3 Bedroom Luxury Apartment in Lekki"
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "Property location",
+                        "example": "Lekki Phase 1, Lagos"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Property price in Naira",
+                        "example": 15000000
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Property type",
+                        "example": "apartment"
+                    },
+                    "images": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "Array of property image URLs",
+                        "example": [
+                            "https://example.com/image1.jpg"
+                        ]
+                    },
+                    "documents": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "Array of property document URLs",
+                        "example": [
+                            "https://example.com/title-deed.pdf"
+                        ]
+                    },
+                    "ai_valuation": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "AI-calculated property valuation",
+                        "example": 16500000
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Property status",
+                        "example": "available"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Property creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Property last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "UserDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the user",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "description": "User first name",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "description": "User last name",
+                        "example": "Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User email address",
+                        "example": "john.doe@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "User phone number",
+                        "example": "+2348012345678"
+                    },
+                    "role": {
+                        "type": "string",
+                        "description": "User role",
+                        "example": "user"
+                    },
+                    "verified": {
+                        "type": "boolean",
+                        "description": "Email verification status",
+                        "example": true
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "description": "Account active status",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "User creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "email",
+                    "role",
+                    "verified",
+                    "isActive"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "PoolDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the pool",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "property": {
+                        "$ref": "#/components/schemas/PropertyDto",
+                        "description": "Property details"
+                    },
+                    "creator": {
+                        "$ref": "#/components/schemas/UserDto",
+                        "description": "Pool creator details"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Pool name",
+                        "example": "Lagos Luxury Apartment Co-Own"
+                    },
+                    "target_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Target amount to raise",
+                        "example": 5000000
+                    },
+                    "raised_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Amount raised so far",
+                        "example": 3250000
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fundraising deadline",
+                        "example": "2024-12-31T00:00:00.000Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Pool status",
+                        "example": "active"
+                    },
+                    "is_public": {
+                        "type": "boolean",
+                        "description": "Whether the pool is publicly visible",
+                        "example": false
+                    },
+                    "my_ownership_pct": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Your ownership percentage in this pool (if you are a member)",
+                        "example": 15.5
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Pool creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Pool last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "invite_link": {
+                        "type": "string",
+                        "description": "Invite link for pool membership",
+                        "example": "https://coown.app/pools/550e8400-e29b-41d4-a716-446655440000/join"
+                    }
+                },
+                "required": [
+                    "id",
+                    "property",
+                    "creator",
+                    "name",
+                    "target_amount",
+                    "raised_amount",
+                    "status",
+                    "is_public"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Property": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "location": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "images": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "documents": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "ai_valuation": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "title",
+                    "location",
+                    "price",
+                    "type",
+                    "status"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "bvn_hash": {
+                        "type": "string"
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "email"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Pool": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "property": {
+                        "$ref": "#/components/schemas/Property"
+                    },
+                    "property_id": {
+                        "type": "string"
+                    },
+                    "creator": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "creator_id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "target_amount": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "raised_amount": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "is_public": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "property",
+                    "property_id",
+                    "creator",
+                    "creator_id",
+                    "name",
+                    "target_amount",
+                    "raised_amount",
+                    "status",
+                    "is_public"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "CreatePoolDto": {
+                "properties": {
+                    "property_id": {
+                        "type": "string",
+                        "description": "ID of the property to create pool for",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the co-ownership pool",
+                        "example": "Lagos Luxury Apartment Co-Own"
+                    },
+                    "target_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Target amount to raise for the property",
+                        "example": 5000000
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Deadline for raising funds (optional)",
+                        "example": "2024-12-31"
+                    },
+                    "is_public": {
+                        "type": "boolean",
+                        "description": "Whether the pool is publicly visible",
+                        "example": false
+                    }
+                },
+                "required": [
+                    "property_id",
+                    "name",
+                    "target_amount"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "PoolMemberDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the pool member",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
+                    },
+                    "declared_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Amount declared to contribute",
+                        "example": 100000
+                    },
+                    "paid_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Amount actually paid",
+                        "example": 50000
+                    },
+                    "ownership_pct": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Ownership percentage",
+                        "example": 10
+                    },
+                    "joined_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Member join timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "pool_id",
+                    "user_id",
+                    "declared_amount",
+                    "paid_amount",
+                    "ownership_pct"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "JoinPoolDto": {
+                "properties": {
+                    "investment_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "The amount the user wants to invest/contribute to the pool",
+                        "example": 250000
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "NGN",
+                            "USD",
+                            "GBP",
+                            "EUR"
+                        ],
+                        "description": "The currency for the investment",
+                        "example": "NGN"
+                    }
+                },
+                "required": [
+                    "investment_amount",
+                    "user_id",
+                    "currency"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "ContributionDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the contribution",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Contribution amount",
+                        "example": 50000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "Currency",
+                        "example": "NGN"
+                    },
+                    "ownership_pct": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Member's current ownership percentage in the pool",
+                        "example": 8.5
+                    },
+                    "fx_rate": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Foreign exchange rate",
+                        "example": 1
+                    },
+                    "payment_ref": {
+                        "type": "string",
+                        "description": "Payment reference",
+                        "example": "PAY_123456789"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Contribution timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "pool_id",
+                    "user_id",
+                    "amount",
+                    "currency"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "PoolDashboardDto": {
+                "properties": {
+                    "pool": {
+                        "$ref": "#/components/schemas/PoolDto",
+                        "description": "Pool details"
+                    },
+                    "members": {
+                        "items": {
+                            "$ref": "#/components/schemas/PoolMemberDto"
+                        },
+                        "type": "array",
+                        "description": "List of pool members"
+                    },
+                    "contributions": {
+                        "items": {
+                            "$ref": "#/components/schemas/ContributionDto"
+                        },
+                        "type": "array",
+                        "description": "List of contributions"
+                    },
+                    "progress": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Progress percentage (0-100)",
+                        "example": 65.5
+                    }
+                },
+                "required": [
+                    "pool",
+                    "members",
+                    "contributions",
+                    "progress"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "CertificatePoolDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Pool name",
+                        "example": "Lagos Luxury Apartment Co-Own"
+                    },
+                    "target_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Target amount to raise",
+                        "example": 5000000
+                    },
+                    "raised_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Amount raised so far",
+                        "example": 3250000
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fundraising deadline",
+                        "example": "2024-12-31T00:00:00.000Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "target_amount",
+                    "raised_amount"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "CertificateMemberDto": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "User name",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User email",
+                        "example": "john.doe@example.com"
+                    },
+                    "declared_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Amount declared to contribute",
+                        "example": 100000
+                    },
+                    "paid_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Amount actually paid",
+                        "example": 50000
+                    },
+                    "ownership_pct": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Ownership percentage",
+                        "example": 10
+                    }
+                },
+                "required": [
+                    "name",
+                    "email",
+                    "declared_amount",
+                    "paid_amount",
+                    "ownership_pct"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "CertificateMemberSummaryDto": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "User name",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User email",
+                        "example": "john.doe@example.com"
+                    },
+                    "ownership_pct": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Ownership percentage",
+                        "example": 10
+                    }
+                },
+                "required": [
+                    "name",
+                    "email",
+                    "ownership_pct"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "OwnershipCertificateDto": {
+                "properties": {
+                    "pool": {
+                        "$ref": "#/components/schemas/CertificatePoolDto",
+                        "description": "Pool details (essential fields only)"
+                    },
+                    "member": {
+                        "$ref": "#/components/schemas/CertificateMemberDto",
+                        "description": "The requesting member's certificate details"
+                    },
+                    "members": {
+                        "items": {
+                            "$ref": "#/components/schemas/CertificateMemberSummaryDto"
+                        },
+                        "type": "array",
+                        "description": "All members in pool with ownership percentages (summary only)"
+                    },
+                    "daysRemaining": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true,
+                        "description": "Number of days until pool deadline",
+                        "example": 120
+                    },
+                    "generatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Timestamp of certificate generation",
+                        "example": "2024-01-15T12:00:00.000Z"
+                    }
+                },
+                "required": [
+                    "pool",
+                    "member",
+                    "members",
+                    "daysRemaining",
+                    "generatedAt"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Partial_Pool_": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "property": {
+                        "$ref": "#/components/schemas/Property"
+                    },
+                    "property_id": {
+                        "type": "string"
+                    },
+                    "creator": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "creator_id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "target_amount": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "raised_amount": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "is_public": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "MilestoneDto": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the milestone",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Milestone title",
+                        "example": "Property Purchase Agreement"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Milestone description",
+                        "example": "Complete the property purchase agreement with the seller"
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target completion date",
+                        "example": "2024-02-15T00:00:00.000Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Milestone status",
+                        "example": "pending"
+                    },
+                    "required_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Required approvals",
+                        "example": 3
+                    },
+                    "current_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Current approvals",
+                        "example": 2
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Milestone creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "pool_id",
+                    "title",
+                    "description",
+                    "target_date",
+                    "status",
+                    "required_approvals",
+                    "current_approvals"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "CreateMilestoneDto": {
+                "properties": {
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Milestone title",
+                        "example": "Property Purchase Agreement"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Milestone description",
+                        "example": "Complete the property purchase agreement with the seller"
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target completion date",
+                        "example": "2024-02-15"
+                    },
+                    "required_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Required approvals",
+                        "example": 3
+                    }
+                },
+                "required": [
+                    "pool_id",
+                    "title",
+                    "description",
+                    "target_date",
+                    "required_approvals"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "VoteMilestoneDto": {
+                "properties": {
+                    "approve": {
+                        "type": "boolean",
+                        "description": "Vote decision",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "approve"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Partial_MilestoneDto_": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the milestone",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Milestone title",
+                        "example": "Property Purchase Agreement"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Milestone description",
+                        "example": "Complete the property purchase agreement with the seller"
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target completion date",
+                        "example": "2024-02-15T00:00:00.000Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Milestone status",
+                        "example": "pending"
+                    },
+                    "required_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Required approvals",
+                        "example": 3
+                    },
+                    "current_approvals": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Current approvals",
+                        "example": 2
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Milestone creation timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "PaymentDto": {
+                "properties": {
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID to contribute to",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User ID making the contribution",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Payment amount",
+                        "example": 50000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "NGN",
+                            "USD",
+                            "GBP",
+                            "EUR"
+                        ],
+                        "description": "Payment currency",
+                        "example": "USD"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "enum": [
+                            "card",
+                            "bank_transfer",
+                            "cross_border"
+                        ],
+                        "description": "Payment method",
+                        "example": "card"
+                    }
+                },
+                "required": [
+                    "pool_id",
+                    "user_id",
+                    "amount"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "InterswitchPaymentDto": {
+                "properties": {
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID to contribute to",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User ID making the contribution",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
+                    },
+                    "merchant_code": {
+                        "type": "string",
+                        "description": "Interswitch merchant code",
+                        "example": "MX275869"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Payment amount in minor units (kobo)",
+                        "example": 10000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "NGN",
+                            "USD",
+                            "GBP",
+                            "EUR"
+                        ],
+                        "description": "Payment currency",
+                        "example": "NGN"
+                    },
+                    "payment_ref": {
+                        "type": "string",
+                        "description": "Interswitch payment reference",
+                        "example": "FBN|WEB|MX275869|..."
+                    }
+                },
+                "required": [
+                    "pool_id",
+                    "user_id",
+                    "merchant_code",
+                    "amount",
+                    "currency",
+                    "payment_ref"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "Partial_ContributionDto_": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the contribution",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "Pool ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User ID",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Contribution amount",
+                        "example": 50000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "Currency",
+                        "example": "NGN"
+                    },
+                    "ownership_pct": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Member's current ownership percentage in the pool",
+                        "example": 8.5
+                    },
+                    "fx_rate": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Foreign exchange rate",
+                        "example": 1
+                    },
+                    "payment_ref": {
+                        "type": "string",
+                        "description": "Payment reference",
+                        "example": "PAY_123456789"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Contribution timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp",
+                        "example": "2024-01-15T10:30:00.000Z"
+                    }
+                },
+                "type": "object",
+                "description": "Make all properties in T optional"
+            },
+            "RegisterUserDto": {
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "tokenDto": {
+                "properties": {
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "LoginUserResponseDto": {
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "$ref": "#/components/schemas/tokenDto"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/Partial_User_"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "LoginUserDto": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            },
+            "refreshTokenDto": {
+                "properties": {
+                    "refreshToken": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "refreshToken"
+                ],
+                "type": "object",
+                "additionalProperties": false
+            }
+        },
+        "securitySchemes": {
+            "jwt": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT token obtained from /auth/login"
+            }
+        }
+    },
+    "info": {
+        "title": "coown-api",
+        "version": "1.0.0",
+        "license": {
+            "name": "ISC"
+        },
+        "contact": {
+            "name": "Salawu Olanrewaju Joseph"
+        }
+    },
+    "paths": {
+        "/users/{id}": {
+            "get": {
+                "operationId": "GetUserById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User-or-null_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "email": "john.doe@example.com",
+                                            "phone": "+2348012345678",
+                                            "verified": true,
+                                            "role": "user",
+                                            "isActive": true,
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "summary": "Get user by ID",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateUser",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "firstName": "Jane",
+                                            "lastName": "Doe",
+                                            "phone": "+2348012345678"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "description": "UPDATE USER",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserDto"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeleteUser",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ],
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": "550e8400-e29b-41d4-a716-446655440000"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "description": "DELETE USER",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/users": {
+            "get": {
+                "operationId": "ListAll",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Partial_User_"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "firstName": "John",
+                                                "lastName": "Doe",
+                                                "email": "john.doe@example.com",
+                                                "role": "user",
+                                                "verified": true,
+                                                "isActive": true,
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "LIST ALL USERS",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "role",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "isActive",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ]
+            }
+        },
+        "/users/{id}/verify-bvn": {
+            "post": {
+                "operationId": "VerifyBvn",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BvnVerificationResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "userId": "550e8400-e29b-41d4-a716-446655440000",
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "middleName": "Michael",
+                                            "dateOfBirth": "1990-01-15",
+                                            "phoneNumber": "+2348012345678",
+                                            "nin": "12345678901",
+                                            "verified": true,
+                                            "verifiedAt": "2026-03-25T22:36:21.732Z",
+                                            "message": "BVN verified successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid BVN or verification failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "BVN verification failed",
+                                            "statusCode": 400,
+                                            "name": "VerificationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "User not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "VERIFY BVN",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyBvnDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/properties": {
+            "get": {
+                "operationId": "GetProperties",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PropertyDto"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "title": "3 Bedroom Luxury Apartment in Lekki",
+                                                "location": "Lekki Phase 1, Lagos",
+                                                "price": 15000000,
+                                                "type": "apartment",
+                                                "images": [
+                                                    "https://example.com/image1.jpg"
+                                                ],
+                                                "documents": [
+                                                    "https://example.com/title-deed.pdf"
+                                                ],
+                                                "ai_valuation": 16500000,
+                                                "status": "available",
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid filter parameters",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve a list of properties, with optional filtering by location, type, and status.",
+                "tags": [
+                    "Properties"
+                ],
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "location",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "apartment",
+                                "house",
+                                "land",
+                                "commercial"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "available",
+                                "under_contract",
+                                "sold"
+                            ]
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "operationId": "CreateProperty",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PropertyDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "title": "3 Bedroom Luxury Apartment in Lekki",
+                                            "location": "Lekki Phase 1, Lagos",
+                                            "price": 15000000,
+                                            "type": "apartment",
+                                            "images": [
+                                                "https://example.com/image1.jpg"
+                                            ],
+                                            "documents": [
+                                                "https://example.com/title-deed.pdf"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Property created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PropertyDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid property data",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePropertyDtoType"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/properties/listings": {
+            "get": {
+                "operationId": "GetPropertyListings",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PropertyDto"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Get the list of property listings that are currently active for investment search.",
+                "tags": [
+                    "Properties"
+                ],
+                "security": [],
+                "parameters": []
+            }
+        },
+        "/properties/{id}": {
+            "get": {
+                "operationId": "GetPropertyById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PropertyDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "title": "3 Bedroom Luxury Apartment in Lekki",
+                                            "location": "Lekki Phase 1, Lagos",
+                                            "price": 15000000,
+                                            "type": "apartment",
+                                            "images": [
+                                                "https://example.com/image1.jpg"
+                                            ],
+                                            "documents": [
+                                                "https://example.com/title-deed.pdf"
+                                            ],
+                                            "ai_valuation": 16500000,
+                                            "status": "available",
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Property Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Property not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Get details for a specific property by ID.",
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateProperty",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PropertyDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Property Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Property not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Partial_PropertyDto_"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeleteProperty",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Cannot delete property with active pools",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Property Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Property not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/properties/{id}/valuation": {
+            "get": {
+                "operationId": "GetPropertyValuation",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "confidence": {
+                                            "type": "string"
+                                        },
+                                        "estimatedValue": {
+                                            "type": "number",
+                                            "format": "double"
+                                        }
+                                    },
+                                    "required": [
+                                        "confidence",
+                                        "estimatedValue"
+                                    ],
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "estimatedValue": 16500000,
+                                            "confidence": "High"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Property Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Property not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Properties"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/pools": {
+            "get": {
+                "operationId": "GetPools",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PoolDto"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "property": {
+                                                    "id": "550e8400-e29b-41d4-a716-446655440001",
+                                                    "title": "3 Bedroom Luxury Apartment in Lekki",
+                                                    "location": "Lekki Phase 1, Lagos",
+                                                    "price": 15000000,
+                                                    "type": "apartment",
+                                                    "status": "available"
+                                                },
+                                                "creator": {
+                                                    "id": "550e8400-e29b-41d4-a716-446655440002",
+                                                    "firstName": "John",
+                                                    "lastName": "Doe",
+                                                    "email": "john.doe@example.com",
+                                                    "role": "user",
+                                                    "verified": true,
+                                                    "isActive": true
+                                                },
+                                                "name": "Lagos Luxury Apartment Co-Own",
+                                                "target_amount": 5000000,
+                                                "raised_amount": 3250000,
+                                                "deadline": "2024-12-31T00:00:00.000Z",
+                                                "status": "active",
+                                                "is_public": false,
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid filter parameters",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve a list of pools. Optionally filter by creator ID or public status.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "creatorId",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "isPublic",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "operationId": "CreatePool",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PoolDto"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Pool Created Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PoolDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid pool data or property not found",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Authentication required",
+                                            "statusCode": 401,
+                                            "name": "UnauthorizedError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Create a new co-ownership pool for a property. Returns the created pool with an invite link.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePoolDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pools/public": {
+            "get": {
+                "operationId": "GetPublicPools",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pool"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve a list of all public pools available for joining.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [],
+                "parameters": []
+            }
+        },
+        "/pools/{id}": {
+            "get": {
+                "operationId": "GetPoolById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PoolDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve detailed information about a specific pool by its ID.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdatePool",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Pool"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Update pool details such as name, target amount, or deadline.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Partial_Pool_"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeletePool",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Delete a pool. This action cannot be undone.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/pools/{id}/invite": {
+            "get": {
+                "operationId": "GetInviteLink",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "invite_link": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "invite_link"
+                                    ],
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Generate and retrieve the invite link for a pool to share with potential members.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/pools/{id}/join": {
+            "get": {
+                "operationId": "JoinPool",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PoolMemberDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440003",
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                            "declared_amount": 0,
+                                            "paid_amount": 0,
+                                            "ownership_pct": 0,
+                                            "joined_at": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid amount or already a member",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Authentication required",
+                                            "statusCode": 401,
+                                            "name": "UnauthorizedError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Join a pool instantly with default investment amount (0). Update details later via PUT endpoint.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateJoinDetails",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PoolMemberDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid data or not a member",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Authentication required",
+                                            "statusCode": 401,
+                                            "name": "UnauthorizedError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Update the investment amount and currency for an existing pool membership.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/JoinPoolDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pools/{id}/dashboard": {
+            "get": {
+                "operationId": "GetPoolDashboard",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PoolDashboardDto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve comprehensive dashboard data for a pool, including members, contributions, and progress.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/pools/{id}/certificate": {
+            "get": {
+                "operationId": "GetPoolCertificate",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OwnershipCertificateDto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool or member not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool or user not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Generate an ownership certificate for the requesting pool member.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/pools/{id}/users": {
+            "get": {
+                "operationId": "GetPoolUsers",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve the list of user objects for all members of a specific pool.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/pools/{id}/toggle-public": {
+            "put": {
+                "operationId": "TogglePublic",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PoolDto"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Only pool creator can toggle public status",
+                                            "statusCode": 403,
+                                            "name": "ForbiddenError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Toggle the public visibility of a pool. Only the pool creator can perform this action.",
+                "tags": [
+                    "Pools"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "is_public": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "is_public"
+                                ],
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/milestones": {
+            "get": {
+                "operationId": "GetMilestones",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/MilestoneDto"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                                "title": "Collect 50% of target funds",
+                                                "description": "Complete the first funding milestone",
+                                                "target_date": "2024-02-15T00:00:00.000Z",
+                                                "status": "pending",
+                                                "required_approvals": 3,
+                                                "current_approvals": 2,
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Retrieve milestones, optionally filtered by pool ID.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "optional pool ID to filter milestones by pool",
+                        "in": "query",
+                        "name": "poolId",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "operationId": "CreateMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MilestoneDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "title": "Collect 50% of target funds",
+                                            "description": "First major funding milestone",
+                                            "target_date": "2024-02-15T00:00:00.000Z",
+                                            "required_approvals": 3
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Milestone created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MilestoneDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid milestone data or pool not found",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Create a new milestone for a pool.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "description": "milestone details including pool_id, title and required approvals",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateMilestoneDto",
+                                "description": "milestone details including pool_id, title and required approvals"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/milestones/{id}": {
+            "get": {
+                "operationId": "GetMilestoneById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/MilestoneDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                            "title": "Collect 50% of target funds",
+                                            "description": "Complete the first funding milestone",
+                                            "target_date": "2024-02-15T00:00:00.000Z",
+                                            "status": "pending",
+                                            "required_approvals": 3,
+                                            "current_approvals": 2,
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Get a specific milestone by ID.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID to lookup",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/MilestoneDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Update a milestone's details. Only status and metadata are updated.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "fields to update (status, description, required_approvals, etc.)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Partial_MilestoneDto_",
+                                "description": "fields to update (status, description, required_approvals, etc.)"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeleteMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Delete a milestone by ID.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID to delete",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/milestones/{id}/vote": {
+            "post": {
+                "operationId": "VoteOnMilestone",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MilestoneDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "approve": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid vote or milestone already completed",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Only pool members can vote on milestones",
+                                            "statusCode": 403,
+                                            "name": "ForbiddenError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Milestone Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Milestone not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Record an approval or rejection vote for a milestone by a pool member.",
+                "tags": [
+                    "Milestones"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "milestone ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "vote payload with approve true/false",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VoteMilestoneDto",
+                                "description": "vote payload with approve true/false"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contributions": {
+            "get": {
+                "operationId": "GetContributions",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/ContributionDto"
+                                    },
+                                    "type": "array"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": [
+                                            {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                                "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                                "amount": 50000,
+                                                "currency": "USD",
+                                                "fx_rate": 1500,
+                                                "payment_ref": "PAY_123456789",
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Get contributions with optional filters for pool or user.",
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "description": "optional pool ID filter",
+                        "in": "query",
+                        "name": "poolId",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "optional user ID filter",
+                        "in": "query",
+                        "name": "userId",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/contributions/{id}": {
+            "get": {
+                "operationId": "GetContributionById",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ContributionDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440001",
+                                            "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                            "amount": 50000,
+                                            "currency": "USD",
+                                            "fx_rate": 1500,
+                                            "payment_ref": "PAY_123456789",
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contribution Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Contribution not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Create a contribution for a pool member. Recursively recalculates pool ownership percentages.",
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "UpdateContribution",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ContributionDto"
+                                        }
+                                    ],
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contribution Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Contribution not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Partial_ContributionDto_"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "DeleteContribution",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contribution Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Contribution not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/contributions/pay": {
+            "post": {
+                "operationId": "ProcessPayment",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContributionDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                            "amount": 50000,
+                                            "currency": "USD",
+                                            "paymentMethod": "cross_border"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Payment processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContributionDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid payment data or insufficient funds",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pool Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Pool not found",
+                                            "statusCode": 404,
+                                            "name": "NotFoundError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [
+                    {
+                        "jwt": []
+                    }
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contributions/verify": {
+            "post": {
+                "operationId": "VerifyContribution",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContributionDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "pool_id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "user_id": "550e8400-e29b-41d4-a716-446655440002",
+                                            "merchant_code": "MX275869",
+                                            "amount": 10000,
+                                            "currency": "NGN",
+                                            "payment_ref": "FBN|WEB|MX275869|..."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Payment verified and contribution recorded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContributionDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "message": "Invalid payment verification data",
+                                            "statusCode": 400,
+                                            "name": "ValidationError"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Contributions"
+                ],
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InterswitchPaymentDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "operationId": "Register",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "email": "john.doe@example.com",
+                                            "password": "SecurePass123!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Partial_User_"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "id": "550e8400-e29b-41d4-a716-446655440000",
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "email": "john.doe@example.com",
+                                            "verified": false,
+                                            "role": "user",
+                                            "isActive": true,
+                                            "created_at": "2024-01-15T10:30:00.000Z",
+                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Register a new user",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "operationId": "Login",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginUserResponseDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "email": "john.doe@example.com",
+                                            "password": "SecurePass123!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "User login",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginUserDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "operationId": "Refresh",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/tokenDto"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": {
+                                            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Refresh access token",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/refreshTokenDto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "delete": {
+                "operationId": "Logout",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ],
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Example 1": {
+                                        "value": "550e8400-e29b-41d4-a716-446655440000"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "User logout",
+                "tags": [
+                    "Authentication"
+                ],
+                "security": [],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ]
+}
