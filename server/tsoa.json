@@ -5,6 +5,7 @@
   "spec": {
     "outputDirectory": "src/swagger",
     "specVersion": 3,
+    "basePath": "/api",
     "info": {
       "title": "CoOwn API",
       "description": "API for CoOwn property co-ownership platform",
