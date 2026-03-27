@@ -26,16 +26,23 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html 
+      lang="en"
       className={`${fraunces.variable} ${dmSans.variable}`}
-      suppressHydrationWarning  // Add this
+      suppressHydrationWarning
     >
-      <body suppressHydrationWarning>  {/* Add this */}
-        <AuthProvider>{children}</AuthProvider>
-        <script src="https://newwebpay.interswitchng.com/collections/w/pay" async />
+      <body suppressHydrationWarning>
+        <AuthProvider>
+          {children}
+          {/* Interswitch script - only if needed globally */}
+          <script 
+            src="https://newwebpay.qa.interswitchng.com/inline-checkout.js" 
+            async 
+          />
+        </AuthProvider>
       </body>
     </html>
   )

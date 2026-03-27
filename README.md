@@ -14,7 +14,7 @@ Most Nigerians cannot afford property alone — but groups of friends, family, a
 
 **CoOwn solves this.**
 
----
+
 
 ## What We Built
 
@@ -24,32 +24,24 @@ CoOwn is a group property co-ownership platform where young Nigerians pool funds
 
 ## Key Features
 
-### 🏘️ Property Marketplace
+###  Property Marketplace
 Browse verified listings across Lagos, Abuja, and Port Harcourt. Every property shows an AI-generated independent valuation so you know if the price is fair before you commit.
 
-### 👥 Group Pool Creation
+###  Group Pool Creation
 See a property you love? Start a pool in 3 taps. CoOwn generates a unique invite link instantly. Share it to WhatsApp. Friends join in under 60 seconds.
 
-### 📊 Live Contribution Dashboard
+### Live Contribution Dashboard
 The hero screen. Every pool member sees the target, how much has been raised, and everyone's exact ownership percentage — updating in real time as contributions come in. Nobody has to ask "have you paid?" The platform handles accountability.
 
-### 🌍 Open Pool Mechanic *(Our Unique Feature)*
+### Open Pool Mechanic *(Our Unique Feature)*
 A group that has partially funded their property can list their remaining stake publicly. Any user on CoOwn can discover the pool, review the verified documents, and buy in as a co-owner — with people they have never met — safely, because the money sits in escrow and every member is BVN-verified.
 
-### 💸 Cross-Border Payments
-Diaspora members contribute from the UK, US, or Canada in their local currency. CoOwn converts via live FX rates and routes through Interswitch's cross-border infrastructure. Stake updates automatically in naira.
-
-### 📜 Legal Co-Ownership Agreement
+###  Legal Co-Ownership Agreement
 Auto-generated Tenancy-in-Common agreement signed digitally by every pool member before a single naira moves. Legally structured, digitally enforced.
 
-### 🏆 Ownership Certificate
+###  Ownership Certificate
 When the property is purchased, every co-owner receives a digital certificate recording their stake — verifiable, downloadable, and permanently stored in the document vault.
 
----
-
-## Screenshots
-
-> *(Add your screenshots here — see setup guide for instructions)*
 
 | Listings | Pool Dashboard | Certificate |
 |----------|---------------|-------------|
@@ -61,7 +53,7 @@ When the property is purchased, every co-owner receives a digital certificate re
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| Frontend | React Native (Expo) | Cross-platform mobile app |
+| Frontend | React ) | Cross-platform mobile app |
 | Backend | Node.js + Express | REST API server |
 | Database | PostgreSQL via Supabase | Relational data + auth |
 | Real-time | Supabase Realtime | Live dashboard updates |
@@ -78,8 +70,8 @@ When the property is purchased, every co-owner receives a digital certificate re
 ```
 User browses listings
         ↓
-Finds a property → 3 options:
-  [Buy alone]  [Start a group pool]  [Join open pool]
+Finds a property → 2 options:
+    [Start a group pool]  [Join open pool]
         ↓
 Creates pool → Invites friends via WhatsApp link
         ↓
@@ -118,14 +110,14 @@ See the full [Setup Guide](docs/SETUP.md) to run this project locally.
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR-TEAM-NAME/coown.git
+git clone https://github.com/joydan1/CoOwn-team .git
 cd coown
 
 # Backend
 cd backend && npm install && npm run dev
 
 # Frontend (new terminal)
-cd frontend && npm install && npx expo start
+cd frontend && npm install && npm run dev
 
 # AI service (new terminal)
 cd ai && pip install -r requirements.txt && uvicorn main:app --reload
@@ -138,7 +130,7 @@ cd ai && pip install -r requirements.txt && uvicorn main:app --reload
 ```
 coown/
 ├── README.md
-├── frontend/          # React Native (Expo) app
+├── frontend/          # React 
 ├── backend/           # Node.js + Express API
 ├── ai/                # Python valuation microservice
 └── docs/
@@ -157,7 +149,7 @@ CoOwn earns only when users succeed — fully aligned incentives.
 | Revenue Stream | How It Works | Est. Per Transaction |
 |---------------|-------------|---------------------|
 | Pool completion fee | 1.5% of successful pool value | ₦120,000 on ₦8M pool |
-| XB FX spread | 0.5% on cross-border contributions | ₦10,000 on ₦2M transfer |
+ contributions | ₦10,000 on ₦2M transfer |
 | Premium listings | Developer partners pay for featured slots | ₦50,000–₦150,000/mo |
 | Secondary market | 1% on stake resales | Variable |
 
@@ -165,10 +157,9 @@ CoOwn earns only when users succeed — fully aligned incentives.
 
 ## Hackathon Sectors Covered
 
-- ✅ **R — Real Estate** (core product)
-- ✅ **XB — Cross-Border Payments** (diaspora contributions)
-- ✅ **P — Payments** (Interswitch integration)
-- ✅ **S — Social Services** (group wealth building for underserved communities)
+-  **R — Real Estate** (core product)
+-  **P — Payments** (Interswitch integration)
+- **S — Social Services** (group wealth building for underserved communities)
 
 ---
 
@@ -176,19 +167,17 @@ CoOwn earns only when users succeed — fully aligned incentives.
 
 | Name | Role | Responsibility |
 |------|------|---------------|
-| [PM Name] | Product Manager | Product strategy, PRD, user research, demo |
-| [Backend Name] | Backend Engineer | API, database, payments, escrow logic |
-| [Frontend Name] | Frontend Engineer | Mobile UI, screens, real-time dashboard |
-| [AI Name] | AI/ML Engineer | Valuation model, forecaster, FastAPI service |
+| [Mary  Sebastian] | Product Manager | Product strategy, PRD, user research, demo |
+| [Salawu Joseph Olarewaju] | Backend Engineer | API, database, payments, escrow logic |
+| [Joy Akpan Dan] | Frontend Engineer | Mobile UI, screens, real-time dashboard |
+| [Anita truscott] | AI/ML Engineer | Valuation model, forecaster, FastAPI service |
 
 ---
 
 ## Demo
 
-- 🌐 **Live app:** [your-demo-link.vercel.app](https://your-demo-link.vercel.app)
-- 🎥 **Demo video:** [Loom link here]
-- 📊 **Pitch deck:** [Link here]
-- 📋 **Full PRD:** Available on request
+-  **Live app:** [https://co-own-team.vercel.app/]
+-  **Full PRD:** https://docs.google.com/document/d/1e0x21Z8T3fWBQSetcYRvS5RL3fPjrY-X/edit?usp=drivesdk&ouid=101158629824390511510&rtpof=true&sd=true
 
 ---
 
@@ -197,9 +186,8 @@ CoOwn earns only when users succeed — fully aligned incentives.
 - [Setup Guide](docs/SETUP.md)
 - [API Documentation](docs/API.md)
 - [System Architecture](docs/ARCHITECTURE.md)
-- [Demo Walkthrough](docs/DEMO.md)
+
 
 ---
 
 *Built with purpose at the Enyata x Interswitch Developer Hackathon, March 2026.*
-
