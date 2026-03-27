@@ -14,6 +14,8 @@ import { MilestoneController } from './../../controllers/milestone';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ContributionController } from './../../controllers/contribution';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ConfigController } from './../../controllers/config';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './../../controllers/auth';
 import { expressAuthentication } from './../../middlewares/authentication';
 // @ts-ignore - no great way to install types from subpackage
@@ -401,13 +403,13 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"pool_id":{"dataType":"string"},"user_id":{"dataType":"string"},"amount":{"dataType":"double"},"currency":{"dataType":"string"},"ownership_pct":{"dataType":"double"},"fx_rate":{"dataType":"double"},"payment_ref":{"dataType":"string"},"created_at":{"dataType":"datetime"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "RegisterUserDto": {
+    "PaymentConfigDto": {
         "dataType": "refObject",
         "properties": {
-            "firstName": {"dataType":"string"},
-            "lastName": {"dataType":"string"},
-            "email": {"dataType":"string","required":true},
-            "password": {"dataType":"string","required":true},
+            "merchantCode": {"dataType":"string","required":true},
+            "payItemId": {"dataType":"string","required":true},
+            "currencyCode": {"dataType":"double","required":true},
+            "environment": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -427,6 +429,19 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string"},
             "token": {"ref":"tokenDto"},
             "user": {"ref":"Partial_User_"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RegisterUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "firstName": {"dataType":"string"},
+            "lastName": {"dataType":"string"},
+            "email": {"dataType":"string","required":true},
+            "phone": {"dataType":"string"},
+            "password": {"dataType":"string","required":true},
+            "bvn": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -468,7 +483,7 @@ export function RegisterRoutes(app: Router) {
         const argsAuthController_getUserById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/users/:id',
+        app.get('/api/users/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.getUserById)),
@@ -500,7 +515,7 @@ export function RegisterRoutes(app: Router) {
                 role: {"in":"query","name":"role","dataType":"string"},
                 isActive: {"in":"query","name":"isActive","dataType":"boolean"},
         };
-        app.get('/users',
+        app.get('/api/users',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.listAll)),
@@ -532,7 +547,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 updates: {"in":"body","name":"updates","required":true,"ref":"UpdateUserDto"},
         };
-        app.put('/users/:id',
+        app.put('/api/users/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.updateUser)),
@@ -563,7 +578,7 @@ export function RegisterRoutes(app: Router) {
         const argsAuthController_deleteUser: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/users/:id',
+        app.delete('/api/users/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.deleteUser)),
@@ -595,7 +610,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"VerifyBvnDto"},
         };
-        app.post('/users/:id/verify-bvn',
+        app.post('/api/users/:id/verify-bvn',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.verifyBvn)),
@@ -628,7 +643,7 @@ export function RegisterRoutes(app: Router) {
                 type: {"in":"query","name":"type","dataType":"union","subSchemas":[{"dataType":"enum","enums":["apartment"]},{"dataType":"enum","enums":["house"]},{"dataType":"enum","enums":["land"]},{"dataType":"enum","enums":["commercial"]}]},
                 status: {"in":"query","name":"status","dataType":"union","subSchemas":[{"dataType":"enum","enums":["available"]},{"dataType":"enum","enums":["under_contract"]},{"dataType":"enum","enums":["sold"]}]},
         };
-        app.get('/properties',
+        app.get('/api/properties',
             ...(fetchMiddlewares<RequestHandler>(PropertyController)),
             ...(fetchMiddlewares<RequestHandler>(PropertyController.prototype.getProperties)),
 
@@ -657,7 +672,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPropertyController_getPropertyListings: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/properties/listings',
+        app.get('/api/properties/listings',
             ...(fetchMiddlewares<RequestHandler>(PropertyController)),
             ...(fetchMiddlewares<RequestHandler>(PropertyController.prototype.getPropertyListings)),
 
@@ -687,8 +702,7 @@ export function RegisterRoutes(app: Router) {
         const argsPropertyController_getPropertyById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/properties/:id',
-            authenticateMiddleware([{"jwt":[]}]),
+        app.get('/api/properties/:id',
             ...(fetchMiddlewares<RequestHandler>(PropertyController)),
             ...(fetchMiddlewares<RequestHandler>(PropertyController.prototype.getPropertyById)),
 
@@ -718,7 +732,7 @@ export function RegisterRoutes(app: Router) {
         const argsPropertyController_getPropertyValuation: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/properties/:id/valuation',
+        app.get('/api/properties/:id/valuation',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PropertyController)),
             ...(fetchMiddlewares<RequestHandler>(PropertyController.prototype.getPropertyValuation)),
@@ -749,7 +763,7 @@ export function RegisterRoutes(app: Router) {
         const argsPropertyController_createProperty: Record<string, TsoaRoute.ParameterSchema> = {
                 property: {"in":"body","name":"property","required":true,"ref":"CreatePropertyDtoType"},
         };
-        app.post('/properties',
+        app.post('/api/properties',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PropertyController)),
             ...(fetchMiddlewares<RequestHandler>(PropertyController.prototype.createProperty)),
@@ -781,7 +795,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 updates: {"in":"body","name":"updates","required":true,"ref":"Partial_PropertyDto_"},
         };
-        app.put('/properties/:id',
+        app.put('/api/properties/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PropertyController)),
             ...(fetchMiddlewares<RequestHandler>(PropertyController.prototype.updateProperty)),
@@ -812,7 +826,7 @@ export function RegisterRoutes(app: Router) {
         const argsPropertyController_deleteProperty: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/properties/:id',
+        app.delete('/api/properties/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PropertyController)),
             ...(fetchMiddlewares<RequestHandler>(PropertyController.prototype.deleteProperty)),
@@ -844,7 +858,7 @@ export function RegisterRoutes(app: Router) {
                 creatorId: {"in":"query","name":"creatorId","dataType":"string"},
                 isPublic: {"in":"query","name":"isPublic","dataType":"boolean"},
         };
-        app.get('/pools',
+        app.get('/api/pools',
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPools)),
 
@@ -873,7 +887,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsPoolController_getPublicPools: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/pools/public',
+        app.get('/api/pools/public',
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPublicPools)),
 
@@ -904,7 +918,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/pools/:id',
+        app.get('/api/pools/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPoolById)),
@@ -936,7 +950,7 @@ export function RegisterRoutes(app: Router) {
                 pool: {"in":"body","name":"pool","required":true,"ref":"CreatePoolDto"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/pools',
+        app.post('/api/pools',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.createPool)),
@@ -967,7 +981,7 @@ export function RegisterRoutes(app: Router) {
         const argsPoolController_getInviteLink: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/pools/:id/invite',
+        app.get('/api/pools/:id/invite',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getInviteLink)),
@@ -999,7 +1013,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/pools/:id/join',
+        app.get('/api/pools/:id/join',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.joinPool)),
@@ -1032,7 +1046,7 @@ export function RegisterRoutes(app: Router) {
                 joinData: {"in":"body","name":"joinData","required":true,"ref":"JoinPoolDto"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.put('/pools/:id/join',
+        app.put('/api/pools/:id/join',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.updateJoinDetails)),
@@ -1063,7 +1077,7 @@ export function RegisterRoutes(app: Router) {
         const argsPoolController_getPoolDashboard: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/pools/:id/dashboard',
+        app.get('/api/pools/:id/dashboard',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPoolDashboard)),
@@ -1095,7 +1109,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/pools/:id/certificate',
+        app.get('/api/pools/:id/certificate',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPoolCertificate)),
@@ -1126,7 +1140,7 @@ export function RegisterRoutes(app: Router) {
         const argsPoolController_getPoolUsers: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/pools/:id/users',
+        app.get('/api/pools/:id/users',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.getPoolUsers)),
@@ -1159,7 +1173,7 @@ export function RegisterRoutes(app: Router) {
                 data: {"in":"body","name":"data","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"is_public":{"dataType":"boolean","required":true}}},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.put('/pools/:id/toggle-public',
+        app.put('/api/pools/:id/toggle-public',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.togglePublic)),
@@ -1191,7 +1205,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 updates: {"in":"body","name":"updates","required":true,"ref":"Partial_Pool_"},
         };
-        app.put('/pools/:id',
+        app.put('/api/pools/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.updatePool)),
@@ -1222,7 +1236,7 @@ export function RegisterRoutes(app: Router) {
         const argsPoolController_deletePool: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/pools/:id',
+        app.delete('/api/pools/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(PoolController)),
             ...(fetchMiddlewares<RequestHandler>(PoolController.prototype.deletePool)),
@@ -1253,7 +1267,7 @@ export function RegisterRoutes(app: Router) {
         const argsMilestoneController_getMilestones: Record<string, TsoaRoute.ParameterSchema> = {
                 poolId: {"in":"query","name":"poolId","dataType":"string"},
         };
-        app.get('/milestones',
+        app.get('/api/milestones',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController)),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController.prototype.getMilestones)),
@@ -1284,7 +1298,7 @@ export function RegisterRoutes(app: Router) {
         const argsMilestoneController_getMilestoneById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/milestones/:id',
+        app.get('/api/milestones/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController)),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController.prototype.getMilestoneById)),
@@ -1315,7 +1329,7 @@ export function RegisterRoutes(app: Router) {
         const argsMilestoneController_createMilestone: Record<string, TsoaRoute.ParameterSchema> = {
                 milestone: {"in":"body","name":"milestone","required":true,"ref":"CreateMilestoneDto"},
         };
-        app.post('/milestones',
+        app.post('/api/milestones',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController)),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController.prototype.createMilestone)),
@@ -1348,7 +1362,7 @@ export function RegisterRoutes(app: Router) {
                 vote: {"in":"body","name":"vote","required":true,"ref":"VoteMilestoneDto"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/milestones/:id/vote',
+        app.post('/api/milestones/:id/vote',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController)),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController.prototype.voteOnMilestone)),
@@ -1380,7 +1394,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 updates: {"in":"body","name":"updates","required":true,"ref":"Partial_MilestoneDto_"},
         };
-        app.put('/milestones/:id',
+        app.put('/api/milestones/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController)),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController.prototype.updateMilestone)),
@@ -1411,7 +1425,7 @@ export function RegisterRoutes(app: Router) {
         const argsMilestoneController_deleteMilestone: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/milestones/:id',
+        app.delete('/api/milestones/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController)),
             ...(fetchMiddlewares<RequestHandler>(MilestoneController.prototype.deleteMilestone)),
@@ -1443,7 +1457,7 @@ export function RegisterRoutes(app: Router) {
                 poolId: {"in":"query","name":"poolId","dataType":"string"},
                 userId: {"in":"query","name":"userId","dataType":"string"},
         };
-        app.get('/contributions',
+        app.get('/api/contributions',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ContributionController)),
             ...(fetchMiddlewares<RequestHandler>(ContributionController.prototype.getContributions)),
@@ -1474,7 +1488,7 @@ export function RegisterRoutes(app: Router) {
         const argsContributionController_getContributionById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/contributions/:id',
+        app.get('/api/contributions/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ContributionController)),
             ...(fetchMiddlewares<RequestHandler>(ContributionController.prototype.getContributionById)),
@@ -1506,7 +1520,7 @@ export function RegisterRoutes(app: Router) {
                 payment: {"in":"body","name":"payment","required":true,"ref":"PaymentDto"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/contributions/pay',
+        app.post('/api/contributions/pay',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ContributionController)),
             ...(fetchMiddlewares<RequestHandler>(ContributionController.prototype.processPayment)),
@@ -1538,7 +1552,7 @@ export function RegisterRoutes(app: Router) {
                 payment: {"in":"body","name":"payment","required":true,"ref":"InterswitchPaymentDto"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/contributions/verify',
+        app.post('/api/contributions/verify',
             ...(fetchMiddlewares<RequestHandler>(ContributionController)),
             ...(fetchMiddlewares<RequestHandler>(ContributionController.prototype.verifyContribution)),
 
@@ -1569,7 +1583,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 updates: {"in":"body","name":"updates","required":true,"ref":"Partial_ContributionDto_"},
         };
-        app.put('/contributions/:id',
+        app.put('/api/contributions/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ContributionController)),
             ...(fetchMiddlewares<RequestHandler>(ContributionController.prototype.updateContribution)),
@@ -1600,7 +1614,7 @@ export function RegisterRoutes(app: Router) {
         const argsContributionController_deleteContribution: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/contributions/:id',
+        app.delete('/api/contributions/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ContributionController)),
             ...(fetchMiddlewares<RequestHandler>(ContributionController.prototype.deleteContribution)),
@@ -1628,10 +1642,39 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsConfigController_getPaymentConfig: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/api/config/payment',
+            ...(fetchMiddlewares<RequestHandler>(ConfigController)),
+            ...(fetchMiddlewares<RequestHandler>(ConfigController.prototype.getPaymentConfig)),
+
+            async function ConfigController_getPaymentConfig(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsConfigController_getPaymentConfig, request, response });
+
+                const controller = new ConfigController();
+
+              await templateService.apiHandler({
+                methodName: 'getPaymentConfig',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_register: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"body","name":"req","required":true,"ref":"RegisterUserDto"},
         };
-        app.post('/auth/register',
+        app.post('/api/auth/register',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.register)),
 
@@ -1661,7 +1704,7 @@ export function RegisterRoutes(app: Router) {
         const argsUserController_login: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"body","name":"req","required":true,"ref":"LoginUserDto"},
         };
-        app.post('/auth/login',
+        app.post('/api/auth/login',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.login)),
 
@@ -1691,7 +1734,7 @@ export function RegisterRoutes(app: Router) {
         const argsUserController_refresh: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"body","name":"req","required":true,"ref":"refreshTokenDto"},
         };
-        app.post('/auth/refresh',
+        app.post('/api/auth/refresh',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.refresh)),
 
@@ -1721,7 +1764,7 @@ export function RegisterRoutes(app: Router) {
         const argsUserController_logout: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"query","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/auth/logout',
+        app.delete('/api/auth/logout',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.logout)),
 

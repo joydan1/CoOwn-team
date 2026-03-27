@@ -21,6 +21,21 @@
   <pre id="output" style="white-space: pre-wrap; background:#f4f4f4; padding:10px; border:1px solid #ccc; margin-top:20px; height:250px; overflow:auto;"></pre>
 
   <script>
+    // Read query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const poolId = urlParams.get('poolId') || '3085a6ba-6604-4ab2-bda9-a61c304d18a5';
+    const userId = urlParams.get('userId') || '65c49bdc-7a4a-41d2-8239-03c95c1efce1';
+    const contributionAmount = parseFloat(urlParams.get('amount')) || 100;
+    const jwt = urlParams.get('jwt') || '';
+
+    // Set inputs
+    document.getElementById('merchant_code').value = 'MX275869';
+    document.getElementById('pay_item_id').value = 'Default_Payable_MX275869';
+    document.getElementById('amount').value = (contributionAmount * 100).toString(); // kobo
+    document.getElementById('currency').value = '566';
+    document.getElementById('cust_email').value = urlParams.get('email') || 'salawu.oj@gmail.com';
+    document.getElementById('jwt').value = jwt;
+
     function out(message) {
       var el = document.getElementById('output');
       el.textContent += message + '\n';
@@ -36,7 +51,7 @@
 
       out('Calling backend /contributions/verify with payload: ' + JSON.stringify(body));
 
-      fetch('/contributions/verify', {
+      fetch('/api/contributions/verify', {  // Note: /api/ prefix
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -47,9 +62,16 @@
       .then(function(r) { return r.json().then(function(json) { return {status: r.status, json: json}; }); })
       .then(function(result) {
         out('Backend response status ' + result.status + ': ' + JSON.stringify(result.json));
+        if (result.status === 200) {
+          alert('Payment Successful! You have paid ₦' + (body.amount / 100));
+          window.location.href = '/pools/' + poolId;  // Redirect to pool dashboard
+        } else {
+          alert('Payment verification failed: ' + JSON.stringify(result.json));
+        }
       })
       .catch(function(err) {
         out('Backend request failed: ' + err);
+        alert('Payment verification failed: ' + err);
       });
     }
 
@@ -59,7 +81,7 @@
       var amount = Number(document.getElementById('amount').value);
       var currency = Number(document.getElementById('currency').value);
       var cust_email = document.getElementById('cust_email').value;
-      var jwt = document.getElementById('jwt').value.trim();
+      var jwt_val = document.getElementById('jwt').value.trim();
       var txn_ref = 'test_' + Date.now();
 
       out('Launching Interswitch checkout...');
@@ -72,21 +94,26 @@
         currency: currency,
         cust_email: cust_email,
         mode: 'TEST',
-        site_redirect_url: window.location.origin + '/interswitch-test.html',
+        site_redirect_url: window.location.origin + '/interswitch-test.html?poolId=' + poolId + '&userId=' + userId + '&amount=' + contributionAmount + '&jwt=' + jwt_val,
         onComplete: function(response) {
           var transactionRef = response.txnref || response.payRef || txn_ref;
 
           onPaymentComplete(response, {
-            pool_id: '3085a6ba-6604-4ab2-bda9-a61c304d18a5',
-            user_id: '65c49bdc-7a4a-41d2-8239-03c95c1efce1',
+            pool_id: poolId,
+            user_id: userId,
             merchant_code: merchant_code,
             amount: amount,
             currency: 'NGN',
             payment_ref: transactionRef
-          }, jwt);
+          }, jwt_val);
         }
       });
     });
+
+    // Auto-start if all params are present
+    if (poolId && userId && contributionAmount && jwt) {
+      document.getElementById('start').click();
+    }
   </script>
 </body>
 </html>

@@ -24,17 +24,35 @@ let UserService = class UserService {
         this.userRepository = userRepository;
     }
     async registerUser(data) {
-        const { firstName, lastName, email, password } = data;
+        const { firstName, lastName, email, phone, password, bvn } = data;
         const existingUser = await this.userRepository.findByEmail(email);
         if (existingUser) {
             throw new AppError_1.AppError("User already exists");
         }
         const passwordHash = await (0, util_1.hashString)(password);
+        // For now, we'll accept BVN as-is without validation
+        // In production, you would validate against Interswitch API
         const savedData = {
-            firstName, lastName, email, password: passwordHash
+            firstName, lastName, email, password: passwordHash, phone
         };
+        // Store BVN if provided (as plain text for testing, should be hashed in production)
+        if (bvn) {
+            savedData.bvn_hash = bvn; // In production, hash this: await hashString(bvn)
+        }
         const user = await this.userRepository.create(savedData);
-        return (0, util_1.cleanedUser)(user);
+        // Generate tokens for newly registered user (auto-login)
+        const accessToken = await (0, util_1.generateAccessToken)(email, user.id);
+        const refreshToken = await (0, util_1.generateRefreshToken)(email, user.id);
+        // Store refresh token in user record
+        await this.userRepository.updateByEmail(email, { token: refreshToken });
+        return {
+            message: "Registration Successful",
+            user: (0, util_1.cleanedUser)(user),
+            token: {
+                accessToken,
+                refreshToken
+            }
+        };
     }
     async loginUser(req) {
         const { email, password } = req;

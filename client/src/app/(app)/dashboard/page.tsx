@@ -60,18 +60,22 @@ export default function DashboardPage() {
         ownershipPct: 0
       }))
       
-      // Fetch contributions for each pool
-      for (const pool of formattedPools) {
-        try {
-          const contributions = await contributionsApi.list()
-          const myContributions = contributions.data.filter((c: any) => 
-            c.pool_id === pool.id && c.user_id === user?.id
+      // Fetch contributions for dashboard summary
+      try {
+        const contributions = await contributionsApi.list()
+        const contributionsData = contributions.data || []
+        
+        // Aggregate contributions by pool
+        for (const pool of formattedPools) {
+          const myContributions = contributionsData.filter((c: any) => 
+            (c.pool_id === pool.id || c.poolId === pool.id) && 
+            (c.user_id === user?.id || c.userId === user?.id)
           )
-          pool.myContribution = myContributions.reduce((sum: number, c: any) => sum + c.amount, 0)
+          pool.myContribution = myContributions.reduce((sum: number, c: any) => sum + (c.amount || 0), 0)
           pool.ownershipPct = pool.targetAmount > 0 ? (pool.myContribution / pool.targetAmount) * 100 : 0
-        } catch (err) {
-          console.error("Failed to fetch contributions for pool", pool.id)
         }
+      } catch (err) {
+        console.error("Failed to fetch contributions:", err)
       }
       
       setPools(formattedPools)

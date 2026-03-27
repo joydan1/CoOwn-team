@@ -1,90 +1,163 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
-import { contributionsApi } from "@/lib/api"
+import { api, contributionsApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
 
+// Interswitch configuration - will be fetched from backend
+let MERCHANT_CODE = "MX275869"
+let PAY_ITEM_ID = "Default_Payable_MX275869"
+const CURRENCY_NUMERIC = 566 // NGN
+
 export default function ContributePage() {
+  // State to track if Interswitch script is loaded
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+    // Dynamically load Interswitch script
+    useEffect(() => {
+      if (typeof window === "undefined") return;
+      if ((window as any).webpayCheckout) {
+        setScriptLoaded(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://newwebpay.qa.interswitchng.com/inline-checkout.js";
+      script.async = true;
+      script.onload = () => setScriptLoaded(true);
+      script.onerror = () => setScriptLoaded(false);
+      document.body.appendChild(script);
+      return () => {
+        document.body.removeChild(script);
+      };
+    }, []);
   const router = useRouter()
   const params = useParams()
   const poolId = params.id as string
-  const { user } = useAuthStore()
+  const { user, token } = useAuthStore()
 
   const [amount, setAmount] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [configLoaded, setConfigLoaded] = useState(false)
+
+
+  // Fetch merchant configuration from backend
+  useEffect(() => {
+    const fetchPaymentConfig = async () => {
+      try {
+        console.log("📋 Fetching payment configuration from backend...")
+        const response = await api.get("/config/payment")
+        const config = response.data
+
+        MERCHANT_CODE = config.merchantCode
+        PAY_ITEM_ID = config.payItemId
+        console.log("✅ Payment config loaded:", { merchantCode: MERCHANT_CODE, payItemId: PAY_ITEM_ID })
+        setConfigLoaded(true)
+      } catch (err) {
+        console.warn("⚠️ Could not fetch payment config:", err)
+        setConfigLoaded(true) // Allow to proceed with defaults
+      }
+    }
+
+    fetchPaymentConfig()
+  }, [])
+
+  const handlePaymentComplete = async (response: any, paymentData: any) => {
+    console.log('💳 Interswitch callback response:', response)
+
+    if (response.resp !== '00') {
+      setError(`Payment failed: ${response.resp}`)
+      setLoading(false)
+      return
+    }
+
+    // Use txn_ref/payment_ref from Interswitch response
+    const transactionRef = response.txnref || response.payRef || paymentData.payment_ref;
+    const verifyPayload = {
+      ...paymentData,
+      payment_ref: transactionRef,
+    };
+
+    try {
+      console.log('📤 Verifying payment with backend...')
+      const verifyResponse = await contributionsApi.verify(verifyPayload)
+      console.log('✅ Backend verification response:', verifyResponse.data)
+      setLoading(false)
+      alert(`Payment successful! You have contributed ₦${paymentData.amount / 100}`)
+      router.push(`/pools/${poolId}`)
+    } catch (err: any) {
+      console.error('❌ Verification error:', err)
+      setError(`Payment verification failed: ${err.response?.data?.message || err.message}`)
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  const contributionAmount = parseFloat(amount);
-  if (isNaN(contributionAmount) || contributionAmount <= 0) {
-    setError("Please enter a valid amount");
-    return;
-  }
+    e.preventDefault()
 
-  setLoading(true);
-  setError("");
+    const contributionAmount = parseFloat(amount)
+    if (isNaN(contributionAmount) || contributionAmount <= 0) {
+      setError("Please enter a valid amount")
+      return
+    }
 
-  try {
-    const response = await contributionsApi.pay({
-      pool_id: poolId,
-      user_id: user?.id,
-      amount: contributionAmount,
-      currency: "NGN",
-      paymentMethod: "card"
-    });
+    if (!user?.id) {
+      setError("User ID not found")
+      return
+    }
 
-    const paymentRef = response.data.payment_ref || response.data.id || `COOWN-${Date.now()}`;
+    setLoading(true)
+    setError("")
 
-    console.log("✅ Payment ref:", paymentRef);
+        try {
+          // Prepare payment data for Interswitch
+          const amountInKobo = Math.floor(contributionAmount * 100)
 
-    // Small delay to ensure script is ready
-    setTimeout(() => {
-      if (typeof (window as any).webpayCheckout === "function") {
-        const paymentData = {
-          merchantCode: "MX275869",
-          payItemID: "Default_Payable_MX275869",
-          amount: Math.round(contributionAmount * 100).toString(),
-          currencyCode: "566",
-          customerEmail: user?.email || "customer@example.com",
-          transactionReference: paymentRef,
-          siteRedirectURL: `${window.location.origin}/payment/callback?poolId=${poolId}`,
-          mode: "TEST"
-        };
+          // Generate txn_ref (restore previous logic)
+          const txnRef = `COOWN-${poolId}-${user.id}-${Date.now()}`
 
-        console.log("🚀 Calling webpayCheckout with:", paymentData);
-
-        (window as any).webpayCheckout(paymentData, {
-          onComplete: (response: any) => {
-            console.log("✅ Payment Completed:", response);
-            alert(`Payment Successful! Reference: ${response?.transactionReference || paymentRef}`);
-            router.push(`/pools/${poolId}`);
-          },
-          onClose: () => {
-            console.log("Modal closed by user");
-            setLoading(false);
-          },
-          onError: (err: any) => {
-            console.error("❌ Payment Error:", err);
-            setError("Payment failed or cancelled.");
-            setLoading(false);
+          const paymentData = {
+            pool_id: poolId,
+            user_id: user.id,
+            merchant_code: MERCHANT_CODE,
+            amount: amountInKobo,
+            currency: 'NGN',
+            payment_ref: txnRef // Will be set after payment
           }
-        });
-      } else {
-        console.error("❌ webpayCheckout function NOT found on window");
-        setError("Interswitch not ready. Please refresh the page and try again.");
-        setLoading(false);
-      }
-    }, 800); // 800ms delay helps in Next.js dev
 
-  } catch (err: any) {
-    console.error("Backend error:", err);
-    setError(err.response?.data?.message || "Failed to start payment");
-    setLoading(false);
+          // Wait for Interswitch script to be loaded
+          if (!scriptLoaded || typeof (window as any).webpayCheckout !== 'function') {
+            setLoading(false);
+            setError('Interswitch checkout script not loaded. Please try again in a moment.');
+            return;
+          }
+
+          (window as any).webpayCheckout({
+            merchant_code: MERCHANT_CODE,
+            pay_item_id: PAY_ITEM_ID,
+            txn_ref: txnRef, // Restore txn_ref logic
+            amount: amountInKobo,
+            currency: CURRENCY_NUMERIC,
+            cust_email: user.email,
+            mode: 'TEST',
+            site_redirect_url: `${window.location.origin}/pools/${poolId}/contribute`,
+            onComplete: function(response: any) {
+              console.log('✅ Payment complete callback:', response)
+              handlePaymentComplete(response, paymentData)
+            },
+            onError: function(error: any) {
+              console.error('❌ Interswitch error:', error)
+              setError(`Payment error: ${error?.message || JSON.stringify(error)}`)
+              setLoading(false)
+            }
+          });
+
+        } catch (err: any) {
+          console.error("❌ Payment error:", err)
+          setError(err.response?.data?.message || err.message || "Failed to start payment")
+          setLoading(false)
+        }
   }
-};
 
   return (
     <main style={{ minHeight: "100vh", background: "#F5F5F0", padding: "40px 24px" }}>
@@ -130,31 +203,28 @@ export default function ContributePage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !configLoaded}
             style={{ 
               width: "100%", 
               padding: "16px", 
-              background: loading ? "#9CA3AF" : "#00C853", 
+              background: (loading || !configLoaded) ? "#9CA3AF" : "#00C853", 
               color: "#0D1F0F", 
               border: "none", 
               borderRadius: "8px", 
               fontWeight: 600, 
               fontSize: "16px",
-              cursor: loading ? "not-allowed" : "pointer"
+              cursor: loading || !configLoaded ? "not-allowed" : "pointer"
             }}
           >
-            {loading ? "Processing..." : "Continue to Pay"}
+            {loading
+              ? "Processing..."
+              : !configLoaded
+                ? "Loading Config..."
+                : !scriptLoaded
+                  ? "Loading Payment..."
+                  : "Continue to Pay"}
           </button>
         </form>
-        <button
-  onClick={() => {
-    console.log("webpayCheckout exists?", typeof (window as any).webpayCheckout);
-    alert("webpayCheckout function exists: " + (typeof (window as any).webpayCheckout === "function"));
-  }}
-  style={{ marginTop: "16px", padding: "10px", background: "#ddd" }}
->
-  Check if Interswitch is Loaded
-</button>
       </div>
     </main>
   )

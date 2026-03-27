@@ -1544,24 +1544,27 @@
                 "type": "object",
                 "description": "Make all properties in T optional"
             },
-            "RegisterUserDto": {
+            "PaymentConfigDto": {
                 "properties": {
-                    "firstName": {
+                    "merchantCode": {
                         "type": "string"
                     },
-                    "lastName": {
+                    "payItemId": {
                         "type": "string"
                     },
-                    "email": {
-                        "type": "string"
+                    "currencyCode": {
+                        "type": "number",
+                        "format": "double"
                     },
-                    "password": {
+                    "environment": {
                         "type": "string"
                     }
                 },
                 "required": [
-                    "email",
-                    "password"
+                    "merchantCode",
+                    "payItemId",
+                    "currencyCode",
+                    "environment"
                 ],
                 "type": "object",
                 "additionalProperties": false
@@ -1590,6 +1593,34 @@
                         "$ref": "#/components/schemas/Partial_User_"
                     }
                 },
+                "type": "object",
+                "additionalProperties": false
+            },
+            "RegisterUserDto": {
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "bvn": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
                 "type": "object",
                 "additionalProperties": false
             },
@@ -2240,11 +2271,7 @@
                 "tags": [
                     "Properties"
                 ],
-                "security": [
-                    {
-                        "jwt": []
-                    }
-                ],
+                "security": [],
                 "parameters": [
                     {
                         "in": "path",
@@ -4207,6 +4234,29 @@
                 }
             }
         },
+        "/config/payment": {
+            "get": {
+                "operationId": "GetPaymentConfig",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentConfigDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Get payment configuration for Interswitch payment gateway",
+                "tags": [
+                    "Configuration"
+                ],
+                "security": [],
+                "parameters": []
+            }
+        },
         "/auth/register": {
             "post": {
                 "operationId": "Register",
@@ -4216,7 +4266,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Partial_User_"
+                                    "$ref": "#/components/schemas/LoginUserResponseDto"
                                 },
                                 "examples": {
                                     "Example 1": {
@@ -4236,20 +4286,27 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Partial_User_"
+                                    "$ref": "#/components/schemas/LoginUserResponseDto"
                                 },
                                 "examples": {
                                     "Example 1": {
                                         "value": {
-                                            "id": "550e8400-e29b-41d4-a716-446655440000",
-                                            "firstName": "John",
-                                            "lastName": "Doe",
-                                            "email": "john.doe@example.com",
-                                            "verified": false,
-                                            "role": "user",
-                                            "isActive": true,
-                                            "created_at": "2024-01-15T10:30:00.000Z",
-                                            "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            "message": "Registration Successful",
+                                            "user": {
+                                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                                "firstName": "John",
+                                                "lastName": "Doe",
+                                                "email": "john.doe@example.com",
+                                                "verified": false,
+                                                "role": "user",
+                                                "isActive": true,
+                                                "created_at": "2024-01-15T10:30:00.000Z",
+                                                "updatedAt": "2024-01-15T10:30:00.000Z"
+                                            },
+                                            "token": {
+                                                "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                                                "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                            }
                                         }
                                     }
                                 }

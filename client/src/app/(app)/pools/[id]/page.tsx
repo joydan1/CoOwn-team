@@ -111,17 +111,37 @@ console.log("Is creator?", user?.id === transformedPool.creatorId)
         console.log("Members response:", membersRes)
         const membersData = membersRes.data || []
         
-        const transformedMembers: Member[] = membersData.map((member: any) => ({
-          id: member.id,
-          userId: member.userId || member.user_id,
-          firstName: member.firstName || member.first_name || "User",
-          lastName: member.lastName || member.last_name || "",
-          email: member.email,
-          paidAmount: member.paidAmount || member.paid_amount || 0,
-          ownershipPct: member.ownershipPct || member.ownership_pct || 0,
-          joinedAt: member.joinedAt || member.joined_at || new Date().toISOString(),
-          isCreator: member.isCreator || member.is_creator || false
-        }))
+        const transformedMembers: Member[] = membersData.map((member: any) => {
+          // Handle both user object and user_id field
+          let firstName = ""
+          let lastName = ""
+          let email = ""
+          let userId = ""
+          
+          if (member.user) {
+            firstName = member.user.firstName || member.user.first_name || ""
+            lastName = member.user.lastName || member.user.last_name || ""
+            email = member.user.email || ""
+            userId = member.user.id || ""
+          } else {
+            firstName = member.firstName || member.first_name || ""
+            lastName = member.lastName || member.last_name || ""
+            email = member.email || ""
+            userId = member.userId || member.user_id || ""
+          }
+          
+          return {
+            id: member.id,
+            userId: userId,
+            firstName: firstName || "User",
+            lastName: lastName,
+            email: email,
+            paidAmount: member.paid_amount || member.paidAmount || 0,
+            ownershipPct: member.ownership_pct || member.ownershipPct || 0,
+            joinedAt: member.joined_at || member.joinedAt || new Date().toISOString(),
+            isCreator: member.is_creator || member.isCreator || false
+          }
+        })
         setMembers(transformedMembers)
       } catch (membersErr) {
         console.error("Failed to fetch members:", membersErr)
@@ -185,7 +205,7 @@ console.log("Is creator?", user?.id === transformedPool.creatorId)
 
   const handleVote = async (milestoneId: string) => {
     try {
-      await milestonesApi.vote(milestoneId)
+      await milestonesApi.vote(milestoneId, { approve: true })
       fetchPoolData()
     } catch (err) {
       console.error("Failed to vote:", err)
@@ -367,6 +387,24 @@ console.log("Is creator?", user?.id === transformedPool.creatorId)
               >
                 Invite
               </button>
+
+              {isCreator && (
+                <button
+                  onClick={() => router.push(`/pools/${poolId}/edit`)}
+                  style={{
+                    padding: "10px 20px",
+                    background: "#fff",
+                    border: "1px solid #E5E5E0",
+                    borderRadius: "999px",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    color: "#0D1F0F",
+                    cursor: "pointer"
+                  }}
+                >
+                  Edit Pool
+                </button>
+              )}
               
               {pool.status !== "completed" && (
                 <button
@@ -607,7 +645,9 @@ console.log("Is creator?", user?.id === transformedPool.creatorId)
               <div style={{ textAlign: "center", padding: "60px 20px", background: "#fff", borderRadius: "16px" }}>
                 <p style={{ color: "#5C6B5E" }}>No milestones created yet</p>
                 {isCreator && (
-                  <button style={{
+                  <button
+                    onClick={() => router.push(`/milestones/create?poolId=${poolId}`)}
+                    style={{
                     marginTop: "16px",
                     padding: "10px 20px",
                     background: "#00C853",
@@ -621,6 +661,25 @@ console.log("Is creator?", user?.id === transformedPool.creatorId)
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {isCreator && (
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <button
+                      onClick={() => router.push(`/milestones/create?poolId=${poolId}`)}
+                      style={{
+                        padding: "9px 16px",
+                        background: "#00C853",
+                        border: "none",
+                        borderRadius: "999px",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: "#0D1F0F",
+                      }}
+                    >
+                      + New Milestone
+                    </button>
+                  </div>
+                )}
                 {milestones.map(milestone => (
                   <div key={milestone.id} style={{
                     background: "#fff",
@@ -646,22 +705,41 @@ console.log("Is creator?", user?.id === transformedPool.creatorId)
                       <span style={{ fontSize: "13px", color: "#8A9E8C" }}>
                         {milestone.votesReceived}/{milestone.votesRequired} votes
                       </span>
-                      {milestone.status === "pending" && milestone.votesReceived === 0 && (
-                        <button
-                          onClick={() => handleVote(milestone.id)}
-                          style={{
-                            padding: "8px 20px",
-                            background: "#00C853",
-                            border: "none",
-                            borderRadius: "999px",
-                            fontSize: "13px",
-                            fontWeight: 600,
-                            cursor: "pointer"
-                          }}
-                        >
-                          Vote
-                        </button>
-                      )}
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        {milestone.status === "pending" && milestone.votesReceived === 0 && (
+                          <button
+                            onClick={() => handleVote(milestone.id)}
+                            style={{
+                              padding: "8px 20px",
+                              background: "#00C853",
+                              border: "none",
+                              borderRadius: "999px",
+                              fontSize: "13px",
+                              fontWeight: 600,
+                              cursor: "pointer"
+                            }}
+                          >
+                            Vote
+                          </button>
+                        )}
+                        {isCreator && (
+                          <button
+                            onClick={() => router.push(`/milestones/${milestone.id}/edit`)}
+                            style={{
+                              padding: "8px 14px",
+                              background: "#fff",
+                              border: "1px solid #00C853",
+                              borderRadius: "999px",
+                              fontSize: "13px",
+                              fontWeight: 600,
+                              color: "#00C853",
+                              cursor: "pointer"
+                            }}
+                          >
+                            Edit
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

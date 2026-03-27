@@ -69,7 +69,10 @@ export default function PropertyDetailPage() {
       // Fetch pools for this property
       const poolsRes = await poolsApi.list()
       const propertyPools = (poolsRes.data || []).filter(
-        (pool: any) => pool.propertyId === propertyId
+        (pool: any) => {
+          const poolPropertyId = pool.property?.id || pool.property_id || pool.propertyId
+          return poolPropertyId === propertyId
+        }
       )
       setPools(propertyPools)
       
@@ -221,24 +224,41 @@ export default function PropertyDetailPage() {
                 {fmt(property.price)}
               </p>
             </div>
-            <button
-              onClick={handleStartPool}
-              style={{
-                padding: "14px 32px",
-                background: "#00C853",
-                color: "#0D1F0F",
-                border: "none",
-                borderRadius: "999px",
-                fontSize: "16px",
-                fontWeight: 700,
-                cursor: "pointer",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#00E676"; e.currentTarget.style.transform = "translateY(-2px)" }}
-              onMouseLeave={e => { e.currentTarget.style.background = "#00C853"; e.currentTarget.style.transform = "translateY(0)" }}
-            >
-              Start a Pool
-            </button>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <button
+                onClick={handleStartPool}
+                style={{
+                  padding: "14px 32px",
+                  background: "#00C853",
+                  color: "#0D1F0F",
+                  border: "none",
+                  borderRadius: "999px",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "#00E676"; e.currentTarget.style.transform = "translateY(-2px)" }}
+                onMouseLeave={e => { e.currentTarget.style.background = "#00C853"; e.currentTarget.style.transform = "translateY(0)" }}
+              >
+                Start a Pool
+              </button>
+              <button
+                onClick={() => router.push(`/properties/${propertyId}/edit`)}
+                style={{
+                  padding: "12px 20px",
+                  background: "#fff",
+                  color: "#0D1F0F",
+                  border: "1px solid #E5E5E0",
+                  borderRadius: "999px",
+                  fontSize: "15px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Edit Property
+              </button>
+            </div>
           </div>
         </div>
 

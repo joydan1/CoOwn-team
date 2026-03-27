@@ -18,8 +18,8 @@ export default class UserService {
     ) { }
 
 
-    public async registerUser(data: RegisterUserDto): Promise<Partial<User>> {
-        const { firstName, lastName, email, password } = data;
+    public async registerUser(data: RegisterUserDto): Promise<LoginUserResponseDto> {
+        const { firstName, lastName, email, phone, password, bvn } = data;
 
         const existingUser = await this.userRepository.findByEmail(email);
 
@@ -29,13 +29,34 @@ export default class UserService {
 
         const passwordHash = await hashString(password);
 
-        const savedData = {
-            firstName, lastName, email, password: passwordHash
+        // For now, we'll accept BVN as-is without validation
+        // In production, you would validate against Interswitch API
+        const savedData: any = {
+            firstName, lastName, email, password: passwordHash, phone
+        };
+
+        // Store BVN if provided (as plain text for testing, should be hashed in production)
+        if (bvn) {
+            savedData.bvn_hash = bvn; // In production, hash this: await hashString(bvn)
         }
+
         const user = await this.userRepository.create(savedData);
 
+        // Generate tokens for newly registered user (auto-login)
+        const accessToken = await generateAccessToken(email, user.id);
+        const refreshToken = await generateRefreshToken(email, user.id);
 
-        return cleanedUser(user);
+        // Store refresh token in user record
+        await this.userRepository.updateByEmail(email, { token: refreshToken });
+
+        return {
+            message: "Registration Successful",
+            user: cleanedUser(user),
+            token: {
+                accessToken,
+                refreshToken
+            }
+        } as LoginUserResponseDto;
     }
 
 

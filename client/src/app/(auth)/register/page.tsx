@@ -153,13 +153,16 @@ export default function RegisterPage() {
         email: form.email,
         phone: form.phone,
         password: form.password,
+        bvn: form.bvn,
       })
-      const { user, token, accessToken, refreshToken } = res.data
-      const finalToken = token ?? accessToken
-      if (!finalToken) throw new Error("No token received")
+      const { user, token } = res.data
+      const accessToken = token?.accessToken
+      const refreshToken = token?.refreshToken
+      
+      if (!accessToken) throw new Error("No token received")
 
-      useAuthStore.getState().setAuth(user, finalToken, refreshToken)
-      router.push("/listings")
+      useAuthStore.getState().setAuth(user, accessToken, refreshToken)
+      router.push("/login")
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       setError(msg ?? "Something went wrong. Please try again.")

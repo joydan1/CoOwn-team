@@ -24,6 +24,7 @@
     }
   },
   "routes": {
+    "basePath": "/api",
     "routesDir": "src/swagger/routes",
     "middleware": "express",
     "authenticationModule": "./src/middlewares/authentication",

@@ -115,12 +115,22 @@ export default function LoginPage() {
       email: form.email, 
       password: form.password 
     })
+
+    console.log('📝 Login response:', res.data)
     
-    console.log("Login response:", res.data)
-    
-    const { user, token, accessToken, refreshToken } = res.data
-    const finalToken = token ?? accessToken
+    const { user, token } = res.data
+    const accessToken = token?.accessToken ?? res.data?.accessToken
+    const refreshToken = token?.refreshToken ?? res.data?.refreshToken
+    const finalToken = accessToken
+
     if (!finalToken) throw new Error("No token received")
+    if (!refreshToken) throw new Error("No refresh token received")
+
+    console.log('🔐 Storing tokens:', {
+      accessTokenLength: finalToken.length,
+      refreshTokenLength: refreshToken.length,
+      userEmail: user?.email
+    })
 
     useAuthStore.getState().setAuth(user, finalToken, refreshToken)
     router.push("/listings")
@@ -129,16 +139,7 @@ export default function LoginPage() {
     console.error("Error response data:", err.response?.data)
     console.error("Error status:", err.response?.status)
     console.error("Error headers:", err.response?.headers)
-    // After setAuth
-console.log("=== TOKEN DEBUG ===")
-const stored = localStorage.getItem('coown-auth')
-console.log("Raw stored data:", stored)
-if (stored) {
-  const parsed = JSON.parse(stored)
-  console.log("Parsed state:", parsed.state)
-  console.log("Token in storage:", parsed.state?.token)
-}
-    
+
     const msg = err.response?.data?.message || err.response?.data?.error || "Invalid email or password."
     setError(msg)
     triggerShake()

@@ -31,9 +31,19 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterUserDto.prototype, "email", void 0);
 __decorate([
+    (0, class_validator_1.IsString)({ message: "Phone must be a string" }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], RegisterUserDto.prototype, "phone", void 0);
+__decorate([
     (0, class_validator_1.IsStrongPassword)({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 }, { message: "Password should be a minimum of 8 characters, with at least 1 uppercase, 1 lowercase, 1 number and 1 special character" }),
     __metadata("design:type", String)
 ], RegisterUserDto.prototype, "password", void 0);
+__decorate([
+    (0, class_validator_1.IsString)({ message: "BVN must be a string" }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], RegisterUserDto.prototype, "bvn", void 0);
 class RegisterUserResponseDto {
 }
 exports.RegisterUserResponseDto = RegisterUserResponseDto;

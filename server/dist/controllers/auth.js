@@ -60,8 +60,8 @@ let UserController = class UserController extends tsoa_1.Controller {
     }
     /** @summary Register a new user @description Create a new user account with email and password */
     async register(req) {
-        const user = await this.userService.registerUser(req);
-        return user;
+        const result = await this.userService.registerUser(req);
+        return result;
     }
     /** @summary User login @description Authenticate user with email and password, returns JWT tokens */
     async login(req) {
@@ -88,15 +88,22 @@ __decorate([
         password: "SecurePass123!"
     }),
     (0, tsoa_1.Response)(201, "User registered successfully", {
-        id: "550e8400-e29b-41d4-a716-446655440000",
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@example.com",
-        verified: false,
-        role: "user",
-        isActive: true,
-        created_at: new Date("2024-01-15T10:30:00Z"),
-        updatedAt: new Date("2024-01-15T10:30:00Z")
+        message: "Registration Successful",
+        user: {
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            firstName: "John",
+            lastName: "Doe",
+            email: "john.doe@example.com",
+            verified: false,
+            role: "user",
+            isActive: true,
+            created_at: new Date("2024-01-15T10:30:00Z"),
+            updatedAt: new Date("2024-01-15T10:30:00Z")
+        },
+        token: {
+            accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
     }),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),

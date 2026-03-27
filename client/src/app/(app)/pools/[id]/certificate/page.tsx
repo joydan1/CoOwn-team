@@ -54,15 +54,52 @@ export default function CertificatePage() {
       // Fetch pool details
       const poolRes = await poolsApi.getOne(poolId)
       const poolData = poolRes.data
-      setPool(poolData)
+      const transformedPool: Pool = {
+        id: poolData.id,
+        name: poolData.name,
+        propertyId: poolData.property?.id || poolData.property_id,
+        propertyTitle: poolData.property?.title || poolData.property_title || "Property",
+        propertyLocation: poolData.property?.location || poolData.property_location || "Location",
+        propertyPrice: poolData.property?.price || poolData.property_price || 0,
+        targetAmount: parseFloat(poolData.target_amount || poolData.targetAmount || "0"),
+        raisedAmount: parseFloat(poolData.raised_amount || poolData.raisedAmount || "0"),
+        status: poolData.status || "open",
+        completedAt: poolData.completed_at || poolData.completedAt
+      }
+      setPool(transformedPool)
       
       // Fetch pool members
       const membersRes = await poolsApi.getMembers(poolId)
       const membersData = membersRes.data || []
-      setMembers(membersData)
+      
+      const transformedMembers: Member[] = membersData.map((member: any) => {
+        let firstName = ""
+        let lastName = ""
+        let userId = ""
+        
+        if (member.user) {
+          firstName = member.user.firstName || member.user.first_name || ""
+          lastName = member.user.lastName || member.user.last_name || ""
+          userId = member.user.id || ""
+        } else {
+          firstName = member.firstName || member.first_name || ""
+          lastName = member.lastName || member.last_name || ""
+          userId = member.userId || member.user_id || ""
+        }
+        
+        return {
+          id: member.id,
+          userId: userId,
+          firstName: firstName || "User",
+          lastName: lastName,
+          paidAmount: member.paid_amount || member.paidAmount || 0,
+          ownershipPct: member.ownership_pct || member.ownershipPct || 0
+        }
+      })
+      setMembers(transformedMembers)
       
       // Find current user in members
-      const currentUserData = membersData.find((m: Member) => m.userId === user?.id)
+      const currentUserData = transformedMembers.find((m: Member) => m.userId === user?.id)
       setCurrentUser(currentUserData || null)
       
     } catch (err: any) {

@@ -18,20 +18,24 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       isAuthenticated: false,
       setAuth: (user, token, refreshToken = null) => {
-        console.log('Setting auth - token:', token);
+        console.log('🔐 [STORE] Setting auth - token length:', token?.length, 'starts with:', token?.substring(0, 30) + '...');
         set({ 
           user, 
           token, 
           refreshToken: refreshToken !== undefined ? refreshToken : null,
           isAuthenticated: true 
         });
+        console.log('✅ [STORE] Auth set and persisted');
       },
-      logout: () => set({ 
-        user: null, 
-        token: null, 
-        refreshToken: null, 
-        isAuthenticated: false 
-      }),
+      logout: () => {
+        console.log('🔐 [STORE] Logging out');
+        set({ 
+          user: null, 
+          token: null, 
+          refreshToken: null, 
+          isAuthenticated: false 
+        });
+      },
     }),
     {
       name: 'coown-auth',

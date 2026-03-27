@@ -73,8 +73,41 @@ export default class ContributionService {
 
         const contributionAmount = Number(data.amount) / 100; // convert kobo to Naira for pool
 
-        // skip strict currency if unavailable from response
-        if (data.currency && verified.CurrencyCode && data.currency.toUpperCase() !== verified.CurrencyCode.toString().toUpperCase()) {
+        // Interswitch may return CurrencyCode as ISO string (e.g. "NGN") or numeric minor code (e.g. 566).
+        // Normalize both before comparing so verification doesn't fail unnecessarily.
+        const normalizeCurrency = (value: unknown): string | null => {
+            if (value === null || value === undefined) return null
+
+            // If it's already a known ISO-like string, keep it.
+            if (typeof value === "string") {
+                const v = value.trim().toUpperCase()
+                if (["NGN", "USD", "GBP", "EUR"].includes(v)) return v
+
+                // Handle numeric strings like "566"
+                const asNum = Number(v)
+                if (!Number.isNaN(asNum)) return normalizeCurrency(asNum)
+                return v
+            }
+
+            if (typeof value === "number") {
+                const code = value
+                const map: Record<number, string> = {
+                    566: "NGN",
+                    840: "USD",
+                    826: "GBP",
+                    978: "EUR",
+                }
+                return map[code] ?? String(code)
+            }
+
+            return String(value)
+        }
+
+        const expectedCurrency = normalizeCurrency(data.currency)
+        const actualCurrency = normalizeCurrency(verified.CurrencyCode)
+
+        // Skip strict currency check if Interswitch didn't return a usable currency value.
+        if (expectedCurrency && actualCurrency && expectedCurrency !== actualCurrency) {
             throw new AppError("Payment currency does not match Interswitch verification", 400);
         }
 

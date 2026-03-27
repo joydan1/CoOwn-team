@@ -46,22 +46,7 @@ export default function JoinPoolPage() {
     fetchPool()
   }, [isAuthenticated, router, poolId])
 
-  const fetchPool = async () => {
-    try {
-      setLoading(true)
-      const res = await poolsApi.getJoinInfo(poolId)
-      setPool(res.data)
-      
-      if (res.data.isPublic && res.data.remainingStake) {
-        setContribution(res.data.remainingStake.toString())
-      }
-    } catch (err: any) {
-      console.error("Failed to fetch pool:", err)
-      setError(err.response?.data?.message || "Pool not found or no longer available")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const fetchPool = async () => {\n    try {\n      setLoading(true)\n      // Fetch full pool details to show join information\n      const res = await poolsApi.getOne(poolId)\n      const poolData = res.data\n      \n      const transformedPool: Pool = {\n        id: poolData.id,\n        name: poolData.name,\n        propertyId: poolData.property?.id || poolData.property_id,\n        propertyTitle: poolData.property?.title || poolData.property_title || \"Property\",\n        propertyLocation: poolData.property?.location || poolData.property_location || \"Location\",\n        propertyImage: poolData.property?.image || poolData.property?.images?.[0] || \"\",\n        targetAmount: parseFloat(poolData.target_amount || poolData.targetAmount || \"0\"),\n        raisedAmount: parseFloat(poolData.raised_amount || poolData.raisedAmount || \"0\"),\n        memberCount: poolData.member_count || poolData.memberCount || 0,\n        memberLimit: poolData.member_limit || poolData.memberLimit || 0,\n        deadline: poolData.deadline,\n        status: poolData.status || \"open\",\n        isPublic: poolData.is_public ?? poolData.isPublic ?? false,\n        description: poolData.description\n      }\n      \n      // Calculate remaining stake\n      const remainingStake = transformedPool.targetAmount - transformedPool.raisedAmount\n      transformedPool.remainingStake = remainingStake > 0 ? remainingStake : 0\n      \n      setPool(transformedPool)\n      \n      if (transformedPool.isPublic && transformedPool.remainingStake) {\n        setContribution(transformedPool.remainingStake.toString())\n      }\n    } catch (err: any) {\n      console.error(\"Failed to fetch pool:\", err)\n      setError(err.response?.data?.message || \"Pool not found or no longer available\")\n    } finally {\n      setLoading(false)\n    }\n  }
 
   const handleJoin = async () => {
     if (!agreed) {
@@ -84,8 +69,12 @@ export default function JoinPoolPage() {
     setError("")
     
     try {
-      // Join the pool
-      await poolsApi.join(poolId)
+      // Join the pool with investment amount
+      await poolsApi.join(poolId, {
+        investment_amount: amount,
+        user_id: user?.id || "",
+        currency: "NGN"
+      })
       
       // If contribution amount specified, create payment intent
       if (amount > 0) {

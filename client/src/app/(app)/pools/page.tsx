@@ -124,6 +124,24 @@ export default function MyPoolsPage() {
           </span>
           <div style={{ display: "flex", gap: "12px" }}>
             <button
+              onClick={() => router.push("/milestones")}
+              style={{
+                background: "rgba(255,255,255,0.1)",
+                color: "#fff",
+                border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: "999px",
+                padding: "8px 16px",
+                fontSize: "14px",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "background 0.2s"
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")}
+              onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
+            >
+              Milestones
+            </button>
+            <button
               onClick={() => router.push("/pools/create")}
               style={{
                 background: "#00C853",

@@ -138,7 +138,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PropertyController.prototype, "getPropertyListings", null);
 __decorate([
-    (0, tsoa_1.Security)("jwt"),
     (0, tsoa_1.Get)("/{id}"),
     (0, tsoa_1.Example)({
         id: "550e8400-e29b-41d4-a716-446655440000",

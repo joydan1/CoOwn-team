@@ -26,7 +26,7 @@ export async function generateAccessToken(email: string, id: string){
 
    return jwt.sign(
     payload
-   , variables.jwt.jwtSecret as string, { expiresIn: '30m', issuer: variables.jwt.issuer as string })
+   , variables.jwt.jwtSecret as string, { expiresIn: '1h', issuer: variables.jwt.issuer as string })
 
 }
 
@@ -43,7 +43,9 @@ export async function generateRefreshToken(email: string, id: string){
 }
 
 export async function verifyToken(token: string){
-    return jwt.verify(token, variables.jwt.jwtSecret as string );
+    return jwt.verify(token, variables.jwt.jwtSecret as string, {
+        issuer: variables.jwt.issuer
+    });
 }
 
 // export function cleanedUser(input: Partial<User>){

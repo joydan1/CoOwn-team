@@ -15,7 +15,7 @@ import http from "http";
 import cors from "cors";
 
 
-const port = variables.port || 4000;
+const port = variables.port || 5000;
  
 const app = express();
 
@@ -28,7 +28,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(passport.initialize());
-app.use("/auth", googleAuthRoutes);
+app.use("/api/auth", googleAuthRoutes);
 app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.static('public'));
@@ -42,7 +42,7 @@ app.use((req, res, next) => {
             "Content-Security-Policy",
             "default-src 'self' https://newwebpay.qa.interswitchng.com https://www.clarity.ms https://h.online-metrix.net; " +
             "script-src 'self' 'unsafe-inline' https://newwebpay.qa.interswitchng.com https://www.clarity.ms https://h.online-metrix.net; " +
-            "connect-src 'self' https://newwebpay.qa.interswitchng.com https://www.clarity.ms https://h.online-metrix.net http://localhost:5000; " +
+            "connect-src 'self' https://newwebpay.qa.interswitchng.com https://www.clarity.ms https://h.online-metrix.net http://localhost:4000 http://localhost:3000; " +
             "frame-src 'self' https://newwebpay.qa.interswitchng.com; " +
             "style-src 'self' 'unsafe-inline'; " +
             "img-src 'self' https://newwebpay.qa.interswitchng.com data:;"

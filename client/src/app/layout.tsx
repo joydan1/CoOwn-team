@@ -31,11 +31,12 @@ export default function RootLayout({
   return (
     <html 
       className={`${fraunces.variable} ${dmSans.variable}`}
-      suppressHydrationWarning  // Add this
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
     >
-      <body suppressHydrationWarning>  {/* Add this */}
+      <head />
+      <body suppressHydrationWarning>
         <AuthProvider>{children}</AuthProvider>
-        <script src="https://newwebpay.qa.interswitchng.com/inline-checkout.js"></script>
       </body>
     </html>
   )

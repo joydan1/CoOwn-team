@@ -58,7 +58,7 @@ async function generateAccessToken(email, id) {
     const payload = {
         email, id
     };
-    return jwt.sign(payload, env_1.variables.jwt.jwtSecret, { expiresIn: '30m', issuer: env_1.variables.jwt.issuer });
+    return jwt.sign(payload, env_1.variables.jwt.jwtSecret, { expiresIn: '1h', issuer: env_1.variables.jwt.issuer });
 }
 async function generateRefreshToken(email, id) {
     const payload = {
@@ -67,7 +67,9 @@ async function generateRefreshToken(email, id) {
     return jwt.sign(payload, env_1.variables.jwt.jwtSecret, { expiresIn: '7d', issuer: env_1.variables.jwt.issuer });
 }
 async function verifyToken(token) {
-    return jwt.verify(token, env_1.variables.jwt.jwtSecret);
+    return jwt.verify(token, env_1.variables.jwt.jwtSecret, {
+        issuer: env_1.variables.jwt.issuer
+    });
 }
 // export function cleanedUser(input: Partial<User>){
 //     delete input.password;

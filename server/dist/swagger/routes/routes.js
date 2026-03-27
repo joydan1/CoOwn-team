@@ -13,6 +13,8 @@ const milestone_1 = require("./../../controllers/milestone");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const contribution_1 = require("./../../controllers/contribution");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+const config_1 = require("./../../controllers/config");
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const auth_1 = require("./../../controllers/auth");
 const authentication_1 = require("./../../middlewares/authentication");
 const expressAuthenticationRecasted = authentication_1.expressAuthentication;
@@ -394,13 +396,13 @@ const models = {
         "type": { "dataType": "nestedObjectLiteral", "nestedProperties": { "id": { "dataType": "string" }, "pool_id": { "dataType": "string" }, "user_id": { "dataType": "string" }, "amount": { "dataType": "double" }, "currency": { "dataType": "string" }, "ownership_pct": { "dataType": "double" }, "fx_rate": { "dataType": "double" }, "payment_ref": { "dataType": "string" }, "created_at": { "dataType": "datetime" }, "updatedAt": { "dataType": "datetime" } }, "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "RegisterUserDto": {
+    "PaymentConfigDto": {
         "dataType": "refObject",
         "properties": {
-            "firstName": { "dataType": "string" },
-            "lastName": { "dataType": "string" },
-            "email": { "dataType": "string", "required": true },
-            "password": { "dataType": "string", "required": true },
+            "merchantCode": { "dataType": "string", "required": true },
+            "payItemId": { "dataType": "string", "required": true },
+            "currencyCode": { "dataType": "double", "required": true },
+            "environment": { "dataType": "string", "required": true },
         },
         "additionalProperties": false,
     },
@@ -420,6 +422,19 @@ const models = {
             "message": { "dataType": "string" },
             "token": { "ref": "tokenDto" },
             "user": { "ref": "Partial_User_" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RegisterUserDto": {
+        "dataType": "refObject",
+        "properties": {
+            "firstName": { "dataType": "string" },
+            "lastName": { "dataType": "string" },
+            "email": { "dataType": "string", "required": true },
+            "phone": { "dataType": "string" },
+            "password": { "dataType": "string", "required": true },
+            "bvn": { "dataType": "string" },
         },
         "additionalProperties": false,
     },
@@ -452,7 +467,7 @@ function RegisterRoutes(app) {
     const argsAuthController_getUserById = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/users/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.getUserById)), async function AuthController_getUserById(request, response, next) {
+    app.get('/api/users/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.getUserById)), async function AuthController_getUserById(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -476,7 +491,7 @@ function RegisterRoutes(app) {
         role: { "in": "query", "name": "role", "dataType": "string" },
         isActive: { "in": "query", "name": "isActive", "dataType": "boolean" },
     };
-    app.get('/users', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.listAll)), async function AuthController_listAll(request, response, next) {
+    app.get('/api/users', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.listAll)), async function AuthController_listAll(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -500,7 +515,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         updates: { "in": "body", "name": "updates", "required": true, "ref": "UpdateUserDto" },
     };
-    app.put('/users/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.updateUser)), async function AuthController_updateUser(request, response, next) {
+    app.put('/api/users/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.updateUser)), async function AuthController_updateUser(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -523,7 +538,7 @@ function RegisterRoutes(app) {
     const argsAuthController_deleteUser = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.delete('/users/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.deleteUser)), async function AuthController_deleteUser(request, response, next) {
+    app.delete('/api/users/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.deleteUser)), async function AuthController_deleteUser(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -547,7 +562,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         body: { "in": "body", "name": "body", "required": true, "ref": "VerifyBvnDto" },
     };
-    app.post('/users/:id/verify-bvn', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.verifyBvn)), async function AuthController_verifyBvn(request, response, next) {
+    app.post('/api/users/:id/verify-bvn', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController)), ...((0, runtime_1.fetchMiddlewares)(user_1.AuthController.prototype.verifyBvn)), async function AuthController_verifyBvn(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -572,7 +587,7 @@ function RegisterRoutes(app) {
         type: { "in": "query", "name": "type", "dataType": "union", "subSchemas": [{ "dataType": "enum", "enums": ["apartment"] }, { "dataType": "enum", "enums": ["house"] }, { "dataType": "enum", "enums": ["land"] }, { "dataType": "enum", "enums": ["commercial"] }] },
         status: { "in": "query", "name": "status", "dataType": "union", "subSchemas": [{ "dataType": "enum", "enums": ["available"] }, { "dataType": "enum", "enums": ["under_contract"] }, { "dataType": "enum", "enums": ["sold"] }] },
     };
-    app.get('/properties', ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getProperties)), async function PropertyController_getProperties(request, response, next) {
+    app.get('/api/properties', ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getProperties)), async function PropertyController_getProperties(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -593,7 +608,7 @@ function RegisterRoutes(app) {
     });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     const argsPropertyController_getPropertyListings = {};
-    app.get('/properties/listings', ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getPropertyListings)), async function PropertyController_getPropertyListings(request, response, next) {
+    app.get('/api/properties/listings', ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getPropertyListings)), async function PropertyController_getPropertyListings(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -616,7 +631,7 @@ function RegisterRoutes(app) {
     const argsPropertyController_getPropertyById = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/properties/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getPropertyById)), async function PropertyController_getPropertyById(request, response, next) {
+    app.get('/api/properties/:id', ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getPropertyById)), async function PropertyController_getPropertyById(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -639,7 +654,7 @@ function RegisterRoutes(app) {
     const argsPropertyController_getPropertyValuation = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/properties/:id/valuation', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getPropertyValuation)), async function PropertyController_getPropertyValuation(request, response, next) {
+    app.get('/api/properties/:id/valuation', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.getPropertyValuation)), async function PropertyController_getPropertyValuation(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -662,7 +677,7 @@ function RegisterRoutes(app) {
     const argsPropertyController_createProperty = {
         property: { "in": "body", "name": "property", "required": true, "ref": "CreatePropertyDtoType" },
     };
-    app.post('/properties', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.createProperty)), async function PropertyController_createProperty(request, response, next) {
+    app.post('/api/properties', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.createProperty)), async function PropertyController_createProperty(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -686,7 +701,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         updates: { "in": "body", "name": "updates", "required": true, "ref": "Partial_PropertyDto_" },
     };
-    app.put('/properties/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.updateProperty)), async function PropertyController_updateProperty(request, response, next) {
+    app.put('/api/properties/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.updateProperty)), async function PropertyController_updateProperty(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -709,7 +724,7 @@ function RegisterRoutes(app) {
     const argsPropertyController_deleteProperty = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.delete('/properties/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.deleteProperty)), async function PropertyController_deleteProperty(request, response, next) {
+    app.delete('/api/properties/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController)), ...((0, runtime_1.fetchMiddlewares)(property_1.PropertyController.prototype.deleteProperty)), async function PropertyController_deleteProperty(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -733,7 +748,7 @@ function RegisterRoutes(app) {
         creatorId: { "in": "query", "name": "creatorId", "dataType": "string" },
         isPublic: { "in": "query", "name": "isPublic", "dataType": "boolean" },
     };
-    app.get('/pools', ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPools)), async function PoolController_getPools(request, response, next) {
+    app.get('/api/pools', ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPools)), async function PoolController_getPools(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -754,7 +769,7 @@ function RegisterRoutes(app) {
     });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     const argsPoolController_getPublicPools = {};
-    app.get('/pools/public', ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPublicPools)), async function PoolController_getPublicPools(request, response, next) {
+    app.get('/api/pools/public', ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPublicPools)), async function PoolController_getPublicPools(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -778,7 +793,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.get('/pools/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolById)), async function PoolController_getPoolById(request, response, next) {
+    app.get('/api/pools/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolById)), async function PoolController_getPoolById(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -802,7 +817,7 @@ function RegisterRoutes(app) {
         pool: { "in": "body", "name": "pool", "required": true, "ref": "CreatePoolDto" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.post('/pools', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.createPool)), async function PoolController_createPool(request, response, next) {
+    app.post('/api/pools', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.createPool)), async function PoolController_createPool(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -825,7 +840,7 @@ function RegisterRoutes(app) {
     const argsPoolController_getInviteLink = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/pools/:id/invite', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getInviteLink)), async function PoolController_getInviteLink(request, response, next) {
+    app.get('/api/pools/:id/invite', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getInviteLink)), async function PoolController_getInviteLink(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -849,7 +864,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.get('/pools/:id/join', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.joinPool)), async function PoolController_joinPool(request, response, next) {
+    app.get('/api/pools/:id/join', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.joinPool)), async function PoolController_joinPool(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -874,7 +889,7 @@ function RegisterRoutes(app) {
         joinData: { "in": "body", "name": "joinData", "required": true, "ref": "JoinPoolDto" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.put('/pools/:id/join', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.updateJoinDetails)), async function PoolController_updateJoinDetails(request, response, next) {
+    app.put('/api/pools/:id/join', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.updateJoinDetails)), async function PoolController_updateJoinDetails(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -897,7 +912,7 @@ function RegisterRoutes(app) {
     const argsPoolController_getPoolDashboard = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/pools/:id/dashboard', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolDashboard)), async function PoolController_getPoolDashboard(request, response, next) {
+    app.get('/api/pools/:id/dashboard', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolDashboard)), async function PoolController_getPoolDashboard(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -921,7 +936,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.get('/pools/:id/certificate', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolCertificate)), async function PoolController_getPoolCertificate(request, response, next) {
+    app.get('/api/pools/:id/certificate', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolCertificate)), async function PoolController_getPoolCertificate(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -944,7 +959,7 @@ function RegisterRoutes(app) {
     const argsPoolController_getPoolUsers = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/pools/:id/users', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolUsers)), async function PoolController_getPoolUsers(request, response, next) {
+    app.get('/api/pools/:id/users', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.getPoolUsers)), async function PoolController_getPoolUsers(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -969,7 +984,7 @@ function RegisterRoutes(app) {
         data: { "in": "body", "name": "data", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "is_public": { "dataType": "boolean", "required": true } } },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.put('/pools/:id/toggle-public', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.togglePublic)), async function PoolController_togglePublic(request, response, next) {
+    app.put('/api/pools/:id/toggle-public', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.togglePublic)), async function PoolController_togglePublic(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -993,7 +1008,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         updates: { "in": "body", "name": "updates", "required": true, "ref": "Partial_Pool_" },
     };
-    app.put('/pools/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.updatePool)), async function PoolController_updatePool(request, response, next) {
+    app.put('/api/pools/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.updatePool)), async function PoolController_updatePool(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1016,7 +1031,7 @@ function RegisterRoutes(app) {
     const argsPoolController_deletePool = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.delete('/pools/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.deletePool)), async function PoolController_deletePool(request, response, next) {
+    app.delete('/api/pools/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController)), ...((0, runtime_1.fetchMiddlewares)(pool_1.PoolController.prototype.deletePool)), async function PoolController_deletePool(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1039,7 +1054,7 @@ function RegisterRoutes(app) {
     const argsMilestoneController_getMilestones = {
         poolId: { "in": "query", "name": "poolId", "dataType": "string" },
     };
-    app.get('/milestones', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.getMilestones)), async function MilestoneController_getMilestones(request, response, next) {
+    app.get('/api/milestones', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.getMilestones)), async function MilestoneController_getMilestones(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1062,7 +1077,7 @@ function RegisterRoutes(app) {
     const argsMilestoneController_getMilestoneById = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.getMilestoneById)), async function MilestoneController_getMilestoneById(request, response, next) {
+    app.get('/api/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.getMilestoneById)), async function MilestoneController_getMilestoneById(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1085,7 +1100,7 @@ function RegisterRoutes(app) {
     const argsMilestoneController_createMilestone = {
         milestone: { "in": "body", "name": "milestone", "required": true, "ref": "CreateMilestoneDto" },
     };
-    app.post('/milestones', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.createMilestone)), async function MilestoneController_createMilestone(request, response, next) {
+    app.post('/api/milestones', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.createMilestone)), async function MilestoneController_createMilestone(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1110,7 +1125,7 @@ function RegisterRoutes(app) {
         vote: { "in": "body", "name": "vote", "required": true, "ref": "VoteMilestoneDto" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.post('/milestones/:id/vote', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.voteOnMilestone)), async function MilestoneController_voteOnMilestone(request, response, next) {
+    app.post('/api/milestones/:id/vote', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.voteOnMilestone)), async function MilestoneController_voteOnMilestone(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1134,7 +1149,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         updates: { "in": "body", "name": "updates", "required": true, "ref": "Partial_MilestoneDto_" },
     };
-    app.put('/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.updateMilestone)), async function MilestoneController_updateMilestone(request, response, next) {
+    app.put('/api/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.updateMilestone)), async function MilestoneController_updateMilestone(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1157,7 +1172,7 @@ function RegisterRoutes(app) {
     const argsMilestoneController_deleteMilestone = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.delete('/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.deleteMilestone)), async function MilestoneController_deleteMilestone(request, response, next) {
+    app.delete('/api/milestones/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController)), ...((0, runtime_1.fetchMiddlewares)(milestone_1.MilestoneController.prototype.deleteMilestone)), async function MilestoneController_deleteMilestone(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1181,7 +1196,7 @@ function RegisterRoutes(app) {
         poolId: { "in": "query", "name": "poolId", "dataType": "string" },
         userId: { "in": "query", "name": "userId", "dataType": "string" },
     };
-    app.get('/contributions', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.getContributions)), async function ContributionController_getContributions(request, response, next) {
+    app.get('/api/contributions', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.getContributions)), async function ContributionController_getContributions(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1204,7 +1219,7 @@ function RegisterRoutes(app) {
     const argsContributionController_getContributionById = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.get('/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.getContributionById)), async function ContributionController_getContributionById(request, response, next) {
+    app.get('/api/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.getContributionById)), async function ContributionController_getContributionById(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1228,7 +1243,7 @@ function RegisterRoutes(app) {
         payment: { "in": "body", "name": "payment", "required": true, "ref": "PaymentDto" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.post('/contributions/pay', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.processPayment)), async function ContributionController_processPayment(request, response, next) {
+    app.post('/api/contributions/pay', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.processPayment)), async function ContributionController_processPayment(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1252,7 +1267,7 @@ function RegisterRoutes(app) {
         payment: { "in": "body", "name": "payment", "required": true, "ref": "InterswitchPaymentDto" },
         req: { "in": "request", "name": "req", "required": true, "dataType": "object" },
     };
-    app.post('/contributions/verify', ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.verifyContribution)), async function ContributionController_verifyContribution(request, response, next) {
+    app.post('/api/contributions/verify', ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.verifyContribution)), async function ContributionController_verifyContribution(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1276,7 +1291,7 @@ function RegisterRoutes(app) {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
         updates: { "in": "body", "name": "updates", "required": true, "ref": "Partial_ContributionDto_" },
     };
-    app.put('/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.updateContribution)), async function ContributionController_updateContribution(request, response, next) {
+    app.put('/api/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.updateContribution)), async function ContributionController_updateContribution(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1299,7 +1314,7 @@ function RegisterRoutes(app) {
     const argsContributionController_deleteContribution = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
     };
-    app.delete('/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.deleteContribution)), async function ContributionController_deleteContribution(request, response, next) {
+    app.delete('/api/contributions/:id', authenticateMiddleware([{ "jwt": [] }]), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController)), ...((0, runtime_1.fetchMiddlewares)(contribution_1.ContributionController.prototype.deleteContribution)), async function ContributionController_deleteContribution(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1319,10 +1334,31 @@ function RegisterRoutes(app) {
         }
     });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    const argsConfigController_getPaymentConfig = {};
+    app.get('/api/config/payment', ...((0, runtime_1.fetchMiddlewares)(config_1.ConfigController)), ...((0, runtime_1.fetchMiddlewares)(config_1.ConfigController.prototype.getPaymentConfig)), async function ConfigController_getPaymentConfig(request, response, next) {
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = templateService.getValidatedArgs({ args: argsConfigController_getPaymentConfig, request, response });
+            const controller = new config_1.ConfigController();
+            await templateService.apiHandler({
+                methodName: 'getPaymentConfig',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     const argsUserController_register = {
         req: { "in": "body", "name": "req", "required": true, "ref": "RegisterUserDto" },
     };
-    app.post('/auth/register', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.register)), async function UserController_register(request, response, next) {
+    app.post('/api/auth/register', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.register)), async function UserController_register(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1345,7 +1381,7 @@ function RegisterRoutes(app) {
     const argsUserController_login = {
         req: { "in": "body", "name": "req", "required": true, "ref": "LoginUserDto" },
     };
-    app.post('/auth/login', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.login)), async function UserController_login(request, response, next) {
+    app.post('/api/auth/login', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.login)), async function UserController_login(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1368,7 +1404,7 @@ function RegisterRoutes(app) {
     const argsUserController_refresh = {
         req: { "in": "body", "name": "req", "required": true, "ref": "refreshTokenDto" },
     };
-    app.post('/auth/refresh', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.refresh)), async function UserController_refresh(request, response, next) {
+    app.post('/api/auth/refresh', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.refresh)), async function UserController_refresh(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {
@@ -1391,7 +1427,7 @@ function RegisterRoutes(app) {
     const argsUserController_logout = {
         id: { "in": "query", "name": "id", "required": true, "dataType": "string" },
     };
-    app.delete('/auth/logout', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.logout)), async function UserController_logout(request, response, next) {
+    app.delete('/api/auth/logout', ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController)), ...((0, runtime_1.fetchMiddlewares)(auth_1.UserController.prototype.logout)), async function UserController_logout(request, response, next) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
         try {

@@ -1,5 +1,30 @@
 import axios from 'axios'
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://coown-team.onrender.com/api'
+
+// Determine default API URL based on environment
+const getDefaultApiUrl = (): string => {
+  // If explicitly set via environment variable, use it
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL
+  }
+  
+  // Auto-detect based on current environment
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname
+    
+    // If running on localhost, connect to local server on port 5000
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:5000/api'
+    }
+    
+    // Otherwise use production (Render)
+    return 'https://coown-team.onrender.com/api'
+  }
+  
+  // Server-side default (build time)
+  return 'https://coown-team.onrender.com/api'
+}
+
+const BASE_URL = getDefaultApiUrl()
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -34,8 +59,15 @@ function getStoredRefreshToken(): string | null {
 // ── Attach JWT to every request ──────────────────
 api.interceptors.request.use((config) => {
   const token = getStoredToken()
+  console.log(`📤 [${config.method?.toUpperCase()}] ${config.url}`, {
+    tokenExists: !!token,
+    tokenLength: token?.length || 0,
+    tokenPreview: token ? token.substring(0, 30) + '...' : 'NO_TOKEN'
+  })
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
+  } else {
+    console.warn('⚠️  No token found in localStorage')
   }
   return config
 })
@@ -53,8 +85,15 @@ api.interceptors.response.use(
   res => res,
   async (error) => {
     const original = error.config
+    
+    console.error(`❌ [${original?.method?.toUpperCase()}] ${original?.url}`, {
+      status: error.response?.status,
+      message: error.response?.data?.message,
+      errorData: error.response?.data
+    })
 
     if (error.response?.status === 401 && !original._retry) {
+      console.warn('🔄 [AUTH] 401 Received, attempting token refresh...')
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -70,15 +109,19 @@ api.interceptors.response.use(
       const refreshToken = getStoredRefreshToken()
 
       if (!refreshToken) {
+        console.error('🔐 [AUTH] No refresh token available, redirecting to login')
         if (typeof window !== 'undefined') window.location.href = '/login'
         return Promise.reject(error)
       }
 
       try {
+        console.log('🔐 [AUTH] Requesting new token with refresh token...')
         const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken })
         const newToken = data.accessToken ?? data.token
         const newRefreshToken = data.refreshToken ?? refreshToken
 
+        console.log('✅ [AUTH] New token received, updating headers and localStorage')
+        
         // Write new tokens back to Zustand's localStorage blob
         const raw = localStorage.getItem('coown-auth')
         if (raw) {
@@ -93,6 +136,7 @@ api.interceptors.response.use(
         original.headers.Authorization = `Bearer ${newToken}`
         return api(original)
       } catch (refreshError) {
+        console.error('❌ [AUTH] Token refresh failed')
         processQueue(refreshError, null)
         localStorage.removeItem('coown-auth')
         if (typeof window !== 'undefined') window.location.href = '/login'
@@ -116,6 +160,7 @@ export const authApi = {
     email: string
     phone: string
     password: string
+    bvn?: string
   }) => api.post('/auth/register', data),
 
   login: (data: {
@@ -223,9 +268,9 @@ export const poolsApi = {
 
   update: (id: string, data: Partial<{
     name: string
-    targetAmount: number
+    target_amount: number
     deadline: string
-    memberLimit: number
+    member_limit: number
   }>) => api.put(`/pools/${id}`, data),
 
   delete: (id: string) =>
@@ -237,8 +282,12 @@ export const poolsApi = {
   getJoinInfo: (id: string) =>
     api.get(`/pools/${id}/join`),
 
-  join: (id: string) =>
-    api.put(`/pools/${id}/join`),
+  join: (id: string, data: {
+    investment_amount: number
+    user_id: string
+    currency: 'NGN' | 'USD' | 'GBP' | 'EUR'
+  }) =>
+    api.put(`/pools/${id}/join`, data),
 
   getDashboard: (id: string) =>
     api.get(`/pools/${id}/dashboard`),
@@ -258,11 +307,11 @@ export const milestonesApi = {
     api.get('/milestones'),
 
   create: (data: {
-    poolId: string
+    pool_id: string
     title: string
     description?: string
-    targetAmount: number
-    dueDate?: string
+    target_date?: string
+    required_approvals?: number
   }) => api.post('/milestones', data),
 
   getOne: (id: string) =>
@@ -271,15 +320,14 @@ export const milestonesApi = {
   update: (id: string, data: Partial<{
     title: string
     description: string
-    targetAmount: number
-    dueDate: string
+    target_date: string
   }>) => api.put(`/milestones/${id}`, data),
 
   delete: (id: string) =>
     api.delete(`/milestones/${id}`),
 
-  vote: (id: string) =>
-    api.post(`/milestones/${id}/vote`),
+  vote: (id: string, data: { approve: boolean }) =>
+    api.post(`/milestones/${id}/vote`, data),
 }
 
 export const contributionsApi = {
