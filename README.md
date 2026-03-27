@@ -61,7 +61,7 @@ When the property is purchased, every co-owner receives a digital certificate re
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| Frontend | React Native (Expo) | Cross-platform mobile app |
+| Frontend | React ) | Cross-platform mobile app |
 | Backend | Node.js + Express | REST API server |
 | Database | PostgreSQL via Supabase | Relational data + auth |
 | Real-time | Supabase Realtime | Live dashboard updates |
