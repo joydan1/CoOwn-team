@@ -6,3 +6,10 @@ server/.env
 client/node_modules
 node_modules
 server/node_modules
+
+.env.example
+client/next-env.d.ts
+server/dist/config/env.js
+server/dist/config/env.js.map
+server/env.example
+server/src/config/env.ts
