@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import AuthProvider from "@/components/AuthProvider"
 import { Fraunces, DM_Sans } from "next/font/google"
 import "./globals.css"
 
@@ -19,17 +20,22 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "CoOwn — Group Property Co-Ownership",
   description:
-    "Pool funds with friends, colleagues, or strangers to buy land and property together, with full  protection and financial transparency.",
+    "Pool funds with friends, colleagues, or strangers to buy land and property together, with full protection and financial transparency.",
 }
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
-      <body>{children}</body>
+    <html 
+      className={`${fraunces.variable} ${dmSans.variable}`}
+      suppressHydrationWarning  // Add this
+    >
+      <body suppressHydrationWarning>  {/* Add this */}
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   )
 }
