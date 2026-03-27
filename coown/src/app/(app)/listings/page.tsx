@@ -74,10 +74,12 @@ const getFallbackImage = (type: string, id: string) => {
   return pool[isNaN(seed) ? 0 : seed % pool.length]
 }
 
-const fmt = (n: number) =>
-  "₦" + (n >= 1_000_000
+const fmt = (n: number) => {
+  if (!n || isNaN(n)) return "₦0"
+  return "₦" + (n >= 1_000_000
     ? (n / 1_000_000).toFixed(1) + "M"
     : (n / 1000).toFixed(0) + "K")
+}
 
 const daysLeft = (deadline: string) =>
   Math.max(0, Math.ceil(
@@ -121,26 +123,29 @@ export default function ListingsPage() {
       setLoading(true)
       setError("")
 
+      // api.ts unwrap() already strips .data — these return arrays directly
       const [propertiesRes, poolsRes] = await Promise.all([
         propertiesApi.listings(),
         poolsApi.public(),
       ])
 
-      console.log("=== OPEN POOLS DEBUG ===")
-      console.log("Pools API response:", poolsRes)
-      console.log("Pools data:", poolsRes.data)
-      console.log("Number of pools:", poolsRes.data?.length)
-      
-      if (poolsRes.data && poolsRes.data.length > 0) {
-        console.log("First pool fields:", Object.keys(poolsRes.data[0]))
-        console.log("First pool:", poolsRes.data[0])
+      console.log("Properties response:", propertiesRes)
+      console.log("Pools response:", poolsRes)
+
+      const propertiesArray = Array.isArray(propertiesRes) ? propertiesRes : []
+      const poolsArray = Array.isArray(poolsRes) ? poolsRes : []
+
+      console.log("Number of pools:", poolsArray.length)
+      if (poolsArray.length > 0) {
+        console.log("First pool fields:", Object.keys(poolsArray[0]))
+        console.log("First pool:", poolsArray[0])
       }
 
-      const formattedProperties: Property[] = (propertiesRes.data || []).map((prop: any) => ({
+      const formattedProperties: Property[] = propertiesArray.map((prop: any) => ({
         id: prop.id,
         title: prop.title,
         location: prop.location,
-        price: prop.price,
+        price: parseFloat(prop.price) || 0,
         type: normalizeType(prop.type || "Apartment"),
         status: prop.status || "available",
         image: prop.image || prop.images?.[0] || getFallbackImage(prop.type || "Apartment", prop.id),
@@ -148,26 +153,27 @@ export default function ListingsPage() {
         bedrooms: prop.bedrooms ?? prop.beds,
         bathrooms: prop.bathrooms ?? prop.baths,
         squareMeters: prop.squareMeters ?? prop.sqm,
-        aiValuation: prop.aiValuation ?? {
-          min: Math.round(prop.price * 0.9),
-          max: Math.round(prop.price * 1.1),
+        aiValuation: prop.aiValuation ?? (prop.price ? {
+          min: Math.round(parseFloat(prop.price) * 0.9),
+          max: Math.round(parseFloat(prop.price) * 1.1),
           confidence: "Medium" as const,
-        },
+        } : undefined),
       }))
       setProperties(formattedProperties)
 
-      const openPoolsData: OpenPool[] = (poolsRes.data || [])
+      const openPoolsData: OpenPool[] = poolsArray
         .filter((pool: any) => {
-          const isPublic = pool.isPublic ?? pool.is_public ?? false
-          const status   = pool.status ?? "open"
-          return isPublic === true && status === "open"
+          // Accept both snake_case and camelCase, and treat missing status as "open"
+          const isPublic = pool.is_public === true || pool.isPublic === true
+          const status = pool.status ?? "open"
+          return isPublic && (status === "open" || status === "funding" || status === "active")
         })
         .map((pool: any) => {
-          const targetAmount     = pool.targetAmount     ?? pool.target_amount     ?? 0
-          const raisedAmount     = pool.raisedAmount     ?? pool.raised_amount     ?? 0
-          const memberCount      = pool.memberCount      ?? pool.member_count      ?? 0
-          const memberLimit      = pool.memberLimit      ?? pool.member_limit      ?? 10
-          const propertyId       = pool.propertyId       ?? pool.property_id       ?? ""
+          const targetAmount     = parseFloat(pool.target_amount ?? pool.targetAmount ?? 0)
+          const raisedAmount     = parseFloat(pool.raised_amount ?? pool.raisedAmount ?? 0)
+          const memberCount      = pool.member_count      ?? pool.memberCount      ?? 0
+          const memberLimit      = pool.member_limit      ?? pool.memberLimit      ?? 10
+          const propertyId       = pool.property_id       ?? pool.propertyId       ?? ""
           const propertyTitle    = pool.property?.title    ?? pool.propertyTitle    ?? pool.property_title    ?? "Property"
           const propertyLocation = pool.property?.location ?? pool.propertyLocation ?? pool.property_location ?? "Location"
           const propertyType     = pool.property?.type     ?? pool.propertyType     ?? pool.property_type     ?? "Apartment"
@@ -343,6 +349,44 @@ export default function ListingsPage() {
                       {user?.email || ""}
                     </p>
                   </div>
+
+                  <button
+                    onClick={() => { setDropdownOpen(false); router.push("/pools") }}
+                    style={{
+                      width: "100%", padding: "11px 16px",
+                      background: "none", border: "none",
+                      display: "flex", alignItems: "center", gap: "10px",
+                      fontSize: "14px", color: "#0D1F0F",
+                      cursor: "pointer", textAlign: "left", transition: "background 0.15s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#F7F7F5")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    My Pools
+                  </button>
+
+                  <button
+                    onClick={() => { setDropdownOpen(false); router.push("/payments") }}
+                    style={{
+                      width: "100%", padding: "11px 16px",
+                      background: "none", border: "none",
+                      display: "flex", alignItems: "center", gap: "10px",
+                      fontSize: "14px", color: "#0D1F0F",
+                      cursor: "pointer", textAlign: "left", transition: "background 0.15s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#F7F7F5")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                      <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                    Payments
+                  </button>
 
                   <button
                     onClick={() => { setDropdownOpen(false); router.push("/profile") }}

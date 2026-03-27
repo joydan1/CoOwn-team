@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { useAuthStore } from "@/store/auth";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://coown-team.onrender.com/api'
 
 export const api = axios.create({
@@ -6,16 +8,25 @@ export const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// ── Read token from Zustand's persist blob ────────
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function unwrap(res: any) {
+  return res?.data?.data ?? res?.data ?? res;
+}
+
 function getStoredToken(): string | null {
-  if (typeof window === 'undefined') return null
+  if (typeof window === 'undefined') return null;
   try {
-    const raw = localStorage.getItem('coown-auth')
-    if (!raw) return null
-    const parsed = JSON.parse(raw)
-    return parsed?.state?.token ?? null
+    const raw = localStorage.getItem('coown-auth');
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    const token = parsed?.state?.token?.accessToken;
+
+    return typeof token === "string" ? token : null;
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -25,22 +36,31 @@ function getStoredRefreshToken(): string | null {
     const raw = localStorage.getItem('coown-auth')
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    return parsed?.state?.refreshToken ?? null
+    return parsed?.state?.token?.refreshToken ?? null
   } catch {
     return null
   }
 }
 
-// ── Attach JWT to every request ──────────────────
+// ─────────────────────────────────────────────
+// REQUEST INTERCEPTOR
+// ─────────────────────────────────────────────
 api.interceptors.request.use((config) => {
-  const token = getStoredToken()
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+  const token =
+    useAuthStore.getState().token?.accessToken ??
+    getStoredToken() ??
+    undefined;
 
-// ── Auto-refresh on 401 ───────────────────────────
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+// ─────────────────────────────────────────────
+// REFRESH TOKEN LOGIC
+// ─────────────────────────────────────────────
 let isRefreshing = false
 let failedQueue: Array<{ resolve: (v: string) => void; reject: (e: unknown) => void }> = []
 
@@ -76,21 +96,24 @@ api.interceptors.response.use(
 
       try {
         const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken })
+
         const newToken = data.accessToken ?? data.token
         const newRefreshToken = data.refreshToken ?? refreshToken
 
-        // Write new tokens back to Zustand's localStorage blob
         const raw = localStorage.getItem('coown-auth')
         if (raw) {
           const parsed = JSON.parse(raw)
-          parsed.state.token = newToken
-          parsed.state.refreshToken = newRefreshToken
+          parsed.state.token = {
+            accessToken: newToken,
+            refreshToken: newRefreshToken,
+          }
           localStorage.setItem('coown-auth', JSON.stringify(parsed))
         }
 
         api.defaults.headers.common.Authorization = `Bearer ${newToken}`
         processQueue(null, newToken)
         original.headers.Authorization = `Bearer ${newToken}`
+
         return api(original)
       } catch (refreshError) {
         processQueue(refreshError, null)
@@ -106,211 +129,78 @@ api.interceptors.response.use(
   }
 )
 
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 // AUTH
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 export const authApi = {
-  register: (data: {
-    firstName: string
-    lastName: string
-    email: string
-    phone: string
-    password: string
-  }) => api.post('/auth/register', data),
+  register: async (data: any) => unwrap(await api.post('/auth/register', data)),
 
-  login: (data: {
-    email: string
-    password: string
-  }) => api.post('/auth/login', data),
+  login: async (data: any) => unwrap(await api.post('/auth/login', data)),
 
-  refresh: (refreshToken: string) =>
-    api.post('/auth/refresh', { refreshToken }),
-
-  logout: () => api.delete('/auth/logout'),
-
-  loginWithGoogle: () => {
-    window.location.href = `${BASE_URL}/auth/google`
+  loginWithGoogle: async (code: string) => {
+    // Some backends expect OAuth callback code as GET query parameters (as used by coown-team).
+    const res = await api.get(`/auth/google/callback?code=${encodeURIComponent(code)}`);
+    return unwrap(res);
   },
+
+  refresh: async (refreshToken: string) => unwrap(await api.post('/auth/refresh', { refreshToken })),
+
+
+  logout: async () => unwrap(await api.post('/auth/logout')),
 }
 
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 // USERS
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 export const usersApi = {
-  list: () =>
-    api.get('/users'),
-
-  getOne: (id: string) =>
-    api.get(`/users/${id}`),
-
-  update: (id: string, data: Partial<{
-    firstName: string
-    lastName: string
-    email: string
-    phone: string
-  }>) => api.put(`/users/${id}`, data),
-
-  delete: (id: string) =>
-    api.delete(`/users/${id}`),
+  list: async () => unwrap(await api.get('/users')),
+  getOne: async (id: string) => unwrap(await api.get(`/users/${id}`)),
+  update: async (id: string, data: any) => unwrap(await api.put(`/users/${id}`, data)),
+  delete: async (id: string) => unwrap(await api.delete(`/users/${id}`)),
 }
 
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 // PROPERTIES
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 export const propertiesApi = {
-  list: (params?: {
-    type?: string
-    minPrice?: number
-    maxPrice?: number
-    location?: string
-  }) => api.get('/properties', { params }),
-
-  create: (data: {
-    title: string
-    description?: string
-    price: number
-    location: string
-    type?: string
-  }) => api.post('/properties', data),
-
-  listings: (params?: {
-    type?: string
-    minPrice?: number
-    maxPrice?: number
-    location?: string
-  }) => api.get('/properties/listings', { params }),
-
-  getOne: (id: string) =>
-    api.get(`/properties/${id}`),
-
-  update: (id: string, data: Partial<{
-    title: string
-    description: string
-    price: number
-    location: string
-    type: string
-  }>) => api.put(`/properties/${id}`, data),
-
-  delete: (id: string) =>
-    api.delete(`/properties/${id}`),
-
-  getValuation: (id: string) =>
-    api.get(`/properties/${id}/valuation`),
+  listings: async (params?: any) => unwrap(await api.get('/properties/listings', { params })),
+  getOne: async (id: string) => unwrap(await api.get(`/properties/${id}`)),
+  create: async (data: any) => unwrap(await api.post('/properties', data)),
 }
 
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 // POOLS
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 export const poolsApi = {
-  list: () =>
-    api.get('/pools'),
-
-  create: (data: {
-    property_id: string
-    name: string
-    target_amount: number
-    deadline: string
-    member_limit: number
-    description?: string
-    min_contribution?: number
-  }) => api.post('/pools', data),
-
-  public: () =>
-    api.get('/pools/public'),
-
-  getOne: (id: string) =>
-    api.get(`/pools/${id}`),
-
-  update: (id: string, data: Partial<{
-    name: string
-    targetAmount: number
-    deadline: string
-    memberLimit: number
-  }>) => api.put(`/pools/${id}`, data),
-
-  delete: (id: string) =>
-    api.delete(`/pools/${id}`),
-
-  getInvite: (id: string) =>
-    api.get(`/pools/${id}/invite`),
-
-  getJoinInfo: (id: string) =>
-    api.get(`/pools/${id}/join`),
-
-  join: (id: string) =>
-    api.put(`/pools/${id}/join`),
-
-  getDashboard: (id: string) =>
-    api.get(`/pools/${id}/dashboard`),
-
-  getMembers: (id: string) =>
-    api.get(`/pools/${id}/users`),
-
-  togglePublic: (id: string, data: { is_public: boolean }) =>
-    api.put(`/pools/${id}/toggle-public`, data),
+  list: async () => unwrap(await api.get('/pools')),
+  public: async () => unwrap(await api.get('/pools/public')),
+  getOne: async (id: string) => unwrap(await api.get(`/pools/${id}`)),
+  create: async (data: any) => unwrap(await api.post('/pools', data)),
+  togglePublic: async (id: string, data: { is_public: boolean }) =>
+    unwrap(await api.put(`/pools/${id}/toggle-public`, data)),
+  delete: async (id: string) => unwrap(await api.delete(`/pools/${id}`)),
+  getMembers: async (id: string) => unwrap(await api.get(`/pools/${id}/users`)),
 }
 
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 // MILESTONES
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 export const milestonesApi = {
-  list: () =>
-    api.get('/milestones'),
-
-  create: (data: {
-    poolId: string
-    title: string
-    description?: string
-    targetAmount: number
-    dueDate?: string
-  }) => api.post('/milestones', data),
-
-  getOne: (id: string) =>
-    api.get(`/milestones/${id}`),
-
-  update: (id: string, data: Partial<{
-    title: string
-    description: string
-    targetAmount: number
-    dueDate: string
-  }>) => api.put(`/milestones/${id}`, data),
-
-  delete: (id: string) =>
-    api.delete(`/milestones/${id}`),
-
-  vote: (id: string) =>
-    api.post(`/milestones/${id}/vote`),
+  list: async () => unwrap(await api.get('/milestones')),
+  getOne: async (id: string) => unwrap(await api.get(`/milestones/${id}`)),
+  create: async (data: any) => unwrap(await api.post('/milestones', data)),
+  update: async (id: string, data: any) => unwrap(await api.put(`/milestones/${id}`, data)),
+  delete: async (id: string) => unwrap(await api.delete(`/milestones/${id}`)),
+  vote: async (id: string) => unwrap(await api.post(`/milestones/${id}/vote`)),
 }
 
+// ─────────────────────────────────────────────
+// CONTRIBUTIONS
+// ─────────────────────────────────────────────
 export const contributionsApi = {
-  list: () =>
-    api.get('/contributions'),
+  list: async () => unwrap(await api.get('/contributions')),
 
-  getOne: (id: string) =>
-    api.get(`/contributions/${id}`),
+  pay: async (data: any) => unwrap(await api.post('/contributions/pay', data)),
 
-  update: (id: string, data: Partial<{
-    amount: number
-    status: string
-  }>) => api.put(`/contributions/${id}`, data),
-
-  delete: (id: string) =>
-    api.delete(`/contributions/${id}`),
-
-  pay: (data: {
-    pool_id: string
-    user_id?: string
-    amount: number
-    currency: string
-    paymentMethod?: string
-  }) => api.post('/contributions/pay', data),
-
-  verify: (data: {
-    pool_id: string
-    user_id: string
-    merchant_code: string
-    amount: number
-    currency: string
-    payment_ref: string
-  }) => api.post('/contributions/verify', data),
+  verify: async (data: any) => unwrap(await api.post('/contributions/verify', data)),
 }

@@ -140,46 +140,93 @@ export default function RegisterPage() {
     return ""
   }
 
-  const handleNext = async () => {
-    const err = validateStep()
-    if (err) { setError(err); triggerShake(); return }
-    if (step < 2) { setPrevStep(step); setStep(s => s + 1); return }
+ const handleNext = async () => {
+  const err = validateStep()
+  if (err) { setError(err); triggerShake(); return }
+  if (step < 2) { setPrevStep(step); setStep(s => s + 1); return }
 
-    setLoading(true)
-    try {
-      const res = await authApi.register({
-        firstName: form.firstName,
-        lastName: form.lastName,
-        email: form.email,
-        phone: form.phone,
-        password: form.password,
-      })
-      const { user, token, accessToken, refreshToken } = res.data
-      const finalToken = token ?? accessToken
-      if (!finalToken) throw new Error("No token received")
+  setLoading(true)
+  try {
+    const res = await authApi.register({
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      phone: form.phone,
+      password: form.password,
+      bvn: form.bvn,
+    })
 
-      useAuthStore.getState().setAuth(user, finalToken, refreshToken)
-      router.push("/listings")
-    } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-      setError(msg ?? "Something went wrong. Please try again.")
-      triggerShake()
-    } finally {
-      setLoading(false)
-    }
+    // Backend returns { message, user, token: { accessToken, refreshToken } }
+    const user = res.user
+    const accessToken = res.token?.accessToken
+    const refreshToken = res.token?.refreshToken
+
+    if (!accessToken) throw new Error("No token received")
+
+    setAuth(user, { accessToken, refreshToken })
+    router.push("/listings")
+
+  } catch (err: unknown) {
+    const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+    setError(msg ?? "Something went wrong. Please try again.")
+    triggerShake()
+  } finally {
+    setLoading(false)
   }
+}
 
   const handleBack = () => {
     setPrevStep(step)
     setStep(s => s - 1)
     setError("")
   }
-const handleGoogle = () => {
-  setGoogleLoading(true)
-  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "https://coown-team.onrender.com"
-  // Redirect the whole page to backend
-  window.location.href = `${apiBase}/auth/google`
-}
+  const handleGoogle = async () => {
+    setGoogleLoading(true)
+    try {
+      const redirectUri = `${window.location.origin}/auth/callback`
+      const response = await fetch(`/api/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`)
+      const json = await response.json()
+
+      const redirectUrl = json?.url || json?.data?.url || json?.data?.redirectUrl || json?.redirect_url
+      if (redirectUrl) {
+        window.location.href = redirectUrl
+        return
+      }
+
+      const tokenPayload = json?.token || json?.data?.token || json
+      const accessToken = tokenPayload?.accessToken || tokenPayload?.access_token
+      const refreshToken = tokenPayload?.refreshToken || tokenPayload?.refresh_token
+
+      if (accessToken && refreshToken) {
+        localStorage.setItem('coown-auth', JSON.stringify({ state: { token: accessToken, refreshToken } }))
+        useAuthStore.getState().setAuth(null, { accessToken, refreshToken })
+        router.push('/listings')
+        return
+      }
+
+      const fallbackAccess = json?.accessToken || json?.access_token
+      const fallbackRefresh = json?.refreshToken || json?.refresh_token
+      if (fallbackAccess && fallbackRefresh) {
+        localStorage.setItem('coown-auth', JSON.stringify({ state: { token: fallbackAccess, refreshToken: fallbackRefresh } }))
+        useAuthStore.getState().setAuth(null, { accessToken: fallbackAccess, refreshToken: fallbackRefresh })
+        router.push('/listings')
+        return
+      }
+
+      if (response.redirected && response.url) {
+        window.location.href = response.url
+        return
+      }
+
+      throw new Error('No redirect URL returned from backend')
+    } catch (err: any) {
+      console.error('Google auth error:', err)
+      setError('Failed to initiate Google sign-in. Check console for details.')
+      triggerShake()
+    } finally {
+      setGoogleLoading(false)
+    }
+  }
   const goingForward = step > prevStep
 
   /* ── Shared input styles ── */

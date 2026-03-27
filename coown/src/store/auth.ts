@@ -1,13 +1,17 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+interface Token {
+  accessToken: string
+  refreshToken: string
+}
 
 interface AuthState {
-  user: any;
-  token: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-  setAuth: (user: any, token: string, refreshToken?: string | null) => void;
-  logout: () => void;
+  user: any
+  token: Token | null
+  isAuthenticated: boolean
+  setAuth: (user: any, token: Token) => void
+  logout: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -15,26 +19,25 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       token: null,
-      refreshToken: null,
       isAuthenticated: false,
-      setAuth: (user, token, refreshToken = null) => {
-        console.log('Setting auth - token:', token);
-        set({ 
-          user, 
-          token, 
-          refreshToken: refreshToken !== undefined ? refreshToken : null,
-          isAuthenticated: true 
-        });
+
+      setAuth: (user, token) => {
+        set({
+          user,
+          token,
+          isAuthenticated: !!token?.accessToken,
+        })
       },
-      logout: () => set({ 
-        user: null, 
-        token: null, 
-        refreshToken: null, 
-        isAuthenticated: false 
-      }),
+
+      logout: () =>
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+        }),
     }),
     {
       name: 'coown-auth',
     }
   )
-);
+)

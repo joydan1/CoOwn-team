@@ -52,13 +52,11 @@ export default function CertificatePage() {
       setLoading(true)
       
       // Fetch pool details
-      const poolRes = await poolsApi.getOne(poolId)
-      const poolData = poolRes.data
+      const poolData = await poolsApi.getOne(poolId)
       setPool(poolData)
       
       // Fetch pool members
-      const membersRes = await poolsApi.getMembers(poolId)
-      const membersData = membersRes.data || []
+      const membersData = await poolsApi.getMembers(poolId) || []
       setMembers(membersData)
       
       // Find current user in members

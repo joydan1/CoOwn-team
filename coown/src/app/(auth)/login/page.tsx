@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { authApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
-import { usersApi } from "@/lib/api"
 
 /* ── Icons ── */
 const IconEye = ({ off }: { off?: boolean }) => (
@@ -103,55 +102,48 @@ export default function LoginPage() {
     setTimeout(() => setShake(false), 600)
   }
 
- const handleSubmit = async () => {
+  const handleSubmit = async () => {
   if (!form.email || !form.password) {
     setError("Please fill in all fields.")
     triggerShake()
     return
   }
-  setLoading(true)
-  try {
-    const res = await authApi.login({ 
-      email: form.email, 
-      password: form.password 
-    })
-    
-    console.log("Login response:", res.data)
-    
-    const { user, token, accessToken, refreshToken } = res.data
-    const finalToken = token ?? accessToken
-    if (!finalToken) throw new Error("No token received")
 
-    useAuthStore.getState().setAuth(user, finalToken, refreshToken)
+  setLoading(true)
+
+  try {
+    const res = await authApi.login({
+      email: form.email,
+      password: form.password,
+    })
+
+    // Backend returns { message, user, token: { accessToken, refreshToken } }
+    const user = res.user
+    const accessToken = res.token?.accessToken
+    const refreshToken = res.token?.refreshToken
+
+    if (!accessToken) throw new Error("No access token received")
+
+    setAuth(user, { accessToken, refreshToken })
     router.push("/listings")
+
   } catch (err: any) {
-    console.error("Full error:", err)
-    console.error("Error response data:", err.response?.data)
-    console.error("Error status:", err.response?.status)
-    console.error("Error headers:", err.response?.headers)
-    // After setAuth
-console.log("=== TOKEN DEBUG ===")
-const stored = localStorage.getItem('coown-auth')
-console.log("Raw stored data:", stored)
-if (stored) {
-  const parsed = JSON.parse(stored)
-  console.log("Parsed state:", parsed.state)
-  console.log("Token in storage:", parsed.state?.token)
-}
-    
-    const msg = err.response?.data?.message || err.response?.data?.error || "Invalid email or password."
+    const msg =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      "Invalid email or password."
     setError(msg)
     triggerShake()
   } finally {
     setLoading(false)
   }
 }
- const handleGoogle = () => {
-  setGoogleLoading(true)
-  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "https://coown-team.onrender.com"
-  // Redirect the whole page to backend
-  window.location.href = `${apiBase}/auth/google`
-}
+  const handleGoogle = () => {
+    setGoogleLoading(true)
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "https://coown-team.onrender.com"
+    window.location.href = `${apiBase}/auth/google`
+  }
+
   return (
     <main style={{
       minHeight: "100vh", display: "flex",
@@ -159,7 +151,7 @@ if (stored) {
       background: "#F5F5F0",
     }}>
 
-      {/* LEFT — Art panel with animations */}
+      {/* LEFT — Art panel */}
       <div className="left-panel" style={{
         display: "none", flex: "0 0 46%",
         background: "#0D1F0F",
@@ -169,7 +161,7 @@ if (stored) {
         position: "relative", overflow: "hidden",
       }}>
         <svg viewBox="0 0 480 520" preserveAspectRatio="xMidYMid slice"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 1, transition: "opacity 1.8s ease" }}>
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 1 }}>
           <defs>
             <radialGradient id="gA" cx="65%" cy="25%" r="55%">
               <stop offset="0%" stopColor="#00C853" stopOpacity="0.18"/>
@@ -218,7 +210,6 @@ if (stored) {
           <p style={{ fontSize: "18px", color: "rgba(255,255,255,0.42)", lineHeight: 1.8, maxWidth: "290px", marginBottom: "44px" }}>
             Your pool is waiting. Check contributions, invite members, and move closer to ownership.
           </p>
-
           <div style={{ display: "flex", gap: "36px" }}>
             {[
               { value: "₦2.1B+", label: "Pooled" },
@@ -322,7 +313,7 @@ if (stored) {
             </span>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <div style={{ marginBottom: "18px" }}>
             <button onClick={handleSubmit} disabled={loading}
               style={{ width: "100%", padding: "18px", background: loading ? "#BDBDBD" : "#00C853", color: loading ? "#6E6E6E" : "#0D1F0F", border: "none", borderRadius: "999px", fontSize: "17px", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", fontFamily: "var(--font-body)", transition: "background 0.2s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s", boxShadow: loading ? "none" : "0 8px 32px rgba(0,200,83,0.30)", position: "relative", overflow: "hidden" }}
@@ -333,7 +324,7 @@ if (stored) {
                 <span style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: "shimmerBtn 1.2s ease-in-out infinite" }}/>
               )}
               <span style={{ position: "relative", zIndex: 1 }}>
-                {loading ? "Signing in" : "Sign in"}
+                {loading ? "Signing in…" : "Sign in"}
               </span>
             </button>
           </div>
@@ -345,7 +336,7 @@ if (stored) {
             <div style={{ flex: 1, height: "1px", background: "#D9D9D4" }}/>
           </div>
 
-          {/* Google Button */}
+          {/* Google */}
           <div>
             <button onClick={handleGoogle} disabled={googleLoading}
               style={{ width: "100%", padding: "16px", background: "#fff", border: "1.5px solid #D9D9D4", borderRadius: "999px", color: "#0D1F0F", fontSize: "16px", fontWeight: 500, cursor: googleLoading ? "not-allowed" : "pointer", fontFamily: "var(--font-body)", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", transition: "border-color 0.2s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s", opacity: googleLoading ? 0.7 : 1, position: "relative", overflow: "hidden" }}
@@ -357,7 +348,7 @@ if (stored) {
               )}
               <IconGoogle />
               <span style={{ position: "relative", zIndex: 1 }}>
-                {googleLoading ? "Processing" : "Continue with Google"}
+                {googleLoading ? "Processing…" : "Continue with Google"}
               </span>
             </button>
           </div>
@@ -371,6 +362,7 @@ if (stored) {
               Create one
             </span>
           </p>
+
         </div>
       </div>
 

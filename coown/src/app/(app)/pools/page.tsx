@@ -58,8 +58,8 @@ export default function MyPoolsPage() {
     try {
       setLoading(true)
       setError("")
-      const res = await poolsApi.list()
-      setPools(res.data || [])
+      const poolsData = await poolsApi.list()
+      setPools(poolsData || [])
     } catch (err: any) {
       console.error("Failed to fetch pools:", err)
       setError(err.response?.data?.message || "Failed to load pools")

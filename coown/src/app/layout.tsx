@@ -35,7 +35,7 @@ export default function RootLayout({
     >
       <body suppressHydrationWarning>  {/* Add this */}
         <AuthProvider>{children}</AuthProvider>
-        <script src="https://newwebpay.qa.interswitchng.com/inline-checkout.js"></script>
+        <script src="https://newwebpay.interswitchng.com/collections/w/pay" async />
       </body>
     </html>
   )
