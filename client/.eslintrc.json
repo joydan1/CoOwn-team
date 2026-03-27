@@ -1,0 +1,8 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-html-attribute": "off",
+    "@next/next/no-html-attribute": "off",
+    "react/no-unknown-property": "off"
+  }
+}

@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { poolsApi, contributionsApi } from "@/lib/api"
@@ -45,9 +47,75 @@ export default function JoinPoolPage() {
     }
     fetchPool()
   }, [isAuthenticated, router, poolId])
+const fetchPool = async () => {
+  try {
+    setLoading(true)
 
-  const fetchPool = async () => {\n    try {\n      setLoading(true)\n      // Fetch full pool details to show join information\n      const res = await poolsApi.getOne(poolId)\n      const poolData = res.data\n      \n      const transformedPool: Pool = {\n        id: poolData.id,\n        name: poolData.name,\n        propertyId: poolData.property?.id || poolData.property_id,\n        propertyTitle: poolData.property?.title || poolData.property_title || \"Property\",\n        propertyLocation: poolData.property?.location || poolData.property_location || \"Location\",\n        propertyImage: poolData.property?.image || poolData.property?.images?.[0] || \"\",\n        targetAmount: parseFloat(poolData.target_amount || poolData.targetAmount || \"0\"),\n        raisedAmount: parseFloat(poolData.raised_amount || poolData.raisedAmount || \"0\"),\n        memberCount: poolData.member_count || poolData.memberCount || 0,\n        memberLimit: poolData.member_limit || poolData.memberLimit || 0,\n        deadline: poolData.deadline,\n        status: poolData.status || \"open\",\n        isPublic: poolData.is_public ?? poolData.isPublic ?? false,\n        description: poolData.description\n      }\n      \n      // Calculate remaining stake\n      const remainingStake = transformedPool.targetAmount - transformedPool.raisedAmount\n      transformedPool.remainingStake = remainingStake > 0 ? remainingStake : 0\n      \n      setPool(transformedPool)\n      \n      if (transformedPool.isPublic && transformedPool.remainingStake) {\n        setContribution(transformedPool.remainingStake.toString())\n      }\n    } catch (err: any) {\n      console.error(\"Failed to fetch pool:\", err)\n      setError(err.response?.data?.message || \"Pool not found or no longer available\")\n    } finally {\n      setLoading(false)\n    }\n  }
+    // Fetch full pool details to show join information
+    const res = await poolsApi.getOne(poolId)
+    const poolData = res.data
 
+    const transformedPool: Pool = {
+      id: poolData.id,
+      name: poolData.name,
+      propertyId: poolData.property?.id || poolData.property_id,
+      propertyTitle:
+        poolData.property?.title ||
+        poolData.property_title ||
+        "Property",
+      propertyLocation:
+        poolData.property?.location ||
+        poolData.property_location ||
+        "Location",
+      propertyImage:
+        poolData.property?.image ||
+        poolData.property?.images?.[0] ||
+        "",
+      targetAmount: parseFloat(
+        poolData.target_amount || poolData.targetAmount || "0"
+      ),
+      raisedAmount: parseFloat(
+        poolData.raised_amount || poolData.raisedAmount || "0"
+      ),
+      memberCount:
+        poolData.member_count || poolData.memberCount || 0,
+      memberLimit:
+        poolData.member_limit || poolData.memberLimit || 0,
+      deadline: poolData.deadline,
+      status: poolData.status || "open",
+      isPublic:
+        poolData.is_public ?? poolData.isPublic ?? false,
+      description: poolData.description,
+    }
+
+    // Calculate remaining stake
+    const remainingStake =
+      transformedPool.targetAmount -
+      transformedPool.raisedAmount
+
+    transformedPool.remainingStake =
+      remainingStake > 0 ? remainingStake : 0
+
+    setPool(transformedPool)
+
+    if (
+      transformedPool.isPublic &&
+      transformedPool.remainingStake
+    ) {
+      setContribution(
+        transformedPool.remainingStake.toString()
+      )
+    }
+  } catch (err: any) {
+    console.error("Failed to fetch pool:", err)
+    setError(
+      err.response?.data?.message ||
+        "Pool not found or no longer available"
+    )
+  } finally {
+    setLoading(false)
+  }
+}
   const handleJoin = async () => {
     if (!agreed) {
       setError("You must agree to the co-ownership agreement")
