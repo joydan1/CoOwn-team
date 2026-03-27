@@ -35,6 +35,10 @@ export default function RootLayout({
     >
       <body suppressHydrationWarning>  {/* Add this */}
         <AuthProvider>{children}</AuthProvider>
+<<<<<<< HEAD:coown/app/layout.tsx
+=======
+        <script src="https://newwebpay.qa.interswitchng.com/inline-checkout.js"></script>
+>>>>>>> 64b08669a32b257404a70e9093f8324291ef41bd:coown/src/app/layout.tsx
       </body>
     </html>
   )
