@@ -15,10 +15,12 @@ interface AuthStore {
   token: string | null
   refreshToken: string | null
   isAuthenticated: boolean
+  isLoading: boolean          // ← This is the key fix
 
   setAuth: (user: User, token: string, refreshToken?: string) => void
   updateUser: (partial: Partial<User>) => void
   logout: () => void
+  initializeAuth: () => void   // ← Optional but recommended
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -28,6 +30,7 @@ export const useAuthStore = create<AuthStore>()(
       token: null,
       refreshToken: null,
       isAuthenticated: false,
+      isLoading: true,                    // ← Start as true
 
       setAuth: (user, token, refreshToken) => {
         set({
@@ -35,8 +38,8 @@ export const useAuthStore = create<AuthStore>()(
           token,
           refreshToken: refreshToken ?? null,
           isAuthenticated: true,
+          isLoading: false,                 // ← Important
         })
-        // No manual localStorage here — let Zustand persist handle it
       },
 
       updateUser: (partial) =>
@@ -50,27 +53,45 @@ export const useAuthStore = create<AuthStore>()(
           token: null,
           refreshToken: null,
           isAuthenticated: false,
+          isLoading: false,
         })
-        // Zustand persist will automatically clear localStorage
+      },
+
+      // Call this once when app starts (e.g. in layout or root page)
+      initializeAuth: () => {
+        const state = get()
+        if (state.token) {
+          set({ 
+            isAuthenticated: true,
+            isLoading: false 
+          })
+        } else {
+          set({ 
+            isAuthenticated: false,
+            isLoading: false 
+          })
+        }
       },
     }),
 
     {
       name: 'coown-auth',
-      storage: createJSONStorage(() => localStorage),   // explicit & reliable
+      storage: createJSONStorage(() => localStorage),
 
       partialize: (state) => ({
         user: state.user,
         token: state.token,
         refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
+        // Do NOT persist isLoading
       }),
 
-      // This runs AFTER rehydration is complete
       onRehydrateStorage: () => (state) => {
-        if (state?.token) {
-          // Optional: you can do extra things here if needed
-          console.log('Auth rehydrated successfully')
+        if (state) {
+          // After rehydration, mark loading as done
+          setTimeout(() => {
+            set({ isLoading: false })
+          }, 10)
         }
       },
     }
