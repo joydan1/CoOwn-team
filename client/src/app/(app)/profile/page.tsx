@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { usersApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -19,16 +19,21 @@ export default function ProfilePage() {
     phone: user?.phone || "",
   })
 
-  if (!isAuthenticated) {
-    router.push("/login")
-    return null
-  }
+  // ✅ FIX: Redirect using useEffect (React-safe)
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+    }
+  }, [isAuthenticated, router])
 
   const initials = useMemo(() => {
     const first = form.firstName?.[0] || user?.firstName?.[0] || "U"
     const last = form.lastName?.[0] || user?.lastName?.[0] || ""
     return `${first}${last}`.toUpperCase()
   }, [form.firstName, form.lastName, user])
+
+  // ✅ Prevent UI flash
+  if (!isAuthenticated) return null
 
   const onChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -59,9 +64,11 @@ export default function ProfilePage() {
 
       const res = await usersApi.update(user.id, payload)
       const updatedUser = { ...user, ...res.data, email: user.email }
+
       if (token) {
         setAuth(updatedUser, token, refreshToken)
       }
+
       setSuccess("Profile updated successfully.")
     } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to update profile.")
@@ -84,32 +91,78 @@ export default function ProfilePage() {
             justifyContent: "space-between",
           }}
         >
-          <span onClick={() => router.push("/")} style={{ fontFamily: "var(--font-display)", fontSize: "25px", fontWeight: 700, color: "#fff", cursor: "pointer" }}>
+          <span
+            onClick={() => router.push("/")}
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "25px",
+              fontWeight: 700,
+              color: "#fff",
+              cursor: "pointer",
+            }}
+          >
             Co<span style={{ color: "#00C853" }}>Own</span>
           </span>
+
           <div style={{ display: "flex", gap: "10px" }}>
-            <button onClick={() => router.push("/listings")} style={ghostNavBtn}>Listings</button>
-            <button onClick={() => router.push("/pools")} style={ghostNavBtn}>My Pools</button>
-            <button onClick={logout} style={ghostNavBtn}>Log out</button>
+            <button onClick={() => router.push("/listings")} style={ghostNavBtn}>
+              Listings
+            </button>
+            <button onClick={() => router.push("/pools")} style={ghostNavBtn}>
+              My Pools
+            </button>
+            <button onClick={logout} style={ghostNavBtn}>
+              Log out
+            </button>
           </div>
         </div>
       </nav>
 
       <section style={{ maxWidth: "760px", margin: "0 auto", padding: "32px 20px 60px" }}>
-        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(30px, 4vw, 40px)", color: "#0D1F0F", marginBottom: "10px" }}>
+        <h1
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(30px, 4vw, 40px)",
+            color: "#0D1F0F",
+            marginBottom: "10px",
+          }}
+        >
           Profile
         </h1>
+
         <p style={{ color: "#5C6B5E", marginBottom: "20px" }}>
           Manage your personal details.
         </p>
 
-        <div style={{ background: "#fff", border: "1px solid #E8E8E3", borderRadius: "18px", padding: "20px" }}>
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid #E8E8E3",
+            borderRadius: "18px",
+            padding: "20px",
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "18px" }}>
-            <div style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#00C853", color: "#0D1F0F", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800 }}>
+            <div
+              style={{
+                width: "52px",
+                height: "52px",
+                borderRadius: "50%",
+                background: "#00C853",
+                color: "#0D1F0F",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 800,
+              }}
+            >
               {initials}
             </div>
+
             <div>
-              <p style={{ fontWeight: 700, color: "#0D1F0F" }}>{form.firstName || "User"} {form.lastName || ""}</p>
+              <p style={{ fontWeight: 700, color: "#0D1F0F" }}>
+                {form.firstName || "User"} {form.lastName || ""}
+              </p>
               <p style={{ fontSize: "13px", color: "#8A9E8C" }}>{form.email}</p>
             </div>
           </div>
@@ -120,17 +173,37 @@ export default function ProfilePage() {
           <form onSubmit={onSave}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <Field label="First Name">
-                <input value={form.firstName} onChange={(e) => onChange("firstName", e.target.value)} style={inputStyle} />
+                <input
+                  value={form.firstName}
+                  onChange={(e) => onChange("firstName", e.target.value)}
+                  style={inputStyle}
+                />
               </Field>
+
               <Field label="Last Name">
-                <input value={form.lastName} onChange={(e) => onChange("lastName", e.target.value)} style={inputStyle} />
+                <input
+                  value={form.lastName}
+                  onChange={(e) => onChange("lastName", e.target.value)}
+                  style={inputStyle}
+                />
               </Field>
             </div>
+
             <Field label="Email">
-              <input value={form.email} disabled style={{ ...inputStyle, background: "#F7F7F5", color: "#8A9E8C" }} />
+              <input
+                value={form.email}
+                disabled
+                style={{ ...inputStyle, background: "#F7F7F5", color: "#8A9E8C" }}
+              />
             </Field>
+
             <Field label="Phone">
-              <input value={form.phone} onChange={(e) => onChange("phone", e.target.value)} style={inputStyle} placeholder="+234..." />
+              <input
+                value={form.phone}
+                onChange={(e) => onChange("phone", e.target.value)}
+                style={inputStyle}
+                placeholder="+234..."
+              />
             </Field>
 
             <button
@@ -160,7 +233,17 @@ export default function ProfilePage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: "12px" }}>
-      <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#2A3D2C", marginBottom: "6px" }}>{label}</label>
+      <label
+        style={{
+          display: "block",
+          fontSize: "13px",
+          fontWeight: 600,
+          color: "#2A3D2C",
+          marginBottom: "6px",
+        }}
+      >
+        {label}
+      </label>
       {children}
     </div>
   )

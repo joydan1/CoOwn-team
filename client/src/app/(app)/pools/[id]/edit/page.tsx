@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { poolsApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -23,15 +23,7 @@ export default function EditPoolPage() {
     description: "",
   })
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    void loadPool()
-  }, [isAuthenticated, router, poolId])
-
-  const loadPool = async () => {
+  const loadPool = useCallback(async () => {
     try {
       setLoading(true)
       setError("")
@@ -49,7 +41,15 @@ export default function EditPoolPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [poolId])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
+    void loadPool()
+  }, [isAuthenticated, router, loadPool])
 
   const onChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))

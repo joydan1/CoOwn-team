@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { poolsApi, contributionsApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -40,82 +40,84 @@ export default function JoinPoolPage() {
   const [contribution, setContribution] = useState("")
   const [agreed, setAgreed] = useState(false)
 
+  const fetchPool = useCallback(async () => {
+    try {
+      setLoading(true)
+
+      // Fetch full pool details to show join information
+      const res = await poolsApi.getOne(poolId)
+      const poolData = res.data
+
+      const transformedPool: Pool = {
+        id: poolData.id,
+        name: poolData.name,
+        propertyId: poolData.property?.id || poolData.property_id,
+        propertyTitle:
+          poolData.property?.title ||
+          poolData.property_title ||
+          "Property",
+        propertyLocation:
+          poolData.property?.location ||
+          poolData.property_location ||
+          "Location",
+        propertyImage:
+          poolData.property?.image ||
+          poolData.property?.images?.[0] ||
+          "",
+        targetAmount: parseFloat(
+          poolData.target_amount || poolData.targetAmount || "0"
+        ),
+        raisedAmount: parseFloat(
+          poolData.raised_amount || poolData.raisedAmount || "0"
+        ),
+        memberCount:
+          poolData.member_count || poolData.memberCount || 0,
+        memberLimit:
+          poolData.member_limit || poolData.memberLimit || 0,
+        deadline: poolData.deadline,
+        status: poolData.status || "open",
+        isPublic:
+          poolData.is_public ?? poolData.isPublic ?? false,
+        description: poolData.description,
+      }
+
+      // Calculate remaining stake
+      const remainingStake =
+        transformedPool.targetAmount -
+        transformedPool.raisedAmount
+
+      transformedPool.remainingStake =
+        remainingStake > 0 ? remainingStake : 0
+
+      setPool(transformedPool)
+
+      if (
+        transformedPool.isPublic &&
+        transformedPool.remainingStake
+      ) {
+        setContribution(
+          transformedPool.remainingStake.toString()
+        )
+      }
+    } catch (err: any) {
+      console.error("Failed to fetch pool:", err)
+      setError(
+        err.response?.data?.message ||
+          "Pool not found or no longer available"
+      )
+    } finally {
+      setLoading(false)
+    }
+  }, [poolId])
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push(`/login?redirect=/pools/join/${poolId}`)
       return
     }
     fetchPool()
-  }, [isAuthenticated, router, poolId])
-const fetchPool = async () => {
-  try {
-    setLoading(true)
+  }, [isAuthenticated, router, fetchPool, poolId])
 
-    // Fetch full pool details to show join information
-    const res = await poolsApi.getOne(poolId)
-    const poolData = res.data
-
-    const transformedPool: Pool = {
-      id: poolData.id,
-      name: poolData.name,
-      propertyId: poolData.property?.id || poolData.property_id,
-      propertyTitle:
-        poolData.property?.title ||
-        poolData.property_title ||
-        "Property",
-      propertyLocation:
-        poolData.property?.location ||
-        poolData.property_location ||
-        "Location",
-      propertyImage:
-        poolData.property?.image ||
-        poolData.property?.images?.[0] ||
-        "",
-      targetAmount: parseFloat(
-        poolData.target_amount || poolData.targetAmount || "0"
-      ),
-      raisedAmount: parseFloat(
-        poolData.raised_amount || poolData.raisedAmount || "0"
-      ),
-      memberCount:
-        poolData.member_count || poolData.memberCount || 0,
-      memberLimit:
-        poolData.member_limit || poolData.memberLimit || 0,
-      deadline: poolData.deadline,
-      status: poolData.status || "open",
-      isPublic:
-        poolData.is_public ?? poolData.isPublic ?? false,
-      description: poolData.description,
-    }
-
-    // Calculate remaining stake
-    const remainingStake =
-      transformedPool.targetAmount -
-      transformedPool.raisedAmount
-
-    transformedPool.remainingStake =
-      remainingStake > 0 ? remainingStake : 0
-
-    setPool(transformedPool)
-
-    if (
-      transformedPool.isPublic &&
-      transformedPool.remainingStake
-    ) {
-      setContribution(
-        transformedPool.remainingStake.toString()
-      )
-    }
-  } catch (err: any) {
-    console.error("Failed to fetch pool:", err)
-    setError(
-      err.response?.data?.message ||
-        "Pool not found or no longer available"
-    )
-  } finally {
-    setLoading(false)
-  }
-}
   const handleJoin = async () => {
     if (!agreed) {
       setError("You must agree to the co-ownership agreement")

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { propertiesApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -26,15 +26,7 @@ export default function EditPropertyPage() {
     imageUrl: "",
   })
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    void loadProperty()
-  }, [isAuthenticated, router, propertyId])
-
-  const loadProperty = async () => {
+  const loadProperty = useCallback(async () => {
     try {
       setLoading(true)
       setError("")
@@ -53,7 +45,15 @@ export default function EditPropertyPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [propertyId])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
+    void loadProperty()
+  }, [isAuthenticated, router, loadProperty])
 
   const onChange = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))

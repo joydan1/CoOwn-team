@@ -1,0 +1,52 @@
+﻿
+> coown@0.1.0 build
+> next build
+
+  Γû▓ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/18) ...
+   Generating static pages (4/18) 
+   Generating static pages (8/18) 
+   Generating static pages (13/18) 
+ Γ£ô Generating static pages (18/18)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Γöî Γùï /                                    3.67 kB        91.2 kB
+Γö£ Γùï /_not-found                          873 B          88.4 kB
+Γö£ Γùï /callback                            3.83 kB         115 kB
+Γö£ Γùï /dashboard                           3.6 kB          115 kB
+Γö£ Γùï /listings                            8.11 kB         125 kB
+Γö£ ╞Æ /listings/[id]                       4.76 kB         121 kB
+Γö£ Γùï /login                               3.82 kB         115 kB
+Γö£ Γùï /milestones                          3.22 kB         115 kB
+Γö£ ╞Æ /milestones/[id]/edit                3.35 kB         115 kB
+Γö£ Γùï /milestones/create                   3.35 kB         115 kB
+Γö£ Γùï /payments                            3.56 kB         115 kB
+Γö£ Γùï /payments/callback                   801 B          88.3 kB
+Γö£ Γùï /pools                               5.07 kB         117 kB
+Γö£ ╞Æ /pools/[id]                          6.33 kB         118 kB
+Γö£ ╞Æ /pools/[id]/certificate              4.87 kB         116 kB
+Γö£ ╞Æ /pools/[id]/contribute               3.6 kB          115 kB
+Γö£ ╞Æ /pools/[id]/edit                     3.54 kB         115 kB
+Γö£ Γùï /pools/create                        4.85 kB         116 kB
+Γö£ ╞Æ /pools/join/[id]                     5.16 kB         117 kB
+Γö£ Γùï /profile                             3.59 kB         115 kB
+Γö£ ╞Æ /properties/[id]/edit                3.56 kB         115 kB
+Γö£ Γùï /properties/create                   3.59 kB         115 kB
+Γöö Γùï /register                            8.24 kB         120 kB
++ First Load JS shared by all            87.5 kB
+  Γö£ chunks/117-64a2d7bd18180113.js       31.7 kB
+  Γö£ chunks/fd9d1056-6d83981521b06321.js  53.6 kB
+  Γöö other shared chunks (total)          2.14 kB
+
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

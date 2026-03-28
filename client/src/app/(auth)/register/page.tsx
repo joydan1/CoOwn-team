@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { authApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
-import { usersApi } from "@/lib/api"
 
 const steps = ["Account", "Personal", "Verify"]
 
@@ -158,10 +157,10 @@ export default function RegisterPage() {
       const { user, token } = res.data
       const accessToken = token?.accessToken
       const refreshToken = token?.refreshToken
-      
-      if (!accessToken) throw new Error("No token received")
 
-      useAuthStore.getState().setAuth(user, accessToken, refreshToken)
+      if (!accessToken || !refreshToken) throw new Error("Missing authentication tokens")
+
+      setAuth(user, accessToken, refreshToken)
       router.push("/login")
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
@@ -372,7 +371,7 @@ const handleGoogle = () => {
                     <input type="password" placeholder="Repeat your password" value={form.confirmPassword} onChange={e => set("confirmPassword", e.target.value)} onKeyDown={e => e.key === "Enter" && handleNext()} style={inputStyle} {...focusHandlers} />
                     <div style={{ position: "absolute", bottom: 0, left: 0, height: "2px", borderRadius: "0 0 12px 12px", background: form.confirmPassword ? (form.confirmPassword === form.password ? ACCENT : "#ef4444") : "transparent", width: form.confirmPassword ? "100%" : "0%", transition: "width 0.4s cubic-bezier(0.16,1,0.3,1), background 0.3s" }}/>
                   </div>
-                  {form.confirmPassword && form.confirmPassword !== form.password && <p style={{ fontSize: "13px", color: "#ef4444", marginTop: "6px" }}>Passwords don't match</p>}
+                  {form.confirmPassword && form.confirmPassword !== form.password && <p style={{ fontSize: "13px", color: "#ef4444", marginTop: "6px" }}>Passwords don&apos;t match</p>}
                   {form.confirmPassword && form.confirmPassword === form.password && <p style={{ fontSize: "13px", color: ACCENT, marginTop: "6px" }}>✓ Passwords match</p>}
                 </div>
 
@@ -443,7 +442,7 @@ const handleGoogle = () => {
                 <div style={{ background: ACCENT_DIM, border: `1px solid rgba(0,200,83,0.20)`, borderRadius: "12px", padding: "14px 16px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
                   <span style={{ fontSize: "18px", flexShrink: 0 }}>📞</span>
                   <div style={{ fontSize: "14px", color: "#1A4D2A", lineHeight: 1.6 }}>
-                    We'll use your phone to send contribution alerts and pool updates. Standard rates apply.
+                    We&apos;ll use your phone to send contribution alerts and pool updates. Standard rates apply.
                   </div>
                 </div>
               </div>
@@ -482,7 +481,7 @@ const handleGoogle = () => {
                 <div style={{ background: GREY_50, border: `1px solid ${GREY_200}`, borderRadius: "12px", padding: "14px 16px", display: "flex", gap: "12px", alignItems: "center" }}>
                   <span style={{ fontSize: "20px", flexShrink: 0 }}>📱</span>
                   <div style={{ fontSize: "14px", color: GREY_600, lineHeight: 1.6 }}>
-                    Don't know your BVN? Dial <strong style={{ color: INK, letterSpacing: "0.05em" }}>*565*0#</strong> from any Nigerian number.
+                    Don&apos;t know your BVN? Dial <strong style={{ color: INK, letterSpacing: "0.05em" }}>*565*0#</strong> from any Nigerian number.
                   </div>
                 </div>
               </div>

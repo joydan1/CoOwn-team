@@ -26,7 +26,7 @@ export default function PaymentCallback() {
         router.push(`/pools/${poolId}?payment=failed`)
       }, 3000)
     }
-  }, [])
+  }, [router, searchParams])
 
   return (
     <main style={{ minHeight: "100vh", background: "#F5F5F0", display: "flex", alignItems: "center", justifyContent: "center" }}>

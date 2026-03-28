@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { milestonesApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -23,15 +23,7 @@ export default function EditMilestonePage() {
     status: "pending",
   })
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    void loadMilestone()
-  }, [isAuthenticated, router, milestoneId])
-
-  const loadMilestone = async () => {
+  const loadMilestone = useCallback(async () => {
     try {
       setLoading(true)
       const res = await milestonesApi.getOne(milestoneId)
@@ -48,7 +40,15 @@ export default function EditMilestonePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [milestoneId])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
+    void loadMilestone()
+  }, [isAuthenticated, router, loadMilestone])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()

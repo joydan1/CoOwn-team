@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { contributionsApi, poolsApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -23,15 +23,7 @@ export default function PaymentsPage() {
   const [contributions, setContributions] = useState<ContributionItem[]>([])
   const [poolNames, setPoolNames] = useState<Record<string, string>>({})
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    void loadData()
-  }, [isAuthenticated, router])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       setError("")
@@ -60,7 +52,15 @@ export default function PaymentsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.id])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
+    void loadData()
+  }, [isAuthenticated, router, loadData])
 
   const total = useMemo(() => contributions.reduce((sum, c) => sum + c.amount, 0), [contributions])
   const count = contributions.length
