@@ -1,6 +1,8 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+export const dynamic = "force-dynamic"
+
+import { useCallback, useEffect, useState, useRef } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { poolsApi, usersApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -43,11 +45,7 @@ export default function CertificatePage() {
   const [error, setError] = useState("")
   const [generating, setGenerating] = useState(false)
 
-  useEffect(() => {
-    fetchCertificateData()
-  }, [poolId])
-
-  const fetchCertificateData = async () => {
+  const fetchCertificateData = useCallback(async () => {
     try {
       setLoading(true)
       
@@ -108,7 +106,11 @@ export default function CertificatePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [poolId, user?.id])
+
+  useEffect(() => {
+    fetchCertificateData()
+  }, [fetchCertificateData])
 
   const downloadCertificate = async () => {
     if (!certificateRef.current) return

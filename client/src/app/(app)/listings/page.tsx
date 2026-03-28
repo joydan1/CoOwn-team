@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { propertiesApi, poolsApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -671,12 +672,16 @@ function PropertyCard({
       }}
     >
       <div style={{ height: "200px", position: "relative", overflow: "hidden" }}>
-        <img
-          src={p.image} alt={p.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
+        <Image
+          src={p.image}
+          alt={p.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 300px"
+          style={{ objectFit: "cover", transition: "transform 0.5s ease" }}
           onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.07)")}
           onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
           onError={e => { (e.currentTarget as HTMLImageElement).src = getFallbackImage(p.type, p.id) }}
+          unoptimized
         />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(13,31,15,0.65) 0%, transparent 55%)" }}/>
         <div style={{
@@ -796,12 +801,16 @@ function OpenPoolCard({
       }}
     >
       <div style={{ height: "200px", position: "relative", overflow: "hidden" }}>
-        <img
-          src={pool.propertyImage} alt={pool.propertyTitle}
-          style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
+        <Image
+          src={pool.propertyImage}
+          alt={pool.propertyTitle}
+          fill
+          sizes="(max-width: 768px) 100vw, 300px"
+          style={{ objectFit: "cover", transition: "transform 0.5s ease" }}
           onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.07)")}
           onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
           onError={e => { (e.currentTarget as HTMLImageElement).src = getFallbackImage(pool.propertyType, pool.id) }}
+          unoptimized
         />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(13,31,15,0.65) 0%, transparent 55%)" }}/>
         <div style={{

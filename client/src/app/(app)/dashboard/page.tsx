@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/store/auth"
 import { poolsApi, contributionsApi } from "@/lib/api"
@@ -26,24 +26,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    fetchDashboardData()
-    
-    // Poll every 30 seconds for real-time updates
-    const interval = setInterval(fetchDashboardData, 30000)
-    return () => clearInterval(interval)
-  }, [isAuthenticated])
+  const fetchDashboardData = useCallback(async () => {
+    if (!user?.id) return
 
-  const fetchDashboardData = async () => {
     try {
       const response = await poolsApi.list()
       const userPools = response.data.filter((pool: any) => 
-        pool.creator_id === user?.id || 
-        pool.members?.some((m: any) => m.user_id === user?.id)
+        pool.creator_id === user.id || 
+        pool.members?.some((m: any) => m.user_id === user.id)
       )
       
       const formattedPools: UserPool[] = userPools.map((pool: any) => ({
@@ -60,16 +50,14 @@ export default function DashboardPage() {
         ownershipPct: 0
       }))
       
-      // Fetch contributions for dashboard summary
       try {
         const contributions = await contributionsApi.list()
         const contributionsData = contributions.data || []
         
-        // Aggregate contributions by pool
         for (const pool of formattedPools) {
           const myContributions = contributionsData.filter((c: any) => 
             (c.pool_id === pool.id || c.poolId === pool.id) && 
-            (c.user_id === user?.id || c.userId === user?.id)
+            (c.user_id === user.id || c.userId === user.id)
           )
           pool.myContribution = myContributions.reduce((sum: number, c: any) => sum + (c.amount || 0), 0)
           pool.ownershipPct = pool.targetAmount > 0 ? (pool.myContribution / pool.targetAmount) * 100 : 0
@@ -85,7 +73,18 @@ export default function DashboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.id])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
+    fetchDashboardData()
+
+    const interval = setInterval(fetchDashboardData, 30000)
+    return () => clearInterval(interval)
+  }, [isAuthenticated, fetchDashboardData, router])
 
   const fmt = (n: number) => "₦" + (n >= 1_000_000 ? (n / 1_000_000).toFixed(1) + "M" : (n / 1000).toFixed(0) + "K")
 
@@ -168,10 +167,10 @@ export default function DashboardPage() {
               </div>
             )
           })}
-          
+
           {pools.length === 0 && (
             <div style={{ textAlign: "center", padding: "60px", background: "#fff", borderRadius: "16px" }}>
-              <p style={{ color: "#5C6B5E", marginBottom: "16px" }}>You haven't joined any pools yet</p>
+              <p style={{ color: "#5C6B5E", marginBottom: "16px" }}>You haven&apos;t joined any pools yet</p>
               <button onClick={() => router.push("/listings")} style={{ padding: "12px 24px", background: "#00C853", border: "none", borderRadius: "8px", cursor: "pointer" }}>
                 Explore Open Pools
               </button>

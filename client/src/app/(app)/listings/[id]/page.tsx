@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import Image from "next/image"
 import { useRouter, useParams } from "next/navigation"
 import { propertiesApi, poolsApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -49,15 +50,7 @@ export default function PropertyDetailPage() {
 
   const propertyId = params.id as string
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    fetchData()
-  }, [isAuthenticated, router, propertyId])
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true)
       setError("")
@@ -82,7 +75,15 @@ export default function PropertyDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [propertyId])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
+    fetchData()
+  }, [isAuthenticated, router, fetchData])
 
   const handleStartPool = () => {
     router.push(`/pools/create?propertyId=${propertyId}`)
@@ -172,10 +173,13 @@ export default function PropertyDetailPage() {
 
       {/* Hero Image */}
       <div style={{ height: "400px", position: "relative", overflow: "hidden" }}>
-        <img
+        <Image
           src={property.image || "https://images.unsplash.com/photo-1500382017468-9049fed747ef"}
           alt={property.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          fill
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+          unoptimized
         />
         <div style={{
           position: "absolute",

@@ -1,6 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState, type ChangeEvent, type FormEvent } from "react"
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
+
 import { useRouter, useSearchParams } from "next/navigation"
 import { milestonesApi, poolsApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -43,7 +46,7 @@ export default function CreateMilestonePage() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError("")
     if (!form.pool_id || !form.title.trim() || !form.description.trim() || !form.target_date) {
@@ -78,10 +81,11 @@ export default function CreateMilestonePage() {
         {error && <div style={{ color: "#b91c1c", marginBottom: "12px" }}>{error}</div>}
 
         <form onSubmit={handleSubmit} style={{ background: "#fff", border: "1px solid #E8E8E3", borderRadius: "16px", padding: "18px" }}>
-          <label style={labelStyle}>Pool</label>
+          <label htmlFor="pool_id" style={labelStyle}>Pool</label>
           <select
+            id="pool_id"
             value={form.pool_id}
-            onChange={(e) => setForm((prev) => ({ ...prev, pool_id: e.target.value }))}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => setForm((prev) => ({ ...prev, pool_id: e.target.value }))}
             style={inputStyle}
           >
             <option value="">Select a pool</option>
@@ -92,29 +96,42 @@ export default function CreateMilestonePage() {
             ))}
           </select>
 
-          <label style={labelStyle}>Title</label>
-          <input value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} style={inputStyle} />
+          <label htmlFor="title" style={labelStyle}>Title</label>
+          <input
+            id="title"
+            value={form.title}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+            style={inputStyle}
+          />
 
-          <label style={labelStyle}>Description</label>
+          <label htmlFor="description" style={labelStyle}>Description</label>
           <textarea
+            id="description"
             value={form.description}
-            onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setForm((prev) => ({ ...prev, description: e.target.value }))}
             rows={4}
             style={inputStyle}
           />
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
             <div>
-              <label style={labelStyle}>Target Date</label>
-              <input type="date" value={form.target_date} onChange={(e) => setForm((prev) => ({ ...prev, target_date: e.target.value }))} style={inputStyle} />
+              <label htmlFor="target_date" style={labelStyle}>Target Date</label>
+              <input
+                id="target_date"
+                type="date"
+                value={form.target_date}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setForm((prev) => ({ ...prev, target_date: e.target.value }))}
+                style={inputStyle}
+              />
             </div>
             <div>
-              <label style={labelStyle}>Required Approvals</label>
+              <label htmlFor="required_approvals" style={labelStyle}>Required Approvals</label>
               <input
+                id="required_approvals"
                 type="number"
                 min="1"
                 value={form.required_approvals}
-                onChange={(e) => setForm((prev) => ({ ...prev, required_approvals: e.target.value }))}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setForm((prev) => ({ ...prev, required_approvals: e.target.value }))}
                 style={inputStyle}
               />
             </div>

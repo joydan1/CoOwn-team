@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { poolsApi, contributionsApi, milestonesApi, usersApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -63,11 +63,7 @@ export default function PoolDetailPage() {
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [makingPublic, setMakingPublic] = useState(false)
 
-  useEffect(() => {
-    fetchPoolData()
-  }, [poolId])
-
-  const fetchPoolData = async () => {
+  const fetchPoolData = useCallback(async () => {
     try {
       setLoading(true)
       setError("")
@@ -187,7 +183,11 @@ console.log("Is creator?", user?.id === transformedPool.creatorId)
     } finally {
       setLoading(false)
     }
-  }
+  }, [poolId, router, user?.id])
+
+  useEffect(() => {
+    fetchPoolData()
+  }, [fetchPoolData])
 
   const handleContribute = () => {
     router.push(`/pools/${poolId}/contribute`)

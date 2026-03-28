@@ -1,6 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+export const dynamic = "force-dynamic"
+
+import { useCallback, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { poolsApi, propertiesApi } from "@/lib/api"
 import { useAuthStore } from "@/store/auth"
@@ -37,15 +39,7 @@ export default function CreatePoolPage() {
     minContribution: "",
   })
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    fetchProperties()
-  }, [isAuthenticated, router])
-
-  const fetchProperties = async () => {
+  const fetchProperties = useCallback(async () => {
     try {
       setLoading(true)
       const res = await propertiesApi.listings()
@@ -56,7 +50,7 @@ export default function CreatePoolPage() {
         const property = props.find((p: Property) => p.id === propertyIdParam)
         if (property) {
           setSelectedProperty(property)
-          setForm(prev => ({
+          setForm((prev) => ({
             ...prev,
             name: `${property.title} Pool`,
             targetAmount: property.price.toString(),
@@ -69,7 +63,15 @@ export default function CreatePoolPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [propertyIdParam])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
+    fetchProperties()
+  }, [isAuthenticated, router, fetchProperties])
 
   const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property)
